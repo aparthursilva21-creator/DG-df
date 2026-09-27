@@ -3,13 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dionésia Guarino - DG Nails DF | Estética & Beleza</title>
+    <title>Studio Dionésia Guarino - Estética, Beleza & Nail Designer</title>
+    <meta name="description" content="Studio Dionésia Guarino em Samambaia Norte - DF. Unhas, Estética, Cílios, Sobrancelhas e Cabelos. Agende seu horário!">
+    
+    <!-- Open Graph / Redes Sociais -->
+    <meta property="og:title" content="Studio Dionésia Guarino - Estética & Beleza">
+    <meta property="og:description" content="Realce sua beleza. Revele sua melhor versão. Samambaia Norte - DF.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1560066984-138dadb4c035">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -19,16 +28,16 @@
                 extend: {
                     colors: {
                         nude: {
-                            50: '#FAF8F5',
-                            100: '#F4EFEA',
-                            200: '#E8DDD3',
-                            300: '#D7C3B3',
-                            400: '#C5A993',
-                            500: '#B28E75',
-                            600: '#9B735A',
-                        },
-                        roseSoft: '#F3E8E6',
-                        champagne: '#F7F2E9',
+                            50: '#FAF7F2',   /* Bege ultraclaro de fundo */
+                            100: '#F3ECE2',  /* Bege suave de elementos */
+                            200: '#E4D5C5',  /* Borda bege */
+                            300: '#D2BBA8',  /* Detalhes intermediários */
+                            400: '#BD9E87',  /* Tom caramelo suave */
+                            500: '#A6826B',  /* Tom principal botões */
+                            600: '#89644F',  /* Hover botões */
+                            800: '#3D2D24',  /* Texto escuro/rodapé */
+                            900: '#211813',  /* Rodapé escuro */
+                        }
                     },
                     fontFamily: {
                         serif: ['"Cormorant Garamond"', 'serif'],
@@ -39,10 +48,10 @@
         }
     </script>
     <style>
-        .bg-soft-pattern {
-            background-color: #FAF8F5;
-            background-image: radial-gradient(#E8DDD3 0.75px, transparent 0.75px);
-            background-size: 24px 24px;
+        .bg-bege-suave {
+            background-color: #FAF7F2;
+            background-image: radial-gradient(#E4D5C5 0.75px, transparent 0.75px);
+            background-size: 28px 28px;
         }
     </style>
 </head>
@@ -51,18 +60,17 @@
     <!-- Header / Navbar -->
     <header class="sticky top-0 z-40 bg-nude-50/90 backdrop-blur-md border-b border-nude-200/60 transition-all">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-            <a href="#" class="flex items-center gap-2">
-                <div class="w-10 h-10 rounded-full bg-nude-200 text-nude-600 flex items-center justify-center font-serif text-xl font-bold border border-nude-300">
+            <a href="#" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-nude-100 text-nude-600 flex items-center justify-center font-serif text-xl font-bold border border-nude-300 shadow-sm">
                     DG
                 </div>
                 <div>
-                    <span class="font-serif text-xl font-bold tracking-wide text-gray-900 block leading-tight">Dionésia Guarino</span>
-                    <span class="text-[10px] tracking-widest text-nude-500 uppercase font-medium">Estética & Beleza</span>
+                    <span class="font-serif text-xl font-bold tracking-wide text-gray-900 block leading-tight">Studio Dionésia Guarino</span>
+                    <span class="text-[10px] tracking-widest text-nude-500 uppercase font-medium">Estética • Beleza • Bem-Estar</span>
                 </div>
             </a>
             
             <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-                <a href="#sobre" class="hover:text-nude-600 transition">Sobre Mim</a>
                 <a href="#servicos" class="hover:text-nude-600 transition">Serviços</a>
                 <a href="#espaco" class="hover:text-nude-600 transition">O Espaço</a>
                 <a href="#avaliacoes" class="hover:text-nude-600 transition">Avaliações</a>
@@ -70,16 +78,16 @@
             </nav>
 
             <a href="https://wa.me/5561993895357?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20agendar%20um%20hor%C3%A1rio." 
-               target="_blank" 
+               target="_blank" rel="noopener noreferrer"
                class="bg-nude-500 hover:bg-nude-600 text-white text-xs sm:text-sm font-medium px-4 py-2.5 rounded-full shadow-sm hover:shadow transition flex items-center gap-2">
-                <i class="fa-brands class-whatsapp text-base"></i>
+                <i class="fa-brands fa-whatsapp text-base"></i>
                 <span>Agendar Horário</span>
             </a>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="relative py-16 sm:py-24 bg-gradient-to-b from-nude-100/50 to-nude-50 overflow-hidden">
+    <section class="relative py-16 sm:py-24 bg-gradient-to-b from-nude-100/60 to-nude-50 overflow-hidden">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div class="space-y-6 text-center md:text-left">
                 <div class="inline-flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-nude-200 text-xs text-nude-600 shadow-sm">
@@ -90,16 +98,16 @@
                 </div>
                 
                 <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl text-gray-900 font-semibold leading-tight">
-                    A verdadeira beleza não se cria, <span class="italic font-normal text-nude-600 block">ela se revela.</span>
+                    Realce sua beleza. <span class="italic font-normal text-nude-600 block">Revele sua melhor versão.</span>
                 </h1>
                 
                 <p class="text-gray-600 text-base sm:text-lg max-w-lg mx-auto md:mx-0 leading-relaxed font-light">
-                    Realce a sua beleza e revele a sua melhor versão com atendimentos personalizados de Nail Designer, Estética e Cuidados Capilares.
+                    A verdadeira beleza não se cria, ela se revela. Atendimentos personalizados de Nail Designer, Estética e Cuidados Capilares.
                 </p>
 
                 <div class="pt-2 flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
                     <a href="https://wa.me/5561993895357?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20atendimento." 
-                       target="_blank" 
+                       target="_blank" rel="noopener noreferrer"
                        class="w-full sm:w-auto bg-nude-500 hover:bg-nude-600 text-white font-medium px-8 py-3.5 rounded-full shadow-md hover:shadow-lg transition text-center flex items-center justify-center gap-2">
                         <i class="fa-brands fa-whatsapp text-lg"></i>
                         <span>Agendar no WhatsApp</span>
@@ -113,7 +121,7 @@
                 <div class="pt-4 flex items-center justify-center md:justify-start gap-6 text-xs text-gray-500">
                     <div class="flex items-center gap-1.5">
                         <i class="fa-solid fa-check text-nude-500"></i>
-                        <span>Profissionalismo</span>
+                        <span>Atendimento Único</span>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <i class="fa-solid fa-check text-nude-500"></i>
@@ -128,14 +136,15 @@
 
             <!-- Profile Image Container -->
             <div class="relative flex justify-center">
-                <div class="relative w-72 h-88 sm:w-80 sm:h-96 rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-nude-200">
+                <div class="relative w-72 h-96 sm:w-80 sm:h-[26rem] rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-nude-200">
+                    <!-- IMPORTANTE: Substitua a URL do src abaixo pela imagem real da Dionésia Guarino -->
                     <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=800" 
-                         alt="Dionésia Guarino - Salão de Beleza" 
+                         alt="Dionésia Guarino - Studio de Beleza" 
                          class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-                    <div class="absolute bottom-4 left-4 right-4 text-white p-3 rounded-lg bg-white/20 backdrop-blur-md border border-white/30 text-center">
-                        <p class="font-serif font-bold text-lg">Dionésia Guarino</p>
-                        <p class="text-xs text-nude-100">Especialista em Unhas & Estética</p>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-4 left-4 right-4 text-white p-3.5 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 text-center">
+                        <p class="font-serif font-bold text-xl">Dionésia Guarino</p>
+                        <p class="text-xs text-nude-100 tracking-wide uppercase mt-0.5">Nail Designer & Especialista em Estética</p>
                     </div>
                 </div>
             </div>
@@ -153,63 +162,98 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Unhas -->
-                <div class="bg-nude-50/60 rounded-2xl p-8 border border-nude-100 hover:border-nude-300 transition shadow-sm hover:shadow-md flex flex-col justify-between">
+                <div class="bg-nude-50/70 rounded-2xl p-8 border border-nude-100 hover:border-nude-300 transition shadow-sm hover:shadow-md flex flex-col justify-between">
                     <div>
-                        <div class="w-12 h-12 rounded-full bg-nude-200 text-nude-600 flex items-center justify-center text-xl mb-6">
+                        <div class="w-12 h-12 rounded-full bg-nude-100 text-nude-600 flex items-center justify-center text-xl mb-6 border border-nude-200">
                             <i class="fa-solid fa-hand-sparkles"></i>
                         </div>
                         <h3 class="font-serif text-2xl font-semibold text-gray-900 mb-4">Unhas & Nail Art</h3>
                         <ul class="space-y-3 text-sm text-gray-600 mb-6">
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Alongamento de Unhas (Fibra de Vidro)</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Manicure e Pedicure</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Banho de Gel & Blindagem</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Esmaltação em Gel</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> SPA dos Pés</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Manicure e Pedicure</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Alongamento de Unhas</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Banho de Gel & Blindagem</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Esmaltação em Gel</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> SPA dos Pés</li>
                         </ul>
                     </div>
-                    <a href="https://wa.me/5561993895357?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20servi%C3%A7o%20de%20unhas." target="_blank" class="block w-full py-2.5 text-center bg-white border border-nude-300 text-nude-600 rounded-xl font-medium text-xs hover:bg-nude-500 hover:text-white transition">Consultar Horários</a>
+                    <a href="https://wa.me/5561993895357?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20servi%C3%A7o%20de%20unhas." target="_blank" rel="noopener noreferrer" class="block w-full py-2.5 text-center bg-white border border-nude-300 text-nude-600 rounded-xl font-medium text-xs hover:bg-nude-500 hover:text-white transition">Consultar Horários</a>
                 </div>
 
                 <!-- Estética & Olhar -->
-                <div class="bg-nude-50/60 rounded-2xl p-8 border border-nude-100 hover:border-nude-300 transition shadow-sm hover:shadow-md flex flex-col justify-between">
+                <div class="bg-nude-50/70 rounded-2xl p-8 border border-nude-100 hover:border-nude-300 transition shadow-sm hover:shadow-md flex flex-col justify-between">
                     <div>
-                        <div class="w-12 h-12 rounded-full bg-nude-200 text-nude-600 flex items-center justify-center text-xl mb-6">
+                        <div class="w-12 h-12 rounded-full bg-nude-100 text-nude-600 flex items-center justify-center text-xl mb-6 border border-nude-200">
                             <i class="fa-solid fa-sparkles"></i>
                         </div>
                         <h3 class="font-serif text-2xl font-semibold text-gray-900 mb-4">Estética & Olhar</h3>
                         <ul class="space-y-3 text-sm text-gray-600 mb-6">
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Design de Sobrancelhas</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Extensão de Cílios</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Limpeza de Pele</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> SPA Labial</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Depilação Corporal & Facial</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Design de Sobrancelhas</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Extensão de Cílios</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Limpeza de Pele</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> SPA Labial</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Depilação Facial e Corporal</li>
                         </ul>
                     </div>
-                    <a href="https://wa.me/5561993895357?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20procedimento%20est%C3%A9tico." target="_blank" class="block w-full py-2.5 text-center bg-white border border-nude-300 text-nude-600 rounded-xl font-medium text-xs hover:bg-nude-500 hover:text-white transition">Consultar Horários</a>
+                    <a href="https://wa.me/5561993895357?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20procedimento%20est%C3%A9tico." target="_blank" rel="noopener noreferrer" class="block w-full py-2.5 text-center bg-white border border-nude-300 text-nude-600 rounded-xl font-medium text-xs hover:bg-nude-500 hover:text-white transition">Consultar Horários</a>
                 </div>
 
                 <!-- Cabelos -->
-                <div class="bg-nude-50/60 rounded-2xl p-8 border border-nude-100 hover:border-nude-300 transition shadow-sm hover:shadow-md flex flex-col justify-between">
+                <div class="bg-nude-50/70 rounded-2xl p-8 border border-nude-100 hover:border-nude-300 transition shadow-sm hover:shadow-md flex flex-col justify-between">
                     <div>
-                        <div class="w-12 h-12 rounded-full bg-nude-200 text-nude-600 flex items-center justify-center text-xl mb-6">
+                        <div class="w-12 h-12 rounded-full bg-nude-100 text-nude-600 flex items-center justify-center text-xl mb-6 border border-nude-200">
                             <i class="fa-solid fa-scissors"></i>
                         </div>
                         <h3 class="font-serif text-2xl font-semibold text-gray-900 mb-4">Cabelos</h3>
                         <ul class="space-y-3 text-sm text-gray-600 mb-6">
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Hidratação Profunda</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Escova & Modelagem</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Corte Feminino</li>
-                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-400"></i> Luzes & Mechas</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Escova & Modelagem</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Hidratação Profunda</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Corte Feminino</li>
+                            <li class="flex items-center gap-2"><i class="fa-regular fa-circle-check text-nude-500"></i> Luzes & Mechas</li>
                         </ul>
                     </div>
-                    <a href="https://wa.me/5561993895357?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20servi%C3%A7o%20de%20cabelo." target="_blank" class="block w-full py-2.5 text-center bg-white border border-nude-300 text-nude-600 rounded-xl font-medium text-xs hover:bg-nude-500 hover:text-white transition">Consultar Horários</a>
+                    <a href="https://wa.me/5561993895357?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20servi%C3%A7o%20de%20cabelo." target="_blank" rel="noopener noreferrer" class="block w-full py-2.5 text-center bg-white border border-nude-300 text-nude-600 rounded-xl font-medium text-xs hover:bg-nude-500 hover:text-white transition">Consultar Horários</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- O Espaço Section -->
+    <section id="espaco" class="py-20 bg-nude-100/40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-xs font-semibold tracking-widest text-nude-500 uppercase">Nosso Studio</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-semibold text-gray-900 mt-2">Conheça Nosso Espaço</h2>
+                <p class="text-sm text-gray-600 mt-2 font-light">Um ambiente aconchegante, climatizado e preparado com carinho para o seu momento de cuidados.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Foto 1: Fachada Real -->
+                <div class="group relative h-64 rounded-2xl overflow-hidden shadow-sm border border-nude-200">
+                    <!-- Substitua o link abaixo pela foto da fachada enviada -->
+                    <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=800" alt="Fachada Studio Dionésia Guarino" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80"></div>
+                    <span class="absolute bottom-4 left-4 text-white font-medium text-sm">Fachada do Studio</span>
+                </div>
+
+                <!-- Foto 2: Interior/Unhas -->
+                <div class="group relative h-64 rounded-2xl overflow-hidden shadow-sm border border-nude-200">
+                    <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&q=80&w=800" alt="Atendimento de Nail Design" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80"></div>
+                    <span class="absolute bottom-4 left-4 text-white font-medium text-sm">Espaço Nail Design</span>
+                </div>
+
+                <!-- Foto 3: Estética -->
+                <div class="group relative h-64 rounded-2xl overflow-hidden shadow-sm border border-nude-200">
+                    <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=800" alt="Sala de Estética" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80"></div>
+                    <span class="absolute bottom-4 left-4 text-white font-medium text-sm">Estética Facial & Cílios</span>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Google Reviews Section -->
-    <section id="avaliacoes" class="py-20 bg-nude-100/40 border-y border-nude-200/50">
+    <section id="avaliacoes" class="py-20 bg-white border-y border-nude-200/50">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="text-center max-w-xl mx-auto mb-12">
                 <div class="inline-flex items-center justify-center gap-1 text-amber-400 mb-2 text-lg">
@@ -220,11 +264,11 @@
                     <i class="fa-solid fa-star"></i>
                 </div>
                 <h2 class="font-serif text-3xl font-semibold text-gray-900">O que dizem nossas clientes</h2>
-                <p class="text-sm text-gray-500 mt-1">Classificação 5,0 estrelas baseada em 33 avaliações no Google Maps</p>
+                <p class="text-sm text-gray-500 mt-1">Classificação 5,0 estrelas no Google Maps</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-nude-100 space-y-3">
+                <div class="bg-nude-50/50 p-6 rounded-2xl shadow-sm border border-nude-200 space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="font-medium text-gray-900">Mariana Vitória</span>
                         <span class="text-xs text-gray-400">Google Review</span>
@@ -232,7 +276,7 @@
                     <p class="text-sm text-gray-600 italic">"Fui muito bem atendida, a Dionésia é extremamente atenciosa, caprichosa e ágil. Dá pra ver que faz tudo com muito cuidado e dedicação."</p>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-nude-100 space-y-3">
+                <div class="bg-nude-50/50 p-6 rounded-2xl shadow-sm border border-nude-200 space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="font-medium text-gray-900">Bianca Lelis</span>
                         <span class="text-xs text-gray-400">Google Review</span>
@@ -240,7 +284,7 @@
                     <p class="text-sm text-gray-600 italic">"Faço minhas unhas com ela há anos e não troco por ninguém. Além de ser uma excelente profissional, extremamente caprichosa, cuidadosa e pontual."</p>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-nude-100 space-y-3">
+                <div class="bg-nude-50/50 p-6 rounded-2xl shadow-sm border border-nude-200 space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="font-medium text-gray-900">Rafaela Carvalho</span>
                         <span class="text-xs text-gray-400">Google Review</span>
@@ -252,7 +296,7 @@
     </section>
 
     <!-- Location & Contact -->
-    <section id="localizacao" class="py-20 bg-white">
+    <section id="localizacao" class="py-20 bg-nude-50/60">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div class="space-y-6">
                 <span class="text-xs font-semibold tracking-widest text-nude-500 uppercase">Onde Estamos</span>
@@ -285,7 +329,7 @@
                 </div>
 
                 <div class="pt-2">
-                    <a href="https://maps.google.com/?q=QN+412+conjunto+C+lote+01/02+Loja+06+Samambaia+Norte+Brasilia+DF" target="_blank" class="inline-flex items-center gap-2 bg-nude-100 hover:bg-nude-200 text-nude-600 px-6 py-3 rounded-xl font-medium text-sm transition">
+                    <a href="https://maps.google.com/?q=QN+412+conjunto+C+lote+01/02+Loja+06+Samambaia+Norte+Brasilia+DF" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-nude-100 hover:bg-nude-200 text-nude-600 px-6 py-3 rounded-xl font-medium text-sm transition border border-nude-200">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Abrir no Google Maps</span>
                     </a>
@@ -302,22 +346,22 @@
     <footer class="bg-nude-900 text-white py-12 border-t border-nude-800">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
             <div>
-                <p class="font-serif text-xl font-bold">Dionésia Guarino</p>
+                <p class="font-serif text-xl font-bold text-nude-100">Studio Dionésia Guarino</p>
                 <p class="text-xs text-gray-400 mt-1">Estética, Beleza & Nail Designer - Samambaia Norte</p>
             </div>
             
             <div class="flex items-center gap-4 text-lg">
-                <a href="https://www.instagram.com/dionesiaguarino/" target="_blank" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-nude-500 transition"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://wa.me/5561993895357" target="_blank" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-nude-500 transition"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://www.instagram.com/dionesiaguarino/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-nude-500 transition"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://wa.me/5561993895357" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-nude-500 transition"><i class="fa-brands fa-whatsapp"></i></a>
             </div>
 
-            <p class="text-xs text-gray-500">© 2026 Dionésia Guarino. Todos os direitos reservados.</p>
+            <p class="text-xs text-gray-400">© 2026 Dionésia Guarino. Todos os direitos reservados.</p>
         </div>
     </footer>
 
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/5561993895357?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20agendar%20um%20hor%C3%A1rio." 
-       target="_blank" 
+       target="_blank" rel="noopener noreferrer"
        class="fixed bottom-6 right-6 bg-emerald-500 hover:bg-emerald-600 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg hover:shadow-xl transition z-50 transform hover:scale-110">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
