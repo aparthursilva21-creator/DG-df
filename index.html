@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Espaço de Beleza & Nail Art</title>
+  <title>Espaço de Beleza</title>
   <style>
     /* RESET & ESTILOS GERAIS */
     * {
@@ -19,7 +19,7 @@
       line-height: 1.6;
     }
 
-    /* PALETA DE CORES */
+    /* PALETA DE CORES BEGE / ESCURO */
     :root {
       --header-bg: #1a1818;
       --beige-button: #e8d5c4;
@@ -54,7 +54,7 @@
       margin: 0 auto 25px auto;
     }
 
-    /* NAVEGAÇÃO */
+    /* NAVEGAÇÃO LIMPA */
     nav {
       background-color: #111;
       padding: 15px;
@@ -180,7 +180,7 @@
       font-weight: 600;
     }
 
-    /* SEÇÃO DE SERVIÇOS & CABELOS */
+    /* SEÇÃO DE SERVIÇOS */
     .services-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -257,7 +257,7 @@
       background: #fff;
     }
 
-    /* MODAL PARA DETALHES DAS PÁGINAS */
+    /* MODAL PARA DETALHES */
     .modal {
       display: none;
       position: fixed;
@@ -308,18 +308,19 @@
 </head>
 <body>
 
-  <!-- NAVEGAÇÃO -->
+  <!-- NAVEGAÇÃO LIMPA -->
   <nav>
     <a href="#sobre">Sobre Mim</a>
-    <a href="#servicos">Especialidades</a>
-    <a href="#cabelos">Cabelos (Márcia)</a>
+    <a href="#servicos">Serviços</a>
+    <a href="#cabelos">Cabelos</a>
+    <a href="#cilios">Cílios</a>
     <a href="#galeria">Galeria Instagram</a>
   </nav>
 
   <!-- CABEÇALHO ESCURO COM FOTO DE FUNDO -->
   <header>
     <h1>Espaço de Beleza & Biossegurança</h1>
-    <p>Excelência em Nail Art, Cuidado das Unhas e Cabelos. Beleza com Saúde e Biosegurança.</p>
+    <p>Excelência em Unhas, Cabelos e Estética. Renovando a autoestima com cuidado e biossegurança.</p>
     <button class="btn-beige" onclick="openModal('Atendimento Especializado', 'Agende seu horário e venha vivenciar uma experiência completa de cuidado e renovação de autoestima.')">Agendar Horário</button>
   </header>
 
@@ -328,7 +329,6 @@
     <!-- SEÇÃO SOBRE A MÃE -->
     <section id="sobre" class="about-section">
       <div class="about-img">
-        <!-- Substituir o SRC pela foto real dela de jaleco -->
         <img src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=500&auto=format&fit=crop" alt="Foto Profissional">
       </div>
       <div class="about-content">
@@ -361,7 +361,7 @@
           <div class="service-card-body">
             <h3>Alongamento em Gel & Esmaltação</h3>
             <p>Especialidade em acabamentos finos, encapsuladas e decorações artesanais sofisticadas.</p>
-            <button class="btn-beige" onclick="openModal('Alongamento em Gel', 'O procedimento de alongamento em gel proporciona unhas resistentes, com aspecto natural e durabilidade prolongada. Inclui preparação anatômica e cutilagem russa.')">Detalhes do Serviço</button>
+            <button class="btn-beige" onclick="openModal('Alongamento em Gel', 'O procedimento de alongamento em gel proporciona unhas resistentes, com aspecto natural e durabilidade prolongada.')">Detalhes do Serviço</button>
           </div>
         </div>
 
@@ -377,22 +377,42 @@
       </div>
     </section>
 
-    <!-- SEÇÃO CABELOS (MÁRCIA) -->
+    <!-- SEÇÃO CABELOS -->
     <section id="cabelos" style="margin-bottom: 60px;">
-      <h2 class="section-title">Espaço Cabelos — Com Márcia</h2>
+      <h2 class="section-title">Procedimentos Capilares</h2>
       <div class="about-section">
         <div class="about-img">
           <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=500&auto=format&fit=crop" alt="Cuidados com Cabelo">
         </div>
         <div class="about-content">
-          <h3>Tratamentos Capilares e Escovas</h3>
+          <h3>Escovas, Tratamentos & Finalização</h3>
           <p>
-            No nosso espaço você também conta com a experiência da <strong>Márcia</strong>, profissional responsável pelo cuidado dos seus cabelos. 
+            No nosso espaço oferecemos cuidados completos para os seus cabelos com a profissional Márcia.
           </p>
           <p>
-            Ela oferece serviços de escova modelada, hidratação profunda, nutrição capilar e finalizações impecáveis para deixar seus fios radiantes e cheios de vida.
+            Serviços de escova modelada, hidratação profunda, nutrição e finalizações que devolvem o brilho e a leveza aos seus fios.
           </p>
-          <button class="btn-beige" onclick="openModal('Serviços de Cabelo com a Márcia', 'A Márcia é especialista em escovas, hidratação e tratamentos que restauram o brilho natural dos cabelos. Agende o combo Unhas + Cabelo para um dia completo de beleza!')">Ver Serviços de Cabelo</button>
+          <button class="btn-beige" onclick="openModal('Serviços de Cabelo', 'Oferecemos escovas, hidratação profunda e tratamentos restauradores que deixam os cabelos radiantes.')">Ver Detalhes</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO CÍLIOS -->
+    <section id="cilios" style="margin-bottom: 60px;">
+      <h2 class="section-title">Extensão de Cílios</h2>
+      <div class="about-section">
+        <div class="about-img">
+          <img src="https://images.unsplash.com/photo-1583001931096-959e9a1a6223?q=80&w=500&auto=format&fit=crop" alt="Extensão de Cílios">
+        </div>
+        <div class="about-content">
+          <h3>Especialidade em Lash Design</h3>
+          <p>
+            Com a profissional Ingrid, você garante aquele olhar marcante e preenchido com a perfeição da extensão de cílios.
+          </p>
+          <p>
+            Técnicas como Volume Russo e Brasileiro para destacar a beleza natural do olhar com leveza, retenção e conforto.
+          </p>
+          <button class="btn-beige" onclick="openModal('Extensão de Cílios', 'Aquela perfeição que só a extensão de cílios te entrega! Fios ultra leves, acoplagem precisa e alta durabilidade.')">Ver Detalhes</button>
         </div>
       </div>
     </section>
@@ -400,7 +420,7 @@
     <!-- GALERIA INSTAGRAM -->
     <section id="galeria">
       <h2 class="section-title">Trabalhos do Instagram</h2>
-      <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px;">Confira algumas fotos dos procedimentos realizados no nosso espaço:</p>
+      <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px;">Confira alguns trabalhos realizados em nosso espaço:</p>
       
       <div class="insta-gallery">
         <div class="insta-item" onclick="openModal('Esmaltação Vermelho Clássico', 'Procedimento realizado com cutilagem funda, hidratação e acabamento em tom vermelho clássico.')">
@@ -408,19 +428,19 @@
           <div class="insta-desc"><strong>Esmaltação Clássica:</strong> Vermelho vibrante e cutilagem perfeita.</div>
         </div>
 
+        <div class="insta-item" onclick="openModal('Extensão de Cílios', 'Aquela perfeição que só a extensão de cílios te entrega! Fios preenchidos e volumosos.')">
+          <img src="https://images.unsplash.com/photo-1583001931096-959e9a1a6223?q=80&w=400&auto=format&fit=crop" alt="Cílios">
+          <div class="insta-desc"><strong>Extensão de Cílios:</strong> Preenchimento e volume perfeito.</div>
+        </div>
+
         <div class="insta-item" onclick="openModal('Nail Art & Glitter', 'Aplicação de esmalte nude com glitter em degradê e filha única decorada.')">
           <img src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?q=80&w=400&auto=format&fit=crop" alt="Decorada Nude com Glitter">
-          <div class="insta-desc"><strong>Nail Art:</strong> Tons terrosos, glitter e filha única decorada.</div>
+          <div class="insta-desc"><strong>Nail Art:</strong> Tons terrosos e glitter delicado.</div>
         </div>
 
-        <div class="insta-item" onclick="openModal('Francesinha Curvada', 'Design de francesinha em degradê colorido e tons pastéis modernos.')">
-          <img src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?q=80&w=400&auto=format&fit=crop" alt="Francesinha Colorida">
-          <div class="insta-desc"><strong>Francesinha Moderna:</strong> Traços delicados e cores vibrantes.</div>
-        </div>
-
-        <div class="insta-item" onclick="openModal('Escova e Modelagem Capilar', 'Procedimento de escova e ondulado realizado pela profissional Márcia.')">
+        <div class="insta-item" onclick="openModal('Escova e Modelagem Capilar', 'Procedimento de escova e ondulado com brilho intenso.')">
           <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=400&auto=format&fit=crop" alt="Cabelo Escovado">
-          <div class="insta-desc"><strong>Cabelos (Márcia):</strong> Escova modelada com brilho intenso.</div>
+          <div class="insta-desc"><strong>Cabelos:</strong> Escova modelada com brilho intenso.</div>
         </div>
       </div>
     </section>
@@ -441,7 +461,7 @@
   <!-- RODAPÉ -->
   <footer>
     <p>&copy; Espaço de Beleza. Todos os direitos reservados.</p>
-    <p>Excelência em Unhas & Estética Capilar desde 2014.</p>
+    <p>Excelência e Biossegurança desde 2014.</p>
   </footer>
 
   <!-- JAVASCRIPT DOS MODAIS -->
