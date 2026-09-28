@@ -76,11 +76,12 @@
 
             <!-- Botão de Ação -->
             <div class="hidden sm:flex items-center">
-                <button onclick="abrirModalAgendamento()" 
+                <a href="https://wa.me/5561993895357?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20agendar%20um%20horário!" 
+                   target="_blank" 
                    class="bg-goldAccent hover:bg-roseGold text-brandDark font-semibold px-5 py-2.5 rounded-full shadow-lg hover:shadow-goldAccent/20 transition-all transform hover:-translate-y-0.5 text-xs uppercase tracking-wider flex items-center space-x-2">
-                    <i class="fa-solid fa-calendar-check text-lg"></i>
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
                     <span>Agendar Horário</span>
-                </button>
+                </a>
             </div>
 
             <!-- Botão Mobile -->
@@ -95,10 +96,11 @@
             <a href="#servicos" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-goldAccent py-2 text-base">Serviços</a>
             <a href="#depoimentos" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-goldAccent py-2 text-base">Depoimentos</a>
             <a href="#localizacao" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-goldAccent py-2 text-base">Localização</a>
-            <button onclick="abrirModalAgendamento(); toggleMobileMenu();" 
+            <a href="https://wa.me/5561993895357?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20agendar%20um%20horário!" 
+               target="_blank" 
                class="block w-full text-center bg-goldAccent text-brandDark font-semibold py-3 rounded-xl uppercase text-sm tracking-wider">
-               <i class="fa-solid fa-calendar-check mr-2"></i> Agendar Horário
-            </button>
+               <i class="fa-brands fa-whatsapp mr-2"></i> Agendar pelo WhatsApp
+            </a>
         </div>
     </header>
 
@@ -131,11 +133,12 @@
 
                 <!-- Ações / CTAs -->
                 <div class="pt-4 flex flex-col sm:flex-row gap-4">
-                    <button onclick="abrirModalAgendamento()" 
+                    <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20ver%20os%20horários%20disponíveis%20para%20unhas!" 
+                       target="_blank"
                        class="bg-goldAccent hover:bg-roseGold text-brandDark text-center font-bold px-8 py-4 rounded-full shadow-2xl transition-all transform hover:-translate-y-1 text-sm uppercase tracking-wider flex items-center justify-center space-x-3">
-                        <i class="fa-solid fa-calendar-check text-xl"></i>
+                        <i class="fa-brands fa-whatsapp text-xl"></i>
                         <span>Garantir Meu Horário</span>
-                    </button>
+                    </a>
                     <a href="#servicos" 
                        class="border border-white/30 hover:border-white text-white text-center font-medium px-8 py-4 rounded-full hover:bg-white/10 transition-all text-sm uppercase tracking-wider flex items-center justify-center">
                         Ver Serviços & Preços
@@ -216,66 +219,78 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-                <!-- Card: Manicure Tradicional -->
-                <div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
-                    <div class="h-56 overflow-hidden relative">
-                        <img src="manicure-tradicional.jpg" alt="Manicure Tradicional e Cutilagem" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <h3 class="text-xl font-serif font-bold text-brandDark">Manicure Tradicional</h3>
-                        <p class="text-gray-600 text-sm">Cutilagem delicada, lixamento, formato perfeito e esmaltação tradicional com excelente acabamento e durabilidade.</p>
-                        <div class="pt-2 flex items-center justify-between">
-                            <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Cuidado Clássico</span>
-                            <button onclick="abrirModalAgendamento(1)" class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
-                                <span>Agendar</span>
-                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+<!-- Card: Manicure Tradicional / Cutilagem e Esmaltação -->
+<div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
+    <div class="h-56 overflow-hidden relative">
+        <img src="manicure-tradicional.jpg" 
+             alt="Manicure Tradicional e Cutilagem" 
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+    </div>
+    <div class="p-6 space-y-4">
+        <h3 class="text-xl font-serif font-bold text-brandDark">Manicure Tradicional</h3>
+        <p class="text-gray-600 text-sm">Cutilagem delicada, lixamento, formato perfeito e esmaltação tradicional com excelente acabamento e durabilidade.</p>
+        <div class="pt-2 flex items-center justify-between">
+            <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Cuidado Clássico</span>
+            <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20agendar%20Manicure%20Tradicional!" 
+               target="_blank" 
+               class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
+                <span>Agendar</span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </a>
+        </div>
+    </div>
+</div>
 
-                <!-- Card: Banho de Gel -->
+                <!-- Card 1: Banho de Gel (NOVO - Destaque Topo) -->
+<div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
+    <div class="h-56 overflow-hidden relative">
+        <img src="banhodegel.png" 
+             alt="Banho de Gel nas Unhas" 
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        <span class="absolute top-4 right-4 bg-brandDark/80 backdrop-blur-md text-goldAccent text-xs px-3 py-1 rounded-full font-medium">Mais Pedido</span>
+    </div>
+    <div class="p-6 space-y-4">
+        <h3 class="text-xl font-serif font-bold text-brandDark">Banho de Gel</h3>
+        <p class="text-gray-600 text-sm">Camada protetora em gel sobre a unha natural que fortalece, evita quebras e garante esmaltação impecável e duradoura por semanas.</p>
+        <div class="pt-2 flex items-center justify-between">
+            <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Alta Resistência</span>
+            <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20agendar%20um%20Banho%20de%20Gel!" 
+               target="_blank" 
+               class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
+                <span>Agendar</span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </a>
+        </div>
+    </div>
+</div>
+                <!-- Card 2: Esmaltação em Gel no Pé (NOVO - Destaque Topo) -->
+<div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
+    <div class="h-56 overflow-hidden relative">
+        <img src="esmaltacaoemgelnope.png" 
+             alt="Esmaltação em Gel nos Pés" 
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        <span class="absolute top-4 right-4 bg-brandDark/80 backdrop-blur-md text-goldAccent text-xs px-3 py-1 rounded-full font-medium">Super Procurado</span>
+    </div>
+    <div class="p-6 space-y-4">
+        <h3 class="text-xl font-serif font-bold text-brandDark">Esmaltação em Gel nos Pés</h3>
+        <p class="text-gray-600 text-sm">Cutilagem precisa e aplicação de gel nos pés com secagem imediata na cabine. Saia de calçado fechado sem borrar!</p>
+        <div class="pt-2 flex items-center justify-between">
+            <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Secagem Imediata</span>
+            <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20agendar%20Esmaltação%20em%20Gel%20nos%20Pés!" 
+               target="_blank" 
+               class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
+                <span>Agendar</span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </a>
+        </div>
+    </div>
+</div>
+                <!-- Card 1: Fibra de Vidro -->
                 <div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
                     <div class="h-56 overflow-hidden relative">
-                        <img src="banhodegel.png" alt="Banho de Gel nas Unhas" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-4 right-4 bg-brandDark/80 backdrop-blur-md text-goldAccent text-xs px-3 py-1 rounded-full font-medium">Mais Pedido</span>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <h3 class="text-xl font-serif font-bold text-brandDark">Banho de Gel</h3>
-                        <p class="text-gray-600 text-sm">Camada protetora em gel sobre a unha natural que fortalece, evita quebras e garante esmaltação impecável e duradoura por semanas.</p>
-                        <div class="pt-2 flex items-center justify-between">
-                            <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Alta Resistência</span>
-                            <button onclick="abrirModalAgendamento(2)" class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
-                                <span>Agendar</span>
-                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card: Esmaltação em Gel no Pé -->
-                <div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
-                    <div class="h-56 overflow-hidden relative">
-                        <img src="esmaltacaoemgelnope.png" alt="Esmaltação em Gel nos Pés" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-4 right-4 bg-brandDark/80 backdrop-blur-md text-goldAccent text-xs px-3 py-1 rounded-full font-medium">Super Procurado</span>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <h3 class="text-xl font-serif font-bold text-brandDark">Esmaltação em Gel nos Pés</h3>
-                        <p class="text-gray-600 text-sm">Cutilagem precisa e aplicação de gel nos pés com secagem imediata na cabine. Saia de calçado fechado sem borrar!</p>
-                        <div class="pt-2 flex items-center justify-between">
-                            <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Secagem Imediata</span>
-                            <button onclick="abrirModalAgendamento(3)" class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
-                                <span>Agendar</span>
-                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card: Fibra de Vidro -->
-                <div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
-                    <div class="h-56 overflow-hidden relative">
-                        <img src="alongamento.png" alt="Extensão em Fibra de Vidro - Dionésia Guarino" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="alongamento.png" 
+                             alt="Extensão em Fibra de Vidro - Dionésia Guarino" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <span class="absolute top-4 right-4 bg-brandDark/80 backdrop-blur-md text-goldAccent text-xs px-3 py-1 rounded-full font-medium">Mais Pedido</span>
                     </div>
                     <div class="p-6 space-y-4">
@@ -283,478 +298,436 @@
                         <p class="text-gray-600 text-sm">Alongamento natural, curvatura perfeita e altíssima durabilidade por até 30 dias com manutenção adequada.</p>
                         <div class="pt-2 flex items-center justify-between">
                             <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Acabamento Ultrafino</span>
-                            <button onclick="abrirModalAgendamento(4)" class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
+                            <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20agendar%20Fibra%20de%20Vidro!" 
+                               target="_blank" 
+                               class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
                                 <span>Agendar</span>
                                 <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card: Esmaltação em Gel / Cutilagem -->
+                <!-- Card 2: Esmaltação em Gel / Cutilagem -->
                 <div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
                     <div class="h-56 overflow-hidden relative">
-                        <img src="esmaltacaoemgel.png" alt="Cutilagem e Esmaltação" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="esmaltacaoemgel.png" 
+                             alt="Cutilagem e Esmaltação" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
                     <div class="p-6 space-y-4">
                         <h3 class="text-xl font-serif font-bold text-brandDark">Esmaltação em Gel & Cutilagem</h3>
                         <p class="text-gray-600 text-sm">Cutilagem tradicional com acabamento limpo e esmalte em gel que seca na hora e não descasca por semanas.</p>
                         <div class="pt-2 flex items-center justify-between">
                             <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Brilho Intenso</span>
-                            <button onclick="abrirModalAgendamento(5)" class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
+                            <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20agendar%20Esmaltação%20em%20Gel!" 
+                               target="_blank" 
+                               class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
                                 <span>Agendar</span>
                                 <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card: Extensão de Cílios -->
+                <!-- Card 3: Extensão de Cílios -->
                 <div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
                     <div class="h-56 overflow-hidden relative">
-                        <img src="dg5.png" alt="Extensão de Cílios" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="dg5.png" 
+                             alt="Extensão de Cílios" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
                     <div class="p-6 space-y-4">
                         <h3 class="text-xl font-serif font-bold text-brandDark">Extensão de Cílios</h3>
                         <p class="text-gray-600 text-sm">Olhar marcante e preenchido com fios leves e de alta qualidade. Mapeamento personalizado para o seu formato de olho.</p>
                         <div class="pt-2 flex items-center justify-between">
                             <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Olhar Marcante</span>
-                            <button onclick="abrirModalAgendamento(6)" class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
+                            <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20agendar%20Extensão%20de%20Cílios!" 
+                               target="_blank" 
+                               class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
                                 <span>Agendar</span>
                                 <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card: Spa dos Pés -->
+                <!-- Card 4: Spa dos Pés -->
                 <div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
                     <div class="h-56 overflow-hidden relative">
-                        <img src="dg7.png" alt="Spa dos Pés" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="dg7.png" 
+                             alt="Spa dos Pés" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
                     <div class="p-6 space-y-4">
                         <h3 class="text-xl font-serif font-bold text-brandDark">Spa dos Pés Renovador</h3>
                         <p class="text-gray-600 text-sm">Higienização, esfoliação profunda, hidratação intensa e massagem relaxante para aliviar o cansaço e deixar a pele aveludada.</p>
                         <div class="pt-2 flex items-center justify-between">
                             <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Relaxamento Total</span>
-                            <button onclick="abrirModalAgendamento(7)" class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
+                            <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20agendar%20Spa%20dos%20Pés!" 
+                               target="_blank" 
+                               class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
                                 <span>Agendar</span>
                                 <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card: Estética Labial & Facial -->
+                <!-- Card 5: Estética Labial & Facial -->
                 <div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
                     <div class="h-56 overflow-hidden relative">
-                        <img src="dg2.png" alt="Estética Facial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="dg2.png" 
+                             alt="Estética Facial" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
                     <div class="p-6 space-y-4">
                         <h3 class="text-xl font-serif font-bold text-brandDark">Spa Labial</h3>
                         <p class="text-gray-600 text-sm">Tratamentos de hidratação labial profunda e rejuvenescimento com tecnologia para uma pele viçosa e radiante.</p>
                         <div class="pt-2 flex items-center justify-between">
                             <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Tecnologia & Beleza</span>
-                            <button onclick="abrirModalAgendamento(8)" class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
+                            <a href="https://wa.me/5561993895357?text=Olá!%20Quero%20saber%20mais%20sobre%20os%20procedimentos%20estéticos!" 
+                               target="_blank" 
+                               class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
                                 <span>Agendar</span>
                                 <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Card: Cuidados Capilares / Cabelo -->
-                <div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
-                    <div class="h-56 overflow-hidden relative">
-                        <img src="dg6.png" alt="Tratamentos Capilares e Escova" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-4 right-4 bg-brandDark/80 backdrop-blur-md text-goldAccent text-xs px-3 py-1 rounded-full font-medium">Brilho & Maciez</span>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <h3 class="text-xl font-serif font-bold text-brandDark">Tratamentos Capilares & Escova</h3>
-                        <p class="text-gray-600 text-sm">Hidratação profunda, nutrição e finalização com escova para devolver a vida, o brilho intenso e o movimento natural aos seus fios.</p>
-                        <div class="pt-2 flex items-center justify-between">
-                            <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Fios Saudáveis</span>
-                            <button onclick="abrirModalAgendamento(9)" class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
-                                <span>Agendar</span>
-                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+<div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
+    <div class="h-56 overflow-hidden relative">
+        <img src="dg6.png" 
+             alt="Tratamentos Capilares e Escova" 
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        <span class="absolute top-4 right-4 bg-brandDark/80 backdrop-blur-md text-goldAccent text-xs px-3 py-1 rounded-full font-medium">Brilho & Maciez</span>
+    </div>
+    <div class="p-6 space-y-4">
+        <h3 class="text-xl font-serif font-bold text-brandDark">Tratamentos Capilares & Escova</h3>
+        <p class="text-gray-600 text-sm">Hidratação profunda, nutrição e finalização com escova para devolver a vida, o brilho intenso e o movimento natural aos seus fios.</p>
+        <div class="pt-2 flex items-center justify-between">
+            <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Fios Saudáveis</span>
+            <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20agendar%20um%20procedimento%20para%20Cabelo!" 
+               target="_blank" 
+               class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
+                <span>Agendar</span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </a>
+        </div>
+    </div>
+</div>
                 
-                <!-- Card: Limpeza de Pele -->
-                <div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
-                    <div class="h-56 overflow-hidden relative">
-                        <img src="dg8.png" alt="Limpeza de Pele Profunda" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-4 right-4 bg-brandDark/80 backdrop-blur-md text-goldAccent text-xs px-3 py-1 rounded-full font-medium">Renovação Facial</span>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <h3 class="text-xl font-serif font-bold text-brandDark">Limpeza de Pele Profunda</h3>
-                        <p class="text-gray-600 text-sm">Remoção de impurezas, cravos e células mortas com higienização, extração delicada e hidratação para devolver a luminosidade da pele.</p>
-                        <div class="pt-2 flex items-center justify-between">
-                            <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Pele Radiante</span>
-                            <button onclick="abrirModalAgendamento(10)" class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
-                                <span>Agendar</span>
-                                <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
+<!-- Card: Limpeza de Pele -->
+<div class="bg-nudeBg rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-goldAccent/10 group">
+    <div class="h-56 overflow-hidden relative">
+        <img src="dg8.png" 
+             alt="Limpeza de Pele Profunda" 
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        <span class="absolute top-4 right-4 bg-brandDark/80 backdrop-blur-md text-goldAccent text-xs px-3 py-1 rounded-full font-medium">Renovação Facial</span>
+    </div>
+    <div class="p-6 space-y-4">
+        <h3 class="text-xl font-serif font-bold text-brandDark">Limpeza de Pele Profunda</h3>
+        <p class="text-gray-600 text-sm">Remoção de impurezas, cravos e células mortas com higienização, extração delicada e hidratação para devolver a luminosidade da pele.</p>
+        <div class="pt-2 flex items-center justify-between">
+            <span class="text-xs text-roseGold font-semibold uppercase tracking-wider">Pele Radiante</span>
+            <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20agendar%20uma%20Limpeza%20de%20Pele!" 
+               target="_blank" 
+               class="text-brandDark font-semibold text-xs hover:text-goldAccent flex items-center space-x-1">
+                <span>Agendar</span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </a>
+        </div>
+    </div>
+</div>
             </div>
         </div>
     </section>
 
-    <!-- SEÇÃO DE AVALIAÇÕES / DEPOIMENTOS -->
-    <section id="depoimentos" class="py-20 bg-white border-t border-goldAccent/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
-                <span class="text-goldAccent font-semibold text-xs uppercase tracking-widest">Opinião dos Clientes</span>
-                <h2 class="text-3xl sm:text-4xl font-serif font-bold text-brandDark">O Que Dizem Sobre Nós</h2>
-                
-                <div class="pt-2 flex items-center justify-center space-x-3">
-                    <div class="flex text-amber-400 text-lg space-x-1">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <span class="text-sm font-bold text-brandDark">5.0 / 5.0</span>
-                    <span class="text-xs text-gray-500">(33 avaliações no Google)</span>
+<!-- SEÇÃO DE AVALIAÇÕES / DEPOIMENTOS -->
+<section id="depoimentos" class="py-20 bg-white border-t border-goldAccent/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Cabeçalho da Seção -->
+        <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+            <span class="text-goldAccent font-semibold text-xs uppercase tracking-widest">Opinião dos Clientes</span>
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-brandDark">O Que Dizem Sobre Nós</h2>
+            
+            <!-- Resumo da Nota do Google -->
+            <div class="pt-2 flex items-center justify-center space-x-3">
+                <div class="flex text-amber-400 text-lg space-x-1">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
                 </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-nudeBg p-6 rounded-2xl border border-goldAccent/10 shadow-sm flex flex-col justify-between space-y-4">
-                    <div class="space-y-3">
-                        <div class="flex text-amber-400 text-xs space-x-1">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        </div>
-                        <p class="text-gray-600 text-sm italic leading-relaxed">
-                            "Fui muito bem atendida, a Dionésia é extremamente atenciosa, caprichosa e ágil. Dá pra ver que ela faz tudo com muito cuidado e dedicação. Minhas unhas ficam sempre perfeitas! Além disso, o ambiente é agradável e organizado. Com certeza virei cliente fiel!"
-                        </p>
-                    </div>
-                    <div class="flex items-center space-x-3 pt-2 border-t border-goldAccent/10">
-                        <div class="w-10 h-10 rounded-full bg-goldAccent/20 flex items-center justify-center font-bold text-goldAccent text-sm">MV</div>
-                        <div>
-                            <span class="block text-sm font-bold text-brandDark">Mariana Vitória</span>
-                            <span class="block text-xs text-gray-400"><i class="fa-brands fa-google text-xs mr-1"></i>Avaliação no Google</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-nudeBg p-6 rounded-2xl border border-goldAccent/10 shadow-sm flex flex-col justify-between space-y-4">
-                    <div class="space-y-3">
-                        <div class="flex text-amber-400 text-xs space-x-1">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        </div>
-                        <p class="text-gray-600 text-sm italic leading-relaxed">
-                            "Faço minhas unhas com ela há anos e não troco por ninguém. Além de ser uma excelente profissional, extremamente caprichosa, cuidadosa e pontual, o atendimento sempre foi impecável."
-                        </p>
-                    </div>
-                    <div class="flex items-center space-x-3 pt-2 border-t border-goldAccent/10">
-                        <div class="w-10 h-10 rounded-full bg-goldAccent/20 flex items-center justify-center font-bold text-goldAccent text-sm">BL</div>
-                        <div>
-                            <span class="block text-sm font-bold text-brandDark">Bianca Lelis</span>
-                            <span class="block text-xs text-gray-400"><i class="fa-brands fa-google text-xs mr-1"></i>Avaliação no Google</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-nudeBg p-6 rounded-2xl border border-goldAccent/10 shadow-sm flex flex-col justify-between space-y-4">
-                    <div class="space-y-3">
-                        <div class="flex text-amber-400 text-xs space-x-1">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        </div>
-                        <p class="text-gray-600 text-sm italic leading-relaxed">
-                            "Faço minhas unhas com ela há muito tempo e amo o trabalho! 💅🏻 O atendimento é maravilhoso, muito caprichosa e cuidadosa. A durabilidade do banho de gel é impressionante, fica lindo por semanas!"
-                        </p>
-                    </div>
-                    <div class="flex items-center space-x-3 pt-2 border-t border-goldAccent/10">
-                        <div class="w-10 h-10 rounded-full bg-goldAccent/20 flex items-center justify-center font-bold text-goldAccent text-sm">NS</div>
-                        <div>
-                            <span class="block text-sm font-bold text-brandDark">Nathalia Santos</span>
-                            <span class="block text-xs text-gray-400"><i class="fa-brands fa-google text-xs mr-1"></i>Local Guide • Google</span>
-                        </div>
-                    </div>
-                </div>
+                <span class="text-sm font-bold text-brandDark">5.0 / 5.0</span>
+                <span class="text-xs text-gray-500">(33 avaliações no Google)</span>
             </div>
         </div>
-    </section>
+
+        <!-- Grid de Depoimentos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Avaliação 1: Mariana Vitória -->
+            <div class="bg-nudeBg p-6 rounded-2xl border border-goldAccent/10 shadow-sm flex flex-col justify-between space-y-4">
+                <div class="space-y-3">
+                    <div class="flex text-amber-400 text-xs space-x-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm italic leading-relaxed">
+                        "Fui muito bem atendida, a Dionésia é extremamente atenciosa, caprichosa e ágil. Dá pra ver que ela faz tudo com muito cuidado e dedicação. Minhas unhas ficam sempre perfeitas! Além disso, o ambiente é agradável e organizado. Com certeza virei cliente fiel!"
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 pt-2 border-t border-goldAccent/10">
+                    <div class="w-10 h-10 rounded-full bg-goldAccent/20 flex items-center justify-center font-bold text-goldAccent text-sm">
+                        MV
+                    </div>
+                    <div>
+                        <span class="block text-sm font-bold text-brandDark">Mariana Vitória</span>
+                        <span class="block text-xs text-gray-400"><i class="fa-brands fa-google text-xs mr-1"></i>Avaliação no Google</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avaliação 2: Bianca Lelis -->
+            <div class="bg-nudeBg p-6 rounded-2xl border border-goldAccent/10 shadow-sm flex flex-col justify-between space-y-4">
+                <div class="space-y-3">
+                    <div class="flex text-amber-400 text-xs space-x-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm italic leading-relaxed">
+                        "Faço minhas unhas com ela há anos e não troco por ninguém. Além de ser uma excelente profissional, extremamente caprichosa, cuidadosa e pontual, o atendimento sempre foi impecável."
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 pt-2 border-t border-goldAccent/10">
+                    <div class="w-10 h-10 rounded-full bg-goldAccent/20 flex items-center justify-center font-bold text-goldAccent text-sm">
+                        BL
+                    </div>
+                    <div>
+                        <span class="block text-sm font-bold text-brandDark">Bianca Lelis</span>
+                        <span class="block text-xs text-gray-400"><i class="fa-brands fa-google text-xs mr-1"></i>Avaliação no Google</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avaliação 3: Nathalia Santos -->
+            <div class="bg-nudeBg p-6 rounded-2xl border border-goldAccent/10 shadow-sm flex flex-col justify-between space-y-4">
+                <div class="space-y-3">
+                    <div class="flex text-amber-400 text-xs space-x-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm italic leading-relaxed">
+                        "Faço minhas unhas com ela há muito tempo e amo o trabalho! 💅🏻 O atendimento é maravilhoso, muito caprichosa e cuidadosa. A durabilidade do banho de gel é impressionante, fica lindo por semanas!"
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 pt-2 border-t border-goldAccent/10">
+                    <div class="w-10 h-10 rounded-full bg-goldAccent/20 flex items-center justify-center font-bold text-goldAccent text-sm">
+                        NS
+                    </div>
+                    <div>
+                        <span class="block text-sm font-bold text-brandDark">Nathalia Santos</span>
+                        <span class="block text-xs text-gray-400"><i class="fa-brands fa-google text-xs mr-1"></i>Local Guide • Google</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avaliação 4: Josyele Dos Santos -->
+            <div class="bg-nudeBg p-6 rounded-2xl border border-goldAccent/10 shadow-sm flex flex-col justify-between space-y-4">
+                <div class="space-y-3">
+                    <div class="flex text-amber-400 text-xs space-x-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm italic leading-relaxed">
+                        "Comecei a fazer o spa dos pés ano passado e simplesmente amei o atendimento. Passei a fazer a minha manutenção de fibra de vidro também, e as pessoas sempre elogiam como parece unha natural!"
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 pt-2 border-t border-goldAccent/10">
+                    <div class="w-10 h-10 rounded-full bg-goldAccent/20 flex items-center justify-center font-bold text-goldAccent text-sm">
+                        JS
+                    </div>
+                    <div>
+                        <span class="block text-sm font-bold text-brandDark">Josyele Dos Santos</span>
+                        <span class="block text-xs text-gray-400"><i class="fa-brands fa-google text-xs mr-1"></i>Avaliação no Google</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avaliação 5: Thaís Carvalho -->
+            <div class="bg-nudeBg p-6 rounded-2xl border border-goldAccent/10 shadow-sm flex flex-col justify-between space-y-4">
+                <div class="space-y-3">
+                    <div class="flex text-amber-400 text-xs space-x-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm italic leading-relaxed">
+                        "A Dionésia entrega qualidade combinada a um tempo de serviço que eu nunca vi igual. Não passo uma semana sem a unha feita e já não abro mais mão desse cuidado! Recomendo de olhos fechados!"
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 pt-2 border-t border-goldAccent/10">
+                    <div class="w-10 h-10 rounded-full bg-goldAccent/20 flex items-center justify-center font-bold text-goldAccent text-sm">
+                        TC
+                    </div>
+                    <div>
+                        <span class="block text-sm font-bold text-brandDark">Thaís Carvalho</span>
+                        <span class="block text-xs text-gray-400"><i class="fa-brands fa-google text-xs mr-1"></i>Avaliação no Google</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avaliação 6: Alzenir Moura -->
+            <div class="bg-nudeBg p-6 rounded-2xl border border-goldAccent/10 shadow-sm flex flex-col justify-between space-y-4">
+                <div class="space-y-3">
+                    <div class="flex text-amber-400 text-xs space-x-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm italic leading-relaxed">
+                        "Existem profissionais que fazem o básico… e existem pessoas como a Dionésia, que colocam amor, dedicação e excelência em cada detalhe. ✨ Sou apaixonada pelo trabalho dela!"
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 pt-2 border-t border-goldAccent/10">
+                    <div class="w-10 h-10 rounded-full bg-goldAccent/20 flex items-center justify-center font-bold text-goldAccent text-sm">
+                        AM
+                    </div>
+                    <div>
+                        <span class="block text-sm font-bold text-brandDark">Alzenir Moura</span>
+                        <span class="block text-xs text-gray-400"><i class="fa-brands fa-google text-xs mr-1"></i>Avaliação no Google</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
     
     <!-- SEÇÃO LOCALIZAÇÃO E CONTATO -->
-    <section id="localizacao" class="py-20 bg-nudeBg border-t border-goldAccent/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
-                <span class="text-goldAccent font-semibold text-xs uppercase tracking-widest">Venha nos Visitar</span>
-                <h2 class="text-3xl sm:text-4xl font-serif font-bold text-brandDark">Onde Estamos</h2>
-                <p class="text-gray-500 text-sm">Um espaço aconchegante e preparado para te receber com todo o conforto em Samambaia Norte.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-                <div class="lg:col-span-1 space-y-6 flex flex-col justify-between">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-goldAccent/10 flex items-start space-x-4">
-                        <div class="w-12 h-12 rounded-xl bg-roseLight text-goldAccent flex items-center justify-center shrink-0 text-xl">
-                            <i class="fa-solid fa-location-dot"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-serif font-bold text-brandDark text-lg">Endereço</h3>
-                            <p class="text-gray-600 text-sm mt-1">Samambaia Norte, Brasília - DF</p>
-                            <p class="text-xs text-gray-400 mt-1">Próximo aos principais pontos de acesso da região.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-goldAccent/10 flex items-start space-x-4">
-                        <div class="w-12 h-12 rounded-xl bg-roseLight text-goldAccent flex items-center justify-center shrink-0 text-xl">
-                            <i class="fa-solid fa-clock"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-serif font-bold text-brandDark text-lg">Horários</h3>
-                            <p class="text-gray-600 text-sm mt-1">Terça a Sábado: 08:00 às 18:00</p>
-                            <p class="text-xs text-roseGold font-medium mt-1">Atendimento com horário agendado</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-goldAccent/10 flex items-start space-x-4">
-                        <div class="w-12 h-12 rounded-xl bg-roseLight text-goldAccent flex items-center justify-center shrink-0 text-xl">
-                            <i class="fa-solid fa-phone"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-serif font-bold text-brandDark text-lg">Agendamentos</h3>
-                            <p class="text-gray-600 text-sm mt-1">(61) 99389-5357</p>
-                            <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20saber%20a%20localização%20exata!" target="_blank" class="inline-block text-xs font-semibold text-goldAccent hover:underline mt-2">
-                                Chamar no WhatsApp &rarr;
-                            </a>
-                        </div>
-                    </div>
-
-                    <a href="https://maps.google.com/?q=Samambaia+Norte+DF" target="_blank" class="w-full bg-brandDark hover:bg-goldAccent hover:text-brandDark text-white font-semibold py-4 rounded-xl text-center shadow-md transition-all text-sm uppercase tracking-wider flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-compass text-lg"></i>
-                        <span>Abrir no Google Maps / GPS</span>
-                    </a>
-                </div>
-
-                <div class="lg:col-span-2 min-h-[350px] rounded-2xl overflow-hidden shadow-sm border border-goldAccent/20">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30702.502901323315!2d-48.09631675!3d-15.86650455!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935a3250b731b8bd%3A0xb3caeeff67be6477!2sSamambaia%20Norte%2C%20Bras%C3%ADlia%20-%20DF!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" width="100%" height="100%" style="border:0; min-height: 380px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-            </div>
+<section id="localizacao" class="py-20 bg-nudeBg border-t border-goldAccent/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+            <span class="text-goldAccent font-semibold text-xs uppercase tracking-widest">Venha nos Visitar</span>
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold text-brandDark">Onde Estamos</h2>
+            <p class="text-gray-500 text-sm">Um espaço aconchegante e preparado para te receber com todo o conforto em Samambaia Norte.</p>
         </div>
-    </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            
+            <!-- Cards com Informações -->
+            <div class="lg:col-span-1 space-y-6 flex flex-col justify-between">
+                
+                <!-- Endereço -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-goldAccent/10 flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-roseLight text-goldAccent flex items-center justify-center shrink-0 text-xl">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-bold text-brandDark text-lg">Endereço</h3>
+                        <p class="text-gray-600 text-sm mt-1">Samambaia Norte, Brasília - DF</p>
+                        <p class="text-xs text-gray-400 mt-1">Próximo aos principais pontos de acesso da região.</p>
+                    </div>
+                </div>
+
+                <!-- Horário de Funcionamento -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-goldAccent/10 flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-roseLight text-goldAccent flex items-center justify-center shrink-0 text-xl">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-bold text-brandDark text-lg">Horários</h3>
+                        <p class="text-gray-600 text-sm mt-1">Terça a Sábado: 08:00 às 18:00</p>
+                        <p class="text-xs text-roseGold font-medium mt-1">Atendimento com horário agendado</p>
+                    </div>
+                </div>
+
+                <!-- Contato Rápido -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-goldAccent/10 flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-roseLight text-goldAccent flex items-center justify-center shrink-0 text-xl">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-bold text-brandDark text-lg">Agendamentos</h3>
+                        <p class="text-gray-600 text-sm mt-1">(61) 99389-5357</p>
+                        <a href="https://wa.me/5561993895357?text=Olá!%20Gostaria%20de%20saber%20a%20localização%20exata!" 
+                           target="_blank" 
+                           class="inline-block text-xs font-semibold text-goldAccent hover:underline mt-2">
+                            Chamar no WhatsApp &rarr;
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Botão Traçar Rota -->
+                <a href="https://maps.google.com/?q=Samambaia+Norte+DF" 
+                   target="_blank" 
+                   class="w-full bg-brandDark hover:bg-goldAccent hover:text-brandDark text-white font-semibold py-4 rounded-xl text-center shadow-md transition-all text-sm uppercase tracking-wider flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-compass text-lg"></i>
+                    <span>Abrir no Google Maps / GPS</span>
+                </a>
+
+            </div>
+
+            <!-- Mapa do Google -->
+            <div class="lg:col-span-2 min-h-[350px] rounded-2xl overflow-hidden shadow-sm border border-goldAccent/20">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30702.502901323315!2d-48.09631675!3d-15.86650455!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935a3250b731b8bd%3A0xb3caeeff67be6477!2sSamambaia%20Norte%2C%20Bras%C3%ADlia%20-%20DF!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0; min-height: 380px;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+
+        </div>
+    </div>
+</section>
 
     <!-- FOOTER COM BOTÕES REDES SOCIAIS -->
     <footer class="bg-brandDark text-gray-400 py-12 border-t border-goldAccent/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            
+            <!-- Identificação -->
             <div class="text-center md:text-left">
                 <span class="block text-xl font-serif font-bold text-white tracking-wider">DIONÉSIA GUARINO</span>
                 <span class="block text-xs text-roseGold tracking-widest uppercase mt-1">DG Nails DF • Estética & Nail Designer</span>
             </div>
 
+            <!-- Botões das Redes Sociais -->
             <div class="flex items-center space-x-4">
-                <a href="https://www.instagram.com/dionesiaguarino/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full border border-goldAccent/40 flex items-center justify-center text-goldAccent hover:text-white hover:bg-goldAccent hover:border-goldAccent transition-all shadow-md group" title="Instagram">
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/dionesiaguarino/" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   class="w-10 h-10 rounded-full border border-goldAccent/40 flex items-center justify-center text-goldAccent hover:text-white hover:bg-goldAccent hover:border-goldAccent transition-all shadow-md group"
+                   title="Instagram">
                     <i class="fa-brands fa-instagram text-lg group-hover:scale-110 transition-transform"></i>
                 </a>
-                <a href="https://wa.me/5561993895357?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20mais%20informações!" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full border border-goldAccent/40 flex items-center justify-center text-goldAccent hover:text-white hover:bg-emeraldWhatsapp hover:border-emeraldWhatsapp transition-all shadow-md group" title="WhatsApp">
+
+                <!-- WhatsApp -->
+                <a href="https://wa.me/5561993895357?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20mais%20informações!" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   class="w-10 h-10 rounded-full border border-goldAccent/40 flex items-center justify-center text-goldAccent hover:text-white hover:bg-emeraldWhatsapp hover:border-emeraldWhatsapp transition-all shadow-md group"
+                   title="WhatsApp">
                     <i class="fa-brands fa-whatsapp text-lg group-hover:scale-110 transition-transform"></i>
                 </a>
             </div>
             
+            <!-- Copyright -->
             <p class="text-xs text-gray-500 text-center md:text-right">
                 &copy; 2026 Dionésia Guarino. Todos os direitos reservados.<br class="hidden sm:inline"> Samambaia Norte - DF.
             </p>
         </div>
     </footer>
 
-    <!-- MODAL DE AGENDAMENTO -->
-    <div id="modal-agendamento" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
-      <div class="bg-white rounded-2xl max-w-md w-full p-6 relative shadow-2xl overflow-y-auto max-h-[90vh]">
-        <button id="fechar-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 font-bold text-xl">&times;</button>
-        
-        <h3 class="text-xl font-serif font-bold text-brandDark mb-1">Agendar Horário</h3>
-        <p class="text-xs text-gray-500 mb-4">Escolha o serviço, a data e o horário ideal para o seu atendimento.</p>
-
-        <form id="form-agendamento" class="space-y-4">
-          <!-- Passo 1: Serviço Selecionado -->
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Serviço</label>
-            <select id="select-servico" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-goldAccent outline-none" required>
-              <option value="">A carregar serviços...</option>
-            </select>
-          </div>
-
-          <!-- Passo 2: Seleção de Data -->
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Data</label>
-            <input type="date" id="input-data" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-goldAccent outline-none" required />
-          </div>
-
-          <!-- Passo 3: Horários Disponíveis -->
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Horários Disponíveis</label>
-            <div id="container-horarios" class="grid grid-cols-3 gap-2 min-h-[40px] items-center justify-center border border-dashed border-gray-200 rounded-lg p-2">
-              <span class="text-xs text-gray-400 col-span-3 text-center">Selecione uma data para ver os horários</span>
-            </div>
-            <input type="hidden" id="input-horario-selecionado" required />
-          </div>
-
-          <!-- Passo 4: Dados do Cliente -->
-          <div class="border-t border-gray-100 pt-3">
-            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Seu Nome</label>
-            <input type="text" id="input-nome" placeholder="Ex: Maria Silva" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm mb-3 focus:ring-2 focus:ring-goldAccent outline-none" required />
-
-            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">WhatsApp</label>
-            <input type="tel" id="input-whatsapp" placeholder="Ex: 61999998888" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-goldAccent outline-none" required />
-          </div>
-
-          <button type="submit" id="btn-confirmar" class="w-full bg-goldAccent hover:bg-roseGold text-brandDark font-bold py-3 rounded-lg shadow-md transition-all duration-200 uppercase text-xs tracking-wider">
-            Confirmar Agendamento
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- SCRIPTS DE NAVEGAÇÃO E AGENDAMENTO -->
+    <!-- SCRIPT MENU MOBILE -->
     <script>
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
         }
-
-        // INTEGRAÇÃO COM A API PYTHON
-        const API_URL = "http://127.0.0.1:8000";
-
-        const modal = document.getElementById('modal-agendamento');
-        const btnFechar = document.getElementById('fechar-modal');
-        const selectServico = document.getElementById('select-servico');
-        const inputData = document.getElementById('input-data');
-        const containerHorarios = document.getElementById('container-horarios');
-        const inputHorarioSelecionado = document.getElementById('input-horario-selecionado');
-        const formAgendamento = document.getElementById('form-agendamento');
-
-        // Definir a data mínima do calendário como hoje
-        const hoje = new Date().toISOString().split('T')[0];
-        inputData.min = hoje;
-
-        // Abrir Modal
-        function abrirModalAgendamento(servicoId = null) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            carregarServicos(servicoId);
-        }
-
-        // Fechar Modal
-        btnFechar.addEventListener('click', () => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        });
-
-        // 1. Carregar lista de serviços
-        async function carregarServicos(servicoIdSelecionado) {
-            try {
-                const response = await fetch(`${API_URL}/servicos`);
-                const servicos = await response.json();
-                
-                selectServico.innerHTML = '<option value="">Selecione um serviço...</option>';
-                servicos.forEach(s => {
-                    const selected = s.id == servicoIdSelecionado ? 'selected' : '';
-                    selectServico.innerHTML += `<option value="${s.id}" ${selected}>${s.nome} (${s.duracao_minutos} min)</option>`;
-                });
-
-                if (servicoIdSelecionado && inputData.value) {
-                    buscarHorariosDisponiveis();
-                }
-            } catch (error) {
-                console.error("Erro ao carregar serviços:", error);
-                selectServico.innerHTML = '<option value="">Erro ao carregar serviços</option>';
-            }
-        }
-
-        // 2. Buscar Horários Livres na API
-        async function buscarHorariosDisponiveis() {
-            const servicoId = selectServico.value;
-            const data = inputData.value;
-            inputHorarioSelecionado.value = "";
-
-            if (!servicoId || !data) return;
-
-            containerHorarios.innerHTML = '<span class="text-xs text-gray-400 col-span-3 text-center">A procurar horários livres...</span>';
-
-            try {
-                const response = await fetch(`${API_URL}/horarios-livres?data=${data}&servico_id=${servicoId}`);
-                const res = await response.json();
-
-                if (res.horarios_disponiveis.length === 0) {
-                    containerHorarios.innerHTML = '<span class="text-xs text-red-500 col-span-3 text-center">Sem horários vagos nesta data.</span>';
-                    return;
-                }
-
-                containerHorarios.innerHTML = '';
-                res.horarios_disponiveis.forEach(hora => {
-                    const btnHora = document.createElement('button');
-                    btnHora.type = 'button';
-                    btnHora.className = 'btn-hora border border-goldAccent/50 hover:bg-roseLight text-brandDark py-1.5 rounded-md text-xs font-semibold transition';
-                    btnHora.innerText = hora;
-                    
-                    btnHora.onclick = () => {
-                        document.querySelectorAll('.btn-hora').forEach(b => b.classList.remove('bg-goldAccent', 'text-brandDark'));
-                        btnHora.classList.add('bg-goldAccent', 'text-brandDark');
-                        inputHorarioSelecionado.value = hora;
-                    };
-
-                    containerHorarios.appendChild(btnHora);
-                });
-            } catch (error) {
-                console.error("Erro ao buscar horários:", error);
-                containerHorarios.innerHTML = '<span class="text-xs text-red-500 col-span-3 text-center">Erro ao carregar horários.</span>';
-            }
-        }
-
-        selectServico.addEventListener('change', buscarHorariosDisponiveis);
-        inputData.addEventListener('change', buscarHorariosDisponiveis);
-
-        // 3. Enviar o Agendamento
-        formAgendamento.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const servicoId = selectServico.value;
-            const data = inputData.value;
-            const hora = inputHorarioSelecionado.value;
-            const nome = document.getElementById('input-nome').value;
-            const whatsapp = document.getElementById('input-whatsapp').value;
-
-            if (!hora) {
-                alert("Por favor, selecione um horário disponível.");
-                return;
-            }
-
-            const payload = {
-                cliente_nome: nome,
-                cliente_whatsapp: "55" + whatsapp.replace(/\D/g, ''),
-                servico_id: parseInt(servicoId),
-                data_hora_inicio: `${data} ${hora}`
-            };
-
-            try {
-                const response = await fetch(`${API_URL}/agendar`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (response.ok) {
-                    alert("Agendamento realizado com sucesso! 🎉");
-                    modal.classList.add('hidden');
-                    formAgendamento.reset();
-                    containerHorarios.innerHTML = '<span class="text-xs text-gray-400 col-span-3 text-center">Selecione uma data para ver os horários</span>';
-                } else {
-                    const err = await response.json();
-                    alert(`Atenção: ${err.detail}`);
-                }
-            } catch (error) {
-                console.error("Erro ao agendar:", error);
-                alert("Não foi possível conectar ao servidor. Verifique se a API está em execução.");
-            }
-        });
     </script>
 </body>
 </html>
