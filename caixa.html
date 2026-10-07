@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fechamento de Caixa | DG Nails</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        roseGold: '#D4A373',
+                        brandDark: '#1A1818',
+                        goldAccent: '#C5A059',
+                        nudeBg: '#FAF7F5'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-nudeBg text-brandDark min-h-screen p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Topo -->
+        <div class="flex flex-col sm:flex-row justify-between items-center bg-brandDark text-white p-6 rounded-2xl shadow-md border border-goldAccent/30">
+            <div>
+                <h1 class="text-2xl font-serif font-bold text-goldAccent">Controle de Caixa & Relatórios</h1>
+                <p class="text-xs text-gray-300">Gestão diária, semanal e mensal do salão</p>
+            </div>
+            <a href="index.html" class="mt-4 sm:mt-0 text-xs bg-goldAccent hover:bg-roseGold text-brandDark font-bold px-4 py-2 rounded-full transition-all">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Voltar ao Site
+            </a>
+        </div>
+
+        <!-- Form de Cadastro de Serviço -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-goldAccent/20">
+            <h2 class="text-lg font-bold text-brandDark mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-goldAccent"></i> Lançar Novo Atendimento
+            </h2>
+            <form id="caixa-form" onsubmit="adicionarLancamento(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Profissional *</label>
+                    <select id="profissional" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-goldAccent focus:outline-none">
+                        <option value="">Selecione...</option>
+                        <option value="Dionésia">Dionésia (Nails/Estética)</option>
+                        <option value="Márcia">Márcia (Cabelo)</option>
+                        <option value="Ingrid">Ingrid (Cílios)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Nome da Cliente *</label>
+                    <input type="text" id="cliente" required placeholder="Ex: Maria Silva" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-goldAccent focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Serviço Realizado *</label>
+                    <input type="text" id="servico" required placeholder="Ex: Fibra de Vidro / Escova / Cílios" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-goldAccent focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Valor (R$) *</label>
+                    <input type="number" step="0.01" id="valor" required placeholder="0.00" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-goldAccent focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Forma de Pagamento *</label>
+                    <select id="pagamento" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-goldAccent focus:outline-none">
+                        <option value="Pix">Pix</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Cartão de Débito">Cartão de Débito</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Data *</label>
+                    <input type="date" id="data" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-goldAccent focus:outline-none">
+                </div>
+
+                <div class="md:col-span-3 pt-2">
+                    <button type="submit" class="w-full bg-brandDark hover:bg-goldAccent hover:text-brandDark text-white font-bold py-3 rounded-xl transition-all shadow-md text-sm uppercase tracking-wider">
+                        <i class="fa-solid fa-check mr-2"></i> Confirmar Lançamento
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Resumo e Filtros -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-goldAccent/20 space-y-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <h2 class="text-lg font-bold text-brandDark flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-goldAccent"></i> Relatório de Vendas
+                </h2>
+                
+                <!-- Filtros -->
+                <div class="flex flex-wrap gap-2">
+                    <select id="filtro-periodo" onchange="renderizarLançamentos()" class="border border-gray-300 rounded-lg p-2 text-xs font-medium">
+                        <option value="todos">Todo o Histórico</option>
+                        <option value="hoje">Hoje</option>
+                        <option value="mes">Este Mês</option>
+                    </select>
+
+                    <select id="filtro-profissional" onchange="renderizarLançamentos()" class="border border-gray-300 rounded-lg p-2 text-xs font-medium">
+                        <option value="todas">Todas as Profissionais</option>
+                        <option value="Dionésia">Dionésia</option>
+                        <option value="Márcia">Márcia</option>
+                        <option value="Ingrid">Ingrid</option>
+                    </select>
+
+                    <button onclick="exportarCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-lg text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-file-excel"></i> Baixar Relatório
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cards de Total -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <div class="bg-nudeBg p-4 rounded-xl border border-goldAccent/20">
+                    <span class="text-xs text-gray-500 font-semibold block">Faturamento do Filtro</span>
+                    <span id="total-valor" class="text-2xl font-bold text-brandDark">R$ 0,00</span>
+                </div>
+                <div class="bg-nudeBg p-4 rounded-xl border border-goldAccent/20">
+                    <span class="text-xs text-gray-500 font-semibold block">Total de Atendimentos</span>
+                    <span id="total-qtd" class="text-2xl font-bold text-brandDark">0</span>
+                </div>
+                <div class="bg-nudeBg p-4 rounded-xl border border-goldAccent/20">
+                    <span class="text-xs text-gray-500 font-semibold block">Maior Forma de PGTO</span>
+                    <span id="top-pagamento" class="text-2xl font-bold text-goldAccent">-</span>
+                </div>
+            </div>
+
+            <!-- Tabela de Lançamentos -->
+            <div class="overflow-x-auto pt-4">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-200 text-xs text-gray-500 bg-gray-50">
+                            <th class="p-3">Data</th>
+                            <th class="p-3">Profissional</th>
+                            <th class="p-3">Cliente</th>
+                            <th class="p-3">Serviço</th>
+                            <th class="p-3">Pagamento</th>
+                            <th class="p-3">Valor</th>
+                            <th class="p-3 text-center">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-corpo">
+                        <!-- Lançamentos entram aqui dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Setar data atual por padrão no formulário
+        document.getElementById('data').valueAsDate = new Date();
+
+        function obterLancamentos() {
+            return JSON.parse(localStorage.getItem('dg_caixa_dados') || '[]');
+        }
+
+        function salvarLancamentos(dados) {
+            localStorage.setItem('dg_caixa_dados', JSON.stringify(dados));
+        }
+
+        function adicionarLancamento(e) {
+            e.preventDefault();
+            const dados = obterLancamentos();
+
+            const novo = {
+                id: Date.now(),
+                profissional: document.getElementById('profissional').value,
+                cliente: document.getElementById('cliente').value,
+                servico: document.getElementById('servico').value,
+                valor: parseFloat(document.getElementById('valor').value),
+                pagamento: document.getElementById('pagamento').value,
+                data: document.getElementById('data').value
+            };
+
+            dados.push(novo);
+            salvarLancamentos(dados);
+            
+            // Limpar formulário mantendo a data
+            document.getElementById('cliente').value = '';
+            document.getElementById('servico').value = '';
+            document.getElementById('valor').value = '';
+
+            renderizarLançamentos();
+        }
+
+        function deletarLancamento(id) {
+            if (confirm('Tem certeza que deseja excluir este registro?')) {
+                let dados = obterLancamentos();
+                dados = dados.filter(item => item.id !== id);
+                salvarLancamentos(dados);
+                renderizarLançamentos();
+            }
+        }
+
+        function renderizarLançamentos() {
+            const dados = obterLancamentos();
+            const filtroPeriodo = document.getElementById('filtro-periodo').value;
+            const filtroProfissional = document.getElementById('filtro-profissional').value;
+            const tbody = document.getElementById('tabela-corpo');
+
+            const hoje = new Date().toISOString().split('T')[0];
+            const mesAtual = new Date().toISOString().slice(0, 7);
+
+            let filtrados = dados.filter(item => {
+                let matchPeriodo = true;
+                if (filtroPeriodo === 'hoje') matchPeriodo = item.data === hoje;
+                if (filtroPeriodo === 'mes') matchPeriodo = item.data.startsWith(mesAtual);
+
+                let matchProfissional = true;
+                if (filtroProfissional !== 'todas') matchProfissional = item.profissional === filtroProfissional;
+
+                return matchPeriodo && matchProfissional;
+            });
+
+            // Ordenar por data mais recente
+            filtrados.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+            // Atualizar Tabela
+            tbody.innerHTML = '';
+            let total = 0;
+            let pgtos = {};
+
+            filtrados.forEach(item => {
+                total += item.valor;
+                pgtos[item.pagamento] = (pgtos[item.pagamento] || 0) + 1;
+
+                const [ano, mes, dia] = item.data.split('-');
+                const dataFormatada = `${dia}/${mes}/${ano}`;
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="p-3 text-xs text-gray-500">${dataFormatada}</td>
+                        <td class="p-3 font-semibold">${item.profissional}</td>
+                        <td class="p-3">${item.cliente}</td>
+                        <td class="p-3">${item.servico}</td>
+                        <td class="p-3 text-xs"><span class="bg-gray-100 px-2 py-1 rounded-md">${item.pagamento}</span></td>
+                        <td class="p-3 font-bold text-emerald-600">R$ ${item.valor.toFixed(2)}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deletarLancamento(${item.id})" class="text-red-500 hover:text-red-700 text-xs">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Atualizar Totais
+            document.getElementById('total-valor').innerText = `R$ ${total.toFixed(2)}`;
+            document.getElementById('total-qtd').innerText = filtrados.length;
+
+            let topPgto = '-';
+            let maxCount = 0;
+            for (let p in pgtos) {
+                if (pgtos[p] > maxCount) {
+                    maxCount = pgtos[p];
+                    topPgto = p;
+                }
+            }
+            document.getElementById('top-pagamento').innerText = topPgto;
+        }
+
+        function exportarCSV() {
+            const dados = obterLancamentos();
+            if (dados.length === 0) {
+                alert('Nenhum dado para exportar!');
+                return;
+            }
+
+            let csv = 'Data,Profissional,Cliente,Servico,Pagamento,Valor\n';
+            dados.forEach(i => {
+                csv += `"${i.data}","${i.profissional}","${i.cliente}","${i.servico}","${i.pagamento}",${i.valor}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `fechamento_caixa_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+        }
+
+        // Renderizar na primeira execução
+        renderizarLançamentos();
+    </script>
+</body>
+</html>
