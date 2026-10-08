@@ -11,6 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Firebase SDKs (Banco de Dados Nuvem) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -21,7 +25,6 @@
                         nudeBg: '#FAF7F5',
                         brandDark: '#1A1818',
                         goldAccent: '#C98270',
-                        nude: '#C98270',
                         emeraldWhatsapp: '#25D366'
                     },
                     fontFamily: {
@@ -33,12 +36,6 @@
         }
     </script>
     <style>
-        .gold-text {
-            background: linear-gradient(135deg, #C98270 0%, #D9917F 50%, #B26A5A 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
         .card-glass {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -47,7 +44,6 @@
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; }
-            .print-full { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
         }
     </style>
 </head>
@@ -86,16 +82,16 @@
                 <div>
                     <span class="inline-block px-3 py-1 bg-goldAccent/20 text-goldAccent rounded-full text-[11px] font-semibold tracking-wider uppercase mb-2">Painel Operacional</span>
                     <h1 class="text-2xl sm:text-3xl font-serif font-bold text-white">Lançamento de Serviços</h1>
-                    <p class="text-xs sm:text-sm text-gray-300 font-light mt-1">Registre cada atendimento realizado para alimentar o controle diário e financeiro do salão.</p>
+                    <p class="text-xs sm:text-sm text-gray-300 font-light mt-1">Registre cada atendimento realizado para alimentar o controle diário e financeiro do salão em tempo real.</p>
                 </div>
                 <div id="status-modo" class="bg-white/10 px-4 py-2 rounded-2xl border border-white/10 text-xs text-gray-200 flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-emeraldWhatsapp animate-pulse"></span>
-                    <span>Modo Profissional Ativo</span>
+                    <span>Sincronizado na Nuvem</span>
                 </div>
             </div>
         </div>
 
-        <!-- FORMULÁRIO DE LANÇAMENTO (ACESSO DAS MENINAS) -->
+        <!-- FORMULÁRIO DE LANÇAMENTO -->
         <section class="card-glass p-6 sm:p-8 rounded-3xl shadow-sm border border-goldAccent/20">
             <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
                 <h2 class="text-xl font-serif font-bold text-brandDark flex items-center gap-2">
@@ -164,7 +160,7 @@
 
                 <!-- Botão Enviar -->
                 <div class="sm:col-span-2 lg:col-span-3 pt-4">
-                    <button type="submit" class="w-full bg-brandDark hover:bg-goldAccent text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl text-xs uppercase tracking-widest flex items-center justify-center gap-2 group">
+                    <button type="submit" id="btn-submit" class="w-full bg-brandDark hover:bg-goldAccent text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl text-xs uppercase tracking-widest flex items-center justify-center gap-2 group">
                         <i class="fa-solid fa-circle-check text-goldAccent group-hover:text-white transition-colors"></i>
                         <span>Lançar Atendimento no Sistema</span>
                     </button>
@@ -172,14 +168,13 @@
             </form>
 
             <!-- Alerta de Sucesso -->
-            <div id="alerta-sucesso" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 text-xs font-semibold flex items-center gap-3 animate-fade-in">
+            <div id="alerta-sucesso" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 text-xs font-semibold flex items-center gap-3">
                 <i class="fa-solid fa-circle-check text-lg text-emerald-600"></i>
-                <span>Atendimento registrado com sucesso! Os dados foram enviados para o relatório da Dionésia.</span>
+                <span>Atendimento registrado com sucesso e enviado para o relatório da Dionésia em tempo real!</span>
             </div>
         </section>
 
-
-        <!-- PAINEL COMPLETO DA GESTORA (DIONÉSIA) - OCULTO POR PADRÃO -->
+        <!-- PAINEL COMPLETO DA GESTORA (DIONÉSIA) -->
         <section id="painel-gestora" class="hidden space-y-6">
 
             <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-md border-2 border-goldAccent/30 space-y-6">
@@ -188,10 +183,10 @@
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-gray-100 pb-6">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 bg-roseLight text-goldAccent text-[10px] font-bold uppercase rounded-md">Exclusivo</span>
+                            <span class="px-2.5 py-0.5 bg-roseLight text-goldAccent text-[10px] font-bold uppercase rounded-md">Exclusivo Gestão</span>
                             <h2 class="text-2xl font-serif font-bold text-brandDark">Painel Financeiro & Relatórios</h2>
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">Visão completa dos faturamentos, comissões e histórico de atendimentos.</p>
+                        <p class="text-xs text-gray-500 mt-1">Visão em tempo real de faturamentos e lançamentos da equipe.</p>
                     </div>
 
                     <div class="flex flex-wrap gap-2 w-full lg:w-auto no-print">
@@ -363,7 +358,6 @@
                     Entrar no Painel
                 </button>
             </form>
-            <p class="text-[10px] text-center text-gray-400">Senha padrão: <code class="bg-gray-100 px-1 py-0.5 rounded">1234</code></p>
         </div>
     </div>
 
@@ -374,32 +368,50 @@
         </div>
     </footer>
 
-    <!-- SCRIPT DE FUNCIONAMENTO DO SISTEMA -->
+    <!-- SCRIPT DE FUNCIONAMENTO DO SISTEMA COM FIREBASE -->
     <script>
-        // CONFIGURAÇÕES E INICIALIZAÇÃO
-        const SENHA_GESTORA = "1234"; // Você pode alterar essa senha aqui se desejar
+        // CONFIGURAÇÃO DO FIREBASE
+        const firebaseConfig = {
+            databaseURL: "https://dgnails-df-default-rtdb.firebaseio.com"
+        };
+        
+        // Inicializar Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        // CONFIGURAÇÕES
+        const SENHA_GESTORA = "Dionesia98";
         let ehGestoraAutenticada = false;
+        let todosLancamentosGlobal = [];
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Setar data e hora atual no formulário
             const hoje = new Date();
             document.getElementById('data').valueAsDate = hoje;
             document.getElementById('hora').value = hoje.toTimeString().substring(0, 5);
+
+            // Escutar alterações no Firebase em Tempo Real
+            db.ref('atendimentos').on('value', (snapshot) => {
+                const data = snapshot.val();
+                todosLancamentosGlobal = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        todosLancamentosGlobal.push({ idFirebase: key, ...data[key] });
+                    });
+                }
+                if (ehGestoraAutenticada) {
+                    renderizarLançamentos();
+                }
+            });
         });
 
-        // OBTER E SALVAR LOCALSTORAGE
-        function obterLancamentos() {
-            return JSON.parse(localStorage.getItem('dg_caixa_dados') || '[]');
-        }
-
-        function salvarLancamentos(dados) {
-            localStorage.setItem('dg_caixa_dados', JSON.stringify(dados));
-        }
-
-        // LANÇAR NOVO ATENDIMENTO
+        // LANÇAR NOVO ATENDIMENTO NA NUVEM
         function adicionarLancamento(e) {
             e.preventDefault();
-            const dados = obterLancamentos();
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Salvando na Nuvem...`;
 
             const novo = {
                 id: Date.now(),
@@ -412,22 +424,23 @@
                 hora: document.getElementById('hora').value || "00:00"
             };
 
-            dados.push(novo);
-            salvarLancamentos(dados);
-            
-            // Limpar formulário mantendo data e hora atualizadas
-            document.getElementById('cliente').value = '';
-            document.getElementById('servico').value = '';
-            document.getElementById('valor').value = '';
-            
-            // Exibir mensagem de sucesso
-            const alerta = document.getElementById('alerta-sucesso');
-            alerta.classList.remove('hidden');
-            setTimeout(() => alerta.classList.add('hidden'), 5000);
-
-            if (ehGestoraAutenticada) {
-                renderizarLançamentos();
-            }
+            db.ref('atendimentos').push(novo)
+                .then(() => {
+                    document.getElementById('cliente').value = '';
+                    document.getElementById('servico').value = '';
+                    document.getElementById('valor').value = '';
+                    
+                    const alerta = document.getElementById('alerta-sucesso');
+                    alerta.classList.remove('hidden');
+                    setTimeout(() => alerta.classList.add('hidden'), 4000);
+                })
+                .catch(err => {
+                    alert('Erro ao salvar no servidor: ' + err.message);
+                })
+                .finally(() => {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = `<i class="fa-solid fa-circle-check text-goldAccent"></i><span>Lançar Atendimento no Sistema</span>`;
+                });
         }
 
         // AUTENTICAÇÃO DA GESTORA
@@ -448,11 +461,10 @@
         function autenticarGestora(e) {
             e.preventDefault();
             const senha = document.getElementById('senha-input').value;
-            if (senha === SENHA_GESTORA || senha === "dg2026") {
+            if (senha === SENHA_GESTORA) {
                 ehGestoraAutenticada = true;
                 fecharModalAuth();
                 
-                // Mostrar painel e atualizar status
                 document.getElementById('painel-gestora').classList.remove('hidden');
                 document.getElementById('status-modo').innerHTML = `
                     <span class="w-2.5 h-2.5 rounded-full bg-goldAccent animate-pulse"></span>
@@ -474,23 +486,19 @@
             document.getElementById('painel-gestora').classList.add('hidden');
             document.getElementById('status-modo').innerHTML = `
                 <span class="w-2.5 h-2.5 rounded-full bg-emeraldWhatsapp animate-pulse"></span>
-                <span>Modo Profissional Ativo</span>
+                <span>Sincronizado na Nuvem</span>
             `;
             document.getElementById('btn-gestora').innerHTML = `<i class="fa-solid fa-lock"></i><span class="hidden sm:inline">Área da Gestora</span>`;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // EXCLUIR REGISTRO
-        function deletarLancamento(id) {
+        // EXCLUIR REGISTRO DO FIREBASE
+        function deletarLancamento(idFirebase) {
             if (confirm('Tem certeza que deseja excluir este atendimento do relatório?')) {
-                let dados = obterLancamentos();
-                dados = dados.filter(item => item.id !== id);
-                salvarLancamentos(dados);
-                renderizarLançamentos();
+                db.ref('atendimentos/' + idFirebase).remove();
             }
         }
 
-        // ALTERNAR VISIBILIDADE DE DATAS CUSTOMIZADAS
         function alternarFiltroData() {
             const p = document.getElementById('filtro-periodo').value;
             const boxInicio = document.getElementById('box-data-inicio');
@@ -505,11 +513,11 @@
             }
         }
 
-        // RENDERIZAÇÃO DOS RELATÓRIOS E FILTROS
+        // RENDERIZAÇÃO DOS RELATÓRIOS
         function renderizarLançamentos() {
             if (!ehGestoraAutenticada) return;
 
-            const dados = obterLancamentos();
+            const dados = todosLancamentosGlobal;
             const filtroPeriodo = document.getElementById('filtro-periodo').value;
             const filtroProfissional = document.getElementById('filtro-profissional').value;
             const tbody = document.getElementById('tabela-corpo');
@@ -519,8 +527,7 @@
             const mesAtualStr = hojeObj.toISOString().slice(0, 7);
             const anoAtualStr = hojeObj.getFullYear().toString();
 
-            // Calcular início da semana (segunda-feira)
-            const diaSemana = hojeObj.getDay(); // 0 Dom, 1 Seg, ...
+            const diaSemana = hojeObj.getDay();
             const distSegunda = diaSemana === 0 ? 6 : diaSemana - 1;
             const segundaObj = new Date(hojeObj);
             segundaObj.setDate(hojeObj.getDate() - distSegunda);
@@ -551,10 +558,8 @@
                 return matchPeriodo && matchProfissional;
             });
 
-            // Ordenar por data/hora mais recente
             filtrados.sort((a, b) => new Date(b.data + 'T' + (b.hora || '00:00')) - new Date(a.data + 'T' + (a.hora || '00:00')));
 
-            // Variáveis de resumo
             tbody.innerHTML = '';
             let total = 0;
             let pgtos = {};
@@ -591,7 +596,7 @@
                             <td class="p-3.5"><span class="bg-gray-100 border border-gray-200 px-2 py-1 rounded-md text-[11px] font-semibold text-gray-700">${item.pagamento}</span></td>
                             <td class="p-3.5 font-bold text-emerald-600">R$ ${item.valor.toFixed(2).replace('.', ',')}</td>
                             <td class="p-3.5 text-center no-print">
-                                <button onclick="deletarLancamento(${item.id})" class="text-red-400 hover:text-red-600 p-1 transition-colors" title="Excluir">
+                                <button onclick="deletarLancamento('${item.idFirebase}')" class="text-red-400 hover:text-red-600 p-1 transition-colors" title="Excluir">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
@@ -600,7 +605,6 @@
                 });
             }
 
-            // Atualizar Cards
             document.getElementById('total-valor').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
             document.getElementById('total-qtd').innerText = filtrados.length;
 
@@ -617,7 +621,6 @@
             }
             document.getElementById('top-pagamento').innerText = topPgto;
 
-            // Atualizar Totais por Profissional
             document.getElementById('resumo-dionesia').innerText = `R$ ${totaisPorProf.Dionésia.toFixed(2).replace('.', ',')}`;
             document.getElementById('resumo-marcia').innerText = `R$ ${totaisPorProf.Márcia.toFixed(2).replace('.', ',')}`;
             document.getElementById('resumo-ingrid').innerText = `R$ ${totaisPorProf.Ingrid.toFixed(2).replace('.', ',')}`;
@@ -625,15 +628,14 @@
 
         // EXPORTAR EXCEL/CSV
         function exportarCSV() {
-            const dados = obtainingFilteredDataForExport();
-            if (dados.length === 0) {
+            if (todosLancamentosGlobal.length === 0) {
                 alert('Nenhum dado encontrado para exportar!');
                 return;
             }
 
-            let csv = '\uFEFF'; // BOM para aceitar acentuação no Excel
+            let csv = '\uFEFF';
             csv += 'Data,Horario,Profissional,Cliente,Servico,Pagamento,Valor(R$)\n';
-            dados.forEach(i => {
+            todosLancamentosGlobal.forEach(i => {
                 csv += `"${i.data}","${i.hora || ''}","${i.profissional}","${i.cliente}","${i.servico}","${i.pagamento}",${i.valor}\n`;
             });
 
@@ -643,10 +645,6 @@
             a.href = url;
             a.download = `relatorio_caixa_DG_${new Date().toISOString().slice(0, 10)}.csv`;
             a.click();
-        }
-
-        function obtainingFilteredDataForExport() {
-            return obterLancamentos();
         }
     </script>
 </body>
