@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agendamento · Dionésia Guarino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf6f2;--linha:#e9ddd4;--rosa:#b9705c;--champ:#f1e1d6;--tinta:#1f1a17;--mudo:#7a6f68}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tinta);font:16px/1.6 Inter,sans-serif;-webkit-font-smoothing:antialiased}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 24px;background:#fff;border-bottom:1px solid var(--linha)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo i{width:44px;height:44px;border-radius:50%;background:#a8644f;color:#fff;display:grid;place-items:center;font:600 16px "Playfair Display",serif}
+.logo b{display:block;font:600 18px/1.2 "Playfair Display",serif;letter-spacing:.06em;text-transform:uppercase}
+.logo small{color:var(--rosa);font-size:11px;letter-spacing:.18em}
+.voltar{font-size:14px;color:var(--mudo);text-decoration:none}
+.topo{max-width:1080px;margin:0 auto;padding:52px 24px 4px}
+h1{font:600 clamp(36px,6vw,58px)/1.06 "Playfair Display",serif;letter-spacing:-.01em}
+h1 em{color:var(--rosa);font-style:normal}
+.topo p{color:var(--mudo);margin-top:12px;max-width:48ch}
+.demo{display:inline-block;margin-top:16px;background:var(--champ);border-radius:999px;padding:5px 14px;font-size:13px;color:#6b4637}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 24px 80px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px;align-items:start}
+@media(max-width:860px){.wrap{grid-template-columns:1fr}.resumo{position:static!important}}
+.passo{background:#fff;border:1px solid var(--linha);border-radius:24px;margin-bottom:14px;transition:box-shadow .25s,opacity .25s}
+.passo.aberto{box-shadow:0 22px 50px -24px rgba(90,50,35,.3)}
+.passo.bloq{opacity:.5}
+.cab{display:flex;align-items:center;gap:14px;padding:20px 24px}
+.n{width:30px;height:30px;border-radius:50%;border:1px solid var(--linha);display:grid;place-items:center;font-size:13px;font-weight:600;color:var(--mudo);flex:none}
+.aberto .n{background:var(--tinta);border-color:var(--tinta);color:#fff}
+.ok .n{background:var(--rosa);border-color:var(--rosa);color:#fff}
+h2{font:600 21px "Playfair Display",serif}
+.val{margin-left:auto;color:var(--mudo);font-size:14px;text-align:right}
+.aberto .val{display:none}
+.alt{display:none;background:none;border:0;color:var(--rosa);font:600 14px Inter,sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.ok .alt{display:inline}
+.passo:not(.aberto) .corpo{display:none}
+.corpo{padding:4px 24px 28px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--rosa);outline-offset:2px}
+.grade{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.op{display:flex;flex-direction:column;gap:4px;background:var(--bg);border:1px solid var(--linha);border-radius:18px;padding:16px 18px;text-align:left;transition:border-color .15s}
+.op:hover,.op.sel{border-color:var(--rosa)}
+.op b{font:600 17px/1.3 "Playfair Display",serif}
+.op small{color:var(--mudo);font-size:13.5px}
+.preco{color:var(--rosa);font-weight:600}
+.prof{flex-direction:row;align-items:center;gap:14px}
+.av{width:60px;height:60px;border-radius:50%;object-fit:cover;background:var(--champ);display:grid;place-items:center;font:600 24px "Playfair Display",serif;color:#a8644f;flex:none}
+.mes{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mes b{font:600 19px "Playfair Display",serif;text-transform:capitalize}
+.seta{width:38px;height:38px;border-radius:50%;border:1px solid var(--linha);background:#fff;font-size:18px;line-height:1}
+.seta:disabled{opacity:.3;cursor:default}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.cal i{font-style:normal;font-size:12px;color:var(--mudo);padding:4px 0}
+.d{aspect-ratio:1;max-height:48px;justify-self:center;width:100%;max-width:48px;border-radius:50%;border:0;background:none;font-weight:500}
+.d:hover:not(:disabled){background:var(--champ)}
+.d:disabled{color:#c9bdb5;cursor:default}
+.d.hoje{box-shadow:inset 0 0 0 1px var(--rosa)}
+.d.sel{background:var(--tinta);color:#fff}
+h3{font-size:13px;font-weight:600;color:var(--mudo);margin:22px 0 10px}
+.horas{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.hora{border:1px solid var(--linha);background:#fff;border-radius:12px;padding:10px 0;font-weight:500}
+.hora:hover{border-color:var(--tinta)}
+.hora.sel{background:var(--tinta);border-color:var(--tinta);color:#fff}
+label{display:block;margin-bottom:14px;color:var(--mudo);font-size:14px}
+input{width:100%;margin-top:4px;background:var(--bg);border:1px solid var(--linha);border-radius:14px;color:var(--tinta);padding:13px 15px;font:inherit}
+.cta{display:inline-block;background:var(--tinta);color:#fff;border:0;border-radius:999px;padding:16px 34px;font-weight:600;font-size:14px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none}
+.cta:hover{background:#3a2e29}
+.erro{color:#b3402a;margin:0 0 12px;font-size:14px}
+.resumo{position:sticky;top:24px;background:var(--tinta);color:#f5ece6;border-radius:28px;padding:30px 28px}
+.resumo h2{color:#fff;margin-bottom:14px}
+.lin{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-top:1px solid rgba(255,255,255,.12);font-size:14.5px}
+.lin span{color:#b3a59c}
+.lin b{font-weight:500;text-align:right}
+.lin b.vazio{color:#6f635b}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid rgba(255,255,255,.3);padding-top:16px;margin-top:4px}
+.total b{font:600 28px "Playfair Display",serif;color:#e8bfae}
+.nota{margin-top:18px;font-size:13px;color:#b3a59c}
+.fim{text-align:center;background:#fff;border:1px solid var(--linha);border-radius:28px;padding:56px 28px}
+.fim h2{font-size:28px;margin:18px 0 8px}
+.fim p{color:var(--mudo);margin:0 auto 26px;max-width:40ch}
+.fim svg{width:76px;height:76px}
+.fim circle,.fim path{fill:none;stroke:var(--rosa);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:220;stroke-dashoffset:220;animation:tr .9s ease forwards}
+.fim path{animation-delay:.4s}
+@keyframes tr{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:.01s!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i>DG</i><div><b>Dionésia Guarino</b><small>NAILS &amp; ESTÉTICA · DF</small></div></div>
+  <a class="voltar" href="index.html">Voltar ao site</a>
+</header>
+<div class="topo">
+  <h1>Agende seu <em>horário</em></h1>
+  <p>Escolha o serviço, o melhor dia e quem vai cuidar de você. Leva menos de um minuto.</p>
+  <span class="demo">Modo demonstração: horários ocupados simulados</span>
+</div>
+<div class="wrap">
+<div>
+<div id="passos">
+  <section class="passo" id="s0"><div class="cab"><span class="n">1</span><h2>Serviço</h2><span class="val" id="v0"></span><button class="alt" id="a0">Alterar</button></div><div class="corpo"><div class="grade" id="servicos"></div></div></section>
+  <section class="passo" id="s1"><div class="cab"><span class="n">2</span><h2>Data e horário</h2><span class="val" id="v1"></span><button class="alt" id="a1">Alterar</button></div><div class="corpo"><div id="cal"></div><div id="horas"></div></div></section>
+  <section class="passo" id="s2"><div class="cab"><span class="n">3</span><h2>Profissional</h2><span class="val" id="v2"></span><button class="alt" id="a2">Alterar</button></div><div class="corpo"><div class="grade" id="profs"></div></div></section>
+  <section class="passo" id="s3"><div class="cab"><span class="n">4</span><h2>Seus dados</h2><span class="val" id="v3"></span></div><div class="corpo">
+    <label>Seu nome<input id="nome" autocomplete="name"></label>
+    <label>Seu WhatsApp, com DDD<input id="zap" inputmode="tel" autocomplete="tel" placeholder="(61) 99999-9999"></label>
+    <p class="erro" id="erro" hidden></p>
+    <button class="cta" id="confirmar">Confirmar agendamento</button>
+  </div></section>
+</div>
+<section class="fim" id="fim" hidden>
+  <svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="34"/><path d="M26 41l10 10 19-21"/></svg>
+  <h2>Seu pedido está pronto</h2>
+  <p>Falta só um toque: envie os detalhes pelo WhatsApp para garantir o seu horário.</p>
+  <a class="cta" id="wa" target="_blank" rel="noopener">Enviar pelo WhatsApp</a>
+</section>
+</div>
+<aside class="resumo" id="resumo"></aside>
+</div>
+
+<script>
+/* ==========================================================================
+   CONFIGURAÇÃO: tudo que você vai querer mudar está neste bloco.
+   Os dados abaixo são EXEMPLOS inventados. Troque pelos reais quando pegar
+   os horários e os preços com cada profissional.
+   ========================================================================== */
+const CONFIG = {
+  // Nome que aparece na mensagem do WhatsApp.
+  SALAO: "DG Nails",
+
+  // Número que RECEBE os pedidos: só dígitos, com 55 + DDD. (Exemplo falso!)
+  WHATSAPP: "5561999999999",
+
+  // true = mostra o preço nos cards de serviço. false = esconde.
+  EXIBIR_PRECOS: true,
+
+  // De quanto em quanto tempo aparece um horário (em minutos). 30 = 09:00, 09:30...
+  INTERVALO_MIN: 30,
+
+  // Quantos dias para frente a cliente consegue marcar.
+  DIAS_A_FRENTE: 30,
+
+  // Antecedência mínima: não deixa marcar para daqui a menos de X horas.
+  ANTECEDENCIA_HORAS: 2
+};
+
+/* PROFISSIONAIS
+   id        : nome curto, sem espaço nem acento (usado nos serviços abaixo).
+   nome      : como aparece para a cliente.
+   funcao    : texto pequeno embaixo do nome.
+   foto      : caminho da imagem (ex.: "fotos/marcia.png"). "" = mostra a inicial.
+   horarios  : dias em que ela atende. Chaves: dom, seg, ter, qua, qui, sex, sab.
+               Cada dia é uma lista de [início, fim]. Dois blocos = pausa no meio.
+               Dia que NÃO aparece = folga. */
+const PROFISSIONAIS = [
+  { id: "dionesia", nome: "Dionésia", funcao: "Unhas e estética", foto: "",
+    horarios: {
+      seg: [["09:00","12:00"],["13:00","18:00"]],
+      ter: [["09:00","12:00"],["13:00","18:00"]],
+      qua: [["09:00","12:00"],["13:00","18:00"]],
+      qui: [["09:00","12:00"],["13:00","18:00"]],
+      sex: [["09:00","12:00"],["13:00","18:00"]],
+      sab: [["08:00","14:00"]]
+    } },
+  { id: "marcia", nome: "Márcia", funcao: "Cabeleireira", foto: "fotos/marcia.png",
+    horarios: {
+      ter: [["09:00","12:00"],["13:00","19:00"]],
+      qua: [["09:00","12:00"],["13:00","19:00"]],
+      qui: [["09:00","12:00"],["13:00","19:00"]],
+      sex: [["09:00","12:00"],["13:00","19:00"]],
+      sab: [["08:00","16:00"]]
+    } },
+  { id: "ingridy", nome: "Ingridy", funcao: "Cílios", foto: "fotos/ingridy.png",
+    horarios: {
+      seg: [["10:00","12:00"],["13:00","18:00"]],
+      qua: [["10:00","12:00"],["13:00","18:00"]],
+      sex: [["10:00","12:00"],["13:00","18:00"]]
+    } }
+];
+
+/* SERVIÇOS
+   nome      : como aparece no card.
+   duracao   : em MINUTOS (é o que bloqueia o tempo na agenda).
+   preco     : número, sem R$ (ex.: 150). Use 0 para não mostrar preço neste serviço.
+   quem      : lista de ids das profissionais que fazem este serviço. */
+const SERVICOS = [
+  { nome: "Alongamento em fibra de vidro",         duracao: 120, preco: 150, quem: ["dionesia"] },
+  { nome: "Esmaltação em gel",      duracao: 60,  preco: 70,  quem: ["dionesia"] },
+  { nome: "Cutilagem",              duracao: 45,  preco: 40,  quem: ["dionesia"] },
+  { nome: "Spa dos pés",            duracao: 60,  preco: 90,  quem: ["dionesia"] },
+  { nome: "Limpeza de pele",        duracao: 60,  preco: 120, quem: ["dionesia"] },
+  { nome: "Corte e escova",         duracao: 60,  preco: 80,  quem: ["marcia"] },
+  { nome: "Extensão de cílios",  duracao: 120, preco: 160, quem: ["ingridy"] }
+];
+
+/* ==========================================================================
+   A partir daqui é o funcionamento da página. Não precisa mexer para trocar
+   horários, preços ou profissionais.
+   ========================================================================== */
+const DIAS = ["dom","seg","ter","qua","qui","sex","sab"];
+const E = { s: null, data: null, hora: null, prof: null, passo: 0, mes: null };
+const $ = id => document.getElementById(id);
+const mins = h => { const [a, b] = h.split(":"); return +a * 60 + +b; };
+const hhmm = m => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+const iso = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+const brl = n => "R$ " + n.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+const prof = id => PROFISSIONAIS.find(p => p.id === id);
+const dataCurta = d => d.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" });
+const dataLonga = d => d.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+
+/* Este é o ÚNICO ponto que finge a agenda. Aqui sorteamos horários "ocupados".
+   Quando ligarmos no Google Agenda, esta função passa a consultar a agenda real. */
+function ocupado(pid, data, hora) {
+  let h = 0;
+  for (const c of pid + data + hora) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return h % 4 === 0;
+}
+
+function livres(p, d, s) {
+  const out = [], agora = new Date();
+  for (const [a, b] of p.horarios[DIAS[d.getDay()]] || []) {
+    for (let m = mins(a); m + s.duracao <= mins(b); m += CONFIG.INTERVALO_MIN) {
+      const dt = new Date(d); dt.setHours(0, m, 0, 0);
+      if (dt - agora < CONFIG.ANTECEDENCIA_HORAS * 36e5) continue;
+      if (!ocupado(p.id, iso(d), hhmm(m))) out.push(hhmm(m));
+    }
+  }
+  return out;
+}
+
+function render() {
+  const vals = [E.s && E.s.nome, E.data && E.hora && dataCurta(E.data) + ", " + E.hora, E.prof && E.prof.nome, ""];
+  for (let i = 0; i < 4; i++) {
+    const el = $("s" + i);
+    el.className = "passo" + (i === E.passo ? " aberto" : i < E.passo ? " ok" : " bloq");
+    $("v" + i).textContent = i < E.passo ? vals[i] : "";
+  }
+  resumo();
+}
+function avancar(i) {
+  E.passo = i; render();
+  $("s" + i).scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function alterar(i) {
+  if (i <= 0) E.s = null;
+  if (i <= 1) E.data = E.hora = null;
+  E.prof = null;
+  if (i === 1) { calendario(); horas(); }
+  if (i === 2) montarProfs();
+  E.passo = i; render();
+}
+[0, 1, 2].forEach(i => $("a" + i).onclick = () => alterar(i));
+
+function resumo() {
+  const lin = (k, v) => `<div class="lin"><span>${k}</span><b class="${v ? "" : "vazio"}">${v || "—"}</b></div>`;
+  const preco = CONFIG.EXIBIR_PRECOS && E.s && E.s.preco ? brl(E.s.preco) : "";
+  $("resumo").innerHTML = `<h2>Seu agendamento</h2>
+    ${lin("Serviço", E.s && E.s.nome)}${lin("Profissional", E.prof && E.prof.nome)}
+    ${lin("Data", E.data && dataLonga(E.data))}${lin("Horário", E.hora)}${lin("Duração", E.s && E.s.duracao + " min")}
+    ${preco ? `<div class="total"><span>Valor</span><b>${preco}</b></div>` : ""}
+    <p class="nota">A confirmação final é feita pelo WhatsApp.</p>`;
+}
+
+SERVICOS.forEach(s => {
+  const b = document.createElement("button");
+  const preco = CONFIG.EXIBIR_PRECOS && s.preco ? ` · <span class="preco">${brl(s.preco)}</span>` : "";
+  b.className = "op";
+  b.innerHTML = `<b>${s.nome}</b><small>${s.duracao} min${preco}</small>`;
+  b.onclick = () => {
+    E.s = s; E.data = E.hora = E.prof = null;
+    const h = new Date(); E.mes = new Date(h.getFullYear(), h.getMonth(), 1);
+    calendario(); horas(); avancar(1);
+  };
+  $("servicos").append(b);
+});
+
+function calendario() {
+  const m = E.mes, hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  const max = new Date(hoje); max.setDate(max.getDate() + CONFIG.DIAS_A_FRENTE);
+  const ult = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
+  let h = `<div class="mes"><button class="seta" id="ant" aria-label="Mês anterior">‹</button><b>${m.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}</b><button class="seta" id="prox" aria-label="Próximo mês">›</button></div><div class="cal">`;
+  ["D","S","T","Q","Q","S","S"].forEach(x => h += `<i>${x}</i>`);
+  for (let i = 0; i < m.getDay(); i++) h += "<span></span>";
+  for (let d = 1; d <= ult; d++) {
+    const dt = new Date(m.getFullYear(), m.getMonth(), d);
+    const ok = dt >= hoje && dt <= max && E.s.quem.some(id => livres(prof(id), dt, E.s).length);
+    const cls = "d" + (+dt === +hoje ? " hoje" : "") + (E.data && +dt === +E.data ? " sel" : "");
+    h += `<button class="${cls}" data-d="${d}" ${ok ? "" : "disabled"}>${d}</button>`;
+  }
+  $("cal").innerHTML = h + "</div>";
+  $("ant").disabled = m <= new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  $("prox").disabled = new Date(m.getFullYear(), m.getMonth() + 1, 1) > max;
+  $("ant").onclick = () => { E.mes = new Date(m.getFullYear(), m.getMonth() - 1, 1); calendario(); };
+  $("prox").onclick = () => { E.mes = new Date(m.getFullYear(), m.getMonth() + 1, 1); calendario(); };
+  $("cal").querySelectorAll(".d").forEach(b => b.onclick = () => {
+    E.data = new Date(m.getFullYear(), m.getMonth(), +b.dataset.d); E.hora = E.prof = null;
+    calendario(); horas(); resumo();
+  });
+}
+
+function horas() {
+  const box = $("horas"); box.innerHTML = "";
+  if (!E.data) return;
+  const mapa = {};
+  E.s.quem.forEach(id => livres(prof(id), E.data, E.s).forEach(h => (mapa[h] = mapa[h] || []).push(id)));
+  E.mapa = mapa;
+  [["Manhã", 0, 720], ["Tarde", 720, 1080], ["Noite", 1080, 1440]].forEach(([nome, a, b]) => {
+    const hs = Object.keys(mapa).sort().filter(h => mins(h) >= a && mins(h) < b);
+    if (!hs.length) return;
+    const t = document.createElement("h3"); t.textContent = nome;
+    const w = document.createElement("div"); w.className = "horas";
+    hs.forEach(h => {
+      const x = document.createElement("button");
+      x.className = "hora" + (E.hora === h ? " sel" : ""); x.textContent = h;
+      x.onclick = () => { E.hora = h; E.prof = null; montarProfs(); avancar(2); };
+      w.append(x);
+    });
+    box.append(t, w);
+  });
+}
+
+function montarProfs() {
+  const box = $("profs"); box.innerHTML = "";
+  (E.mapa[E.hora] || []).forEach(id => {
+    const p = prof(id), b = document.createElement("button");
+    const av = p.foto ? `<img class="av" src="${p.foto}" alt="">` : `<span class="av">${p.nome[0]}</span>`;
+    b.className = "op prof";
+    b.innerHTML = `${av}<span><b>${p.nome}</b><small>${p.funcao}</small></span>`;
+    b.onclick = () => { E.prof = p; avancar(3); };
+    box.append(b);
+  });
+}
+
+$("confirmar").onclick = () => {
+  const nome = $("nome").value.trim(), zap = $("zap").value.replace(/\D/g, "");
+  const erro = $("erro");
+  if (nome.length < 2 || zap.length < 10) {
+    erro.hidden = false; erro.textContent = "Preencha seu nome e um WhatsApp com DDD.";
+    return;
+  }
+  erro.hidden = true;
+  const msg = `Olá! Quero agendar no ${CONFIG.SALAO}:\n${E.s.nome} com ${E.prof.nome}\n${dataLonga(E.data)}, às ${E.hora}\nNome: ${nome}\nWhatsApp: ${zap}`;
+  $("wa").href = `https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent(msg)}`;
+  $("passos").hidden = true; $("fim").hidden = false;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+render();
+</script>
+</body>
+</html>
