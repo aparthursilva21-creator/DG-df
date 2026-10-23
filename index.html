@@ -358,5 +358,10 @@ function toggleMobileMenu(){document.getElementById('mobile-menu').classList.tog
   els.forEach(function(el){var i=Array.prototype.indexOf.call(el.parentNode.children,el);el.classList.add('rev');el.style.setProperty('--d',(i%3)*.12+'s');io.observe(el)});
 })();
 </script>
+  <script>
+document.querySelectorAll('a[href^="https://wa.me/"]').forEach(function(a){
+  if(/agendar|garantir/i.test(a.textContent)){ a.href='agendamento.html'; a.removeAttribute('target'); }
+});
+</script>
 </body>
 </html>
