@@ -95,7 +95,7 @@ input{width:100%;margin-top:4px;background:var(--bg);border:1px solid var(--linh
 <div class="topo">
   <h1>Agende seu <em>horário</em></h1>
   <p>Escolha o serviço, o melhor dia e quem vai cuidar de você. Leva menos de um minuto.</p>
-  <span class="demo">Modo demonstração: horários ocupados simulados</span>
+  <span class="demo" id="demo">Modo demonstração: horários ocupados simulados</span>
 </div>
 <div class="wrap">
 <div>
@@ -131,7 +131,7 @@ const CONFIG = {
   SALAO: "DG Nails",
 
   // Número que RECEBE os pedidos: só dígitos, com 55 + DDD. (Exemplo falso!)
-  WHATSAPP: "5561999999999",
+  WHATSAPP: "5561993895357",
 
   // true = mostra o preço nos cards de serviço. false = esconde.
   EXIBIR_PRECOS: true,
@@ -143,14 +143,18 @@ const CONFIG = {
   DIAS_A_FRENTE: 30,
 
   // Antecedência mínima: não deixa marcar para daqui a menos de X horas.
-  ANTECEDENCIA_HORAS: 2
+  ANTECEDENCIA_HORAS: 2,
+
+  // Link do Apps Script (termina em /exec). Vazio = modo demonstração.
+  // Quando você colar o link aqui, a página passa a usar as agendas de verdade.
+  API: ""
 };
 
 /* PROFISSIONAIS
    id        : nome curto, sem espaço nem acento (usado nos serviços abaixo).
    nome      : como aparece para a cliente.
    funcao    : texto pequeno embaixo do nome.
-   foto      : caminho da imagem (ex.: "fotos/marcia.png"). "" = mostra a inicial.
+   foto      : caminho da imagem (ex.: "marcia.png"). "" = mostra a inicial.
    horarios  : dias em que ela atende. Chaves: dom, seg, ter, qua, qui, sex, sab.
                Cada dia é uma lista de [início, fim]. Dois blocos = pausa no meio.
                Dia que NÃO aparece = folga. */
@@ -164,7 +168,7 @@ const PROFISSIONAIS = [
       sex: [["09:00","12:00"],["13:00","18:00"]],
       sab: [["08:00","14:00"]]
     } },
-  { id: "marcia", nome: "Márcia", funcao: "Cabeleireira", foto: "fotos/marcia.png",
+  { id: "marcia", nome: "Márcia", funcao: "Cabeleireira", foto: "marcia.png",
     horarios: {
       ter: [["09:00","12:00"],["13:00","19:00"]],
       qua: [["09:00","12:00"],["13:00","19:00"]],
@@ -172,7 +176,7 @@ const PROFISSIONAIS = [
       sex: [["09:00","12:00"],["13:00","19:00"]],
       sab: [["08:00","16:00"]]
     } },
-  { id: "ingridy", nome: "Ingridy", funcao: "Cílios", foto: "fotos/ingridy.png",
+  { id: "ingridy", nome: "Ingridy", funcao: "Cílios", foto: "ingridy.png",
     horarios: {
       seg: [["10:00","12:00"],["13:00","18:00"]],
       qua: [["10:00","12:00"],["13:00","18:00"]],
@@ -186,13 +190,16 @@ const PROFISSIONAIS = [
    preco     : número, sem R$ (ex.: 150). Use 0 para não mostrar preço neste serviço.
    quem      : lista de ids das profissionais que fazem este serviço. */
 const SERVICOS = [
-  { nome: "Alongamento em fibra de vidro",         duracao: 120, preco: 150, quem: ["dionesia"] },
-  { nome: "Esmaltação em gel",      duracao: 60,  preco: 70,  quem: ["dionesia"] },
-  { nome: "Cutilagem",              duracao: 45,  preco: 40,  quem: ["dionesia"] },
-  { nome: "Spa dos pés",            duracao: 60,  preco: 90,  quem: ["dionesia"] },
-  { nome: "Limpeza de pele",        duracao: 60,  preco: 120, quem: ["dionesia"] },
-  { nome: "Corte e escova",         duracao: 60,  preco: 80,  quem: ["marcia"] },
-  { nome: "Extensão de cílios",  duracao: 120, preco: 160, quem: ["ingridy"] }
+  { nome: "Manicure tradicional",           duracao: 60,  preco: 40,  quem: ["dionesia"] },
+  { nome: "Banho de gel",                   duracao: 90,  preco: 90,  quem: ["dionesia"] },
+  { nome: "Esmaltação em gel nos pés",      duracao: 60,  preco: 60,  quem: ["dionesia"] },
+  { nome: "Alongamento em fibra de vidro",  duracao: 120, preco: 150, quem: ["dionesia"] },
+  { nome: "Esmaltação em gel e cutilagem",  duracao: 60,  preco: 70,  quem: ["dionesia"] },
+  { nome: "Extensão de cílios",             duracao: 120, preco: 160, quem: ["ingridy"] },
+  { nome: "Spa dos pés renovador",          duracao: 60,  preco: 90,  quem: ["dionesia"] },
+  { nome: "Spa labial",                     duracao: 30,  preco: 40,  quem: ["dionesia"] },
+  { nome: "Tratamentos capilares e escova", duracao: 60,  preco: 80,  quem: ["marcia"] },
+  { nome: "Limpeza de pele profunda",       duracao: 60,  preco: 120, quem: ["dionesia"] }
 ];
 
 /* ==========================================================================
@@ -210,13 +217,29 @@ const prof = id => PROFISSIONAIS.find(p => p.id === id);
 const dataCurta = d => d.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" });
 const dataLonga = d => d.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
 
-/* Este é o ÚNICO ponto que finge a agenda. Aqui sorteamos horários "ocupados".
-   Quando ligarmos no Google Agenda, esta função passa a consultar a agenda real. */
-function ocupado(pid, data, hora) {
+/* Horários ocupados.
+   Sem API: sorteio de demonstração.
+   Com API: lê os eventos que já existem na agenda do Google de cada profissional
+   (inclusive os que ela mesma criar, como almoço ou folga). */
+let OCUP = {};
+function ocupado(pid, data, hora, dur) {
+  if (CONFIG.API) {
+    const a = new Date(`${data}T${hora}:00-03:00`).getTime(), b = a + dur * 60000;
+    return (OCUP[pid] || []).some(([x, y]) => a < y && b > x);
+  }
   let h = 0;
   for (const c of pid + data + hora) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return h % 4 === 0;
 }
+function carregar() {
+  if (!CONFIG.API) return Promise.resolve();
+  const i = new Date(), f = new Date(); f.setDate(f.getDate() + CONFIG.DIAS_A_FRENTE + 1);
+  return fetch(`${CONFIG.API}?acao=ocupados&inicio=${iso(i)}&fim=${iso(f)}`)
+    .then(r => r.json()).then(d => { OCUP = d; })
+    .catch(() => { $("demo").hidden = false; $("demo").textContent = "Não foi possível carregar a agenda agora. Tente de novo em instantes."; });
+}
+let pronto = carregar();
+if (CONFIG.API) $("demo").hidden = true;
 
 function livres(p, d, s) {
   const out = [], agora = new Date();
@@ -224,7 +247,7 @@ function livres(p, d, s) {
     for (let m = mins(a); m + s.duracao <= mins(b); m += CONFIG.INTERVALO_MIN) {
       const dt = new Date(d); dt.setHours(0, m, 0, 0);
       if (dt - agora < CONFIG.ANTECEDENCIA_HORAS * 36e5) continue;
-      if (!ocupado(p.id, iso(d), hhmm(m))) out.push(hhmm(m));
+      if (!ocupado(p.id, iso(d), hhmm(m), s.duracao)) out.push(hhmm(m));
     }
   }
   return out;
@@ -271,7 +294,7 @@ SERVICOS.forEach(s => {
   b.onclick = () => {
     E.s = s; E.data = E.hora = E.prof = null;
     const h = new Date(); E.mes = new Date(h.getFullYear(), h.getMonth(), 1);
-    calendario(); horas(); avancar(1);
+    pronto.then(() => { calendario(); horas(); avancar(1); });
   };
   $("servicos").append(b);
 });
@@ -335,16 +358,37 @@ function montarProfs() {
 
 $("confirmar").onclick = () => {
   const nome = $("nome").value.trim(), zap = $("zap").value.replace(/\D/g, "");
-  const erro = $("erro");
+  const erro = $("erro"), btn = $("confirmar");
   if (nome.length < 2 || zap.length < 10) {
     erro.hidden = false; erro.textContent = "Preencha seu nome e um WhatsApp com DDD.";
     return;
   }
   erro.hidden = true;
   const msg = `Olá! Quero agendar no ${CONFIG.SALAO}:\n${E.s.nome} com ${E.prof.nome}\n${dataLonga(E.data)}, às ${E.hora}\nNome: ${nome}\nWhatsApp: ${zap}`;
-  $("wa").href = `https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent(msg)}`;
-  $("passos").hidden = true; $("fim").hidden = false;
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  const finalizar = () => {
+    $("wa").href = `https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent(msg)}`;
+    if (CONFIG.API) {
+      $("fim").querySelector("h2").textContent = "Agendamento confirmado";
+      $("fim").querySelector("p").textContent = `Seu horário com ${E.prof.nome} está reservado e ela já foi avisada. Se precisar de algo, é só chamar no WhatsApp.`;
+      $("wa").textContent = "Falar no WhatsApp";
+    }
+    $("passos").hidden = true; $("fim").hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  if (!CONFIG.API) return finalizar();
+  btn.disabled = true; btn.textContent = "Confirmando...";
+  fetch(CONFIG.API, { method: "POST", body: JSON.stringify({
+    prof: E.prof.id, servico: E.s.nome, duracao: E.s.duracao,
+    inicio: `${iso(E.data)}T${E.hora}:00-03:00`, nome, zap }) })
+    .then(r => r.json())
+    .then(r => { if (!r.ok) throw new Error(r.erro); finalizar(); })
+    .catch(e => {
+      const ocup = e.message === "ocupado";
+      erro.hidden = false;
+      erro.textContent = ocup ? "Esse horário acabou de ser reservado. Escolha outro." : "Não foi possível agendar agora. Tente de novo ou chame no WhatsApp.";
+      btn.disabled = false; btn.textContent = "Confirmar agendamento";
+      if (ocup) { pronto = carregar(); pronto.then(() => alterar(1)); }
+    });
 };
 
 render();
