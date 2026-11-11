@@ -819,7 +819,7 @@
                 duracaoMinutos:Number(document.getElementById('servico-duracao').value),
                 profissional:document.getElementById('servico-profissional').value,
                 descricao:document.getElementById('servico-descricao').value.trim(),
-                ativo:true,
+                ativo:id ? (servicosCache.find(s => s.id === id)?.ativo !== false) : true,
                 atualizadoEm:new Date().toISOString()
             };
             if (!dados.nome || !Number.isFinite(dados.preco) || dados.preco<0 || !Number.isInteger(dados.duracaoMinutos) || dados.duracaoMinutos<5) {
