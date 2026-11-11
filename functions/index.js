@@ -158,10 +158,6 @@ async function createBooking(data, source) {
   if (!schedule || !endClock || !fitsSchedule(schedule, time, endClock)) {
     throw new HttpsError("failed-precondition", "Esse horário está fora da agenda configurada para a profissional.");
   }
-  if ((Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5))) % SLOT_MINUTES !== 0) {
-    throw new HttpsError("failed-precondition", "Escolha um horário disponível em intervalos de 30 minutos.");
-  }
-
   const appointmentRef = db.collection("agendamentos").doc();
   const lockRef = db.collection("agenda_locks").doc(professionalId + "_" + date);
   const dateQuery = db.collection("agendamentos").where("data", "==", date);
