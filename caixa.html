@@ -550,6 +550,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-functions.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDZiMsjK-3aUMSybjZr6UAS3b8bVXKQ3Nw",
@@ -564,6 +565,9 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        const functions = getFunctions(app, "southamerica-east1");
+        const chamarCriarAgendamentoAdmin = httpsCallable(functions, "createAdminBooking");
+        const chamarAtualizarStatusAgendamento = httpsCallable(functions, "updateBookingStatus");
         const googleProvider = new GoogleAuthProvider();
         const EMAIL_ADMIN = "dionesiaguarina98@gmail.com";
 
@@ -1362,9 +1366,9 @@
         async function alterarStatusAgendamento(a,status) {
             if(!ehGestoraAutenticada) return;
             try {
-                await updateDoc(doc(db,'agendamentos',a.id),{status,atualizadoEm:new Date().toISOString()});
+                await chamarAtualizarStatusAgendamento({appointmentId:a.id,status});
                 a.status=status;
-                renderizarAgendamentosAdmin();
+                await carregarAgendamentosAdmin();
             } catch(err) { console.error(err); alert('Não foi possível atualizar o agendamento.'); }
         }
 
@@ -1400,12 +1404,14 @@
             };
             btn.disabled=true; btn.textContent='Salvando...'; msg.textContent='';
             try {
-                const ref=await addDoc(collection(db,'agendamentos'),novo);
-                agendamentosCache.push({id:ref.id,...novo});
+                await chamarCriarAgendamentoAdmin({
+                    serviceId:servico.id, professionalId:profissional.id,
+                    date, time:hora, customer:cliente, whatsapp
+                });
                 document.getElementById('form-agendamento-admin').reset();
                 document.getElementById('agenda-data').value=data;
                 prepararFormularioAgenda();
-                renderizarAgendamentosAdmin();
+                await carregarAgendamentosAdmin();
                 msg.textContent='Agendamento salvo com sucesso.';
             } catch(err) {
                 console.error('Erro ao salvar agendamento:',err);
