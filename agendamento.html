@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agendamento · Dionésia Guarino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf6f2;--linha:#e9ddd4;--rosa:#b9705c;--champ:#f1e1d6;--tinta:#1f1a17;--mudo:#7a6f68}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tinta);font:16px/1.6 Inter,sans-serif;-webkit-font-smoothing:antialiased}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 24px;background:#fff;border-bottom:1px solid var(--linha)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo i{width:44px;height:44px;border-radius:50%;background:#a8644f;color:#fff;display:grid;place-items:center;font:600 16px "Playfair Display",serif}
+.logo b{display:block;font:600 18px/1.2 "Playfair Display",serif;letter-spacing:.06em;text-transform:uppercase}
+.logo small{color:var(--rosa);font-size:11px;letter-spacing:.18em}
+.voltar{font-size:14px;color:var(--mudo);text-decoration:none}
+.topo{max-width:1080px;margin:0 auto;padding:52px 24px 4px}
+h1{font:600 clamp(36px,6vw,58px)/1.06 "Playfair Display",serif;letter-spacing:-.01em}
+h1 em{color:var(--rosa);font-style:normal}
+.topo p{color:var(--mudo);margin-top:12px;max-width:48ch}
+.demo{display:inline-block;margin-top:16px;background:var(--champ);border-radius:999px;padding:5px 14px;font-size:13px;color:#6b4637}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 24px 80px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px;align-items:start}
+@media(max-width:860px){.wrap{grid-template-columns:1fr}.resumo{position:static!important}}
+.passo{background:#fff;border:1px solid var(--linha);border-radius:24px;margin-bottom:14px;transition:box-shadow .25s,opacity .25s}
+.passo.aberto{box-shadow:0 22px 50px -24px rgba(90,50,35,.3)}
+.passo.bloq{opacity:.5}
+.cab{display:flex;align-items:center;gap:14px;padding:20px 24px}
+.n{width:30px;height:30px;border-radius:50%;border:1px solid var(--linha);display:grid;place-items:center;font-size:13px;font-weight:600;color:var(--mudo);flex:none}
+.aberto .n{background:var(--tinta);border-color:var(--tinta);color:#fff}
+.ok .n{background:var(--rosa);border-color:var(--rosa);color:#fff}
+h2{font:600 21px "Playfair Display",serif}
+.val{margin-left:auto;color:var(--mudo);font-size:14px;text-align:right}
+.aberto .val{display:none}
+.alt{display:none;background:none;border:0;color:var(--rosa);font:600 14px Inter,sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.ok .alt{display:inline}
+.passo:not(.aberto) .corpo{display:none}
+.corpo{padding:4px 24px 28px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--rosa);outline-offset:2px}
+.grade{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.op{display:flex;flex-direction:column;gap:4px;background:var(--bg);border:1px solid var(--linha);border-radius:18px;padding:16px 18px;text-align:left;transition:border-color .15s}
+.op:hover,.op.sel{border-color:var(--rosa)}
+.op b{font:600 17px/1.3 "Playfair Display",serif}
+.op small{color:var(--mudo);font-size:13.5px}
+.preco{color:var(--rosa);font-weight:600}
+.prof{flex-direction:row;align-items:center;gap:14px}
+.av{width:60px;height:60px;border-radius:50%;object-fit:cover;background:var(--champ);display:grid;place-items:center;font:600 24px "Playfair Display",serif;color:#a8644f;flex:none}
+.mes{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mes b{font:600 19px "Playfair Display",serif;text-transform:capitalize}
+.seta{width:38px;height:38px;border-radius:50%;border:1px solid var(--linha);background:#fff;font-size:18px;line-height:1}
+.seta:disabled{opacity:.3;cursor:default}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.cal i{font-style:normal;font-size:12px;color:var(--mudo);padding:4px 0}
+.d{aspect-ratio:1;max-height:48px;justify-self:center;width:100%;max-width:48px;border-radius:50%;border:0;background:none;font-weight:500}
+.d:hover:not(:disabled){background:var(--champ)}
+.d:disabled{color:#c9bdb5;cursor:default}
+.d.hoje{box-shadow:inset 0 0 0 1px var(--rosa)}
+.d.sel{background:var(--tinta);color:#fff}
+h3{font-size:13px;font-weight:600;color:var(--mudo);margin:22px 0 10px}
+.horas{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.hora{border:1px solid var(--linha);background:#fff;border-radius:12px;padding:10px 0;font-weight:500}
+.hora:hover{border-color:var(--tinta)}
+.hora.sel{background:var(--tinta);border-color:var(--tinta);color:#fff}
+label{display:block;margin-bottom:14px;color:var(--mudo);font-size:14px}
+input{width:100%;margin-top:4px;background:var(--bg);border:1px solid var(--linha);border-radius:14px;color:var(--tinta);padding:13px 15px;font:inherit}
+.cta{display:inline-block;background:var(--tinta);color:#fff;border:0;border-radius:999px;padding:16px 34px;font-weight:600;font-size:14px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none}
+.cta:hover{background:#3a2e29}
+.erro{color:#b3402a;margin:0 0 12px;font-size:14px}
+.resumo{position:sticky;top:24px;background:var(--tinta);color:#f5ece6;border-radius:28px;padding:30px 28px}
+.resumo h2{color:#fff;margin-bottom:14px}
+.lin{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-top:1px solid rgba(255,255,255,.12);font-size:14.5px}
+.lin span{color:#b3a59c}
+.lin b{font-weight:500;text-align:right}
+.lin b.vazio{color:#6f635b}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid rgba(255,255,255,.3);padding-top:16px;margin-top:4px}
+.total b{font:600 28px "Playfair Display",serif;color:#e8bfae}
+.nota{margin-top:18px;font-size:13px;color:#b3a59c}
+.fim{text-align:center;background:#fff;border:1px solid var(--linha);border-radius:28px;padding:56px 28px}
+.fim h2{font-size:28px;margin:18px 0 8px}
+.fim p{color:var(--mudo);margin:0 auto 26px;max-width:40ch}
+.fim svg{width:76px;height:76px}
+.fim circle,.fim path{fill:none;stroke:var(--rosa);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:220;stroke-dashoffset:220;animation:tr .9s ease forwards}
+.fim path{animation-delay:.4s}
+@keyframes tr{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:.01s!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i>DG</i><div><b>Dionésia Guarino</b><small>NAILS &amp; ESTÉTICA · DF</small></div></div>
+  <a class="voltar" href="index.html">Voltar ao site</a>
+</header>
+<div class="topo">
+  <h1>Agende seu <em>horário</em></h1>
+  <p>Escolha o serviço, o melhor dia e quem vai cuidar de você. Leva menos de um minuto.</p>
+  <span class="demo" id="demo">Horários consultados diretamente na agenda do estúdio</span>
+</div>
+<div class="wrap">
+<div>
+<div id="passos">
+  <section class="passo" id="s0"><div class="cab"><span class="n">1</span><h2>Serviço</h2><span class="val" id="v0"></span><button class="alt" id="a0">Alterar</button></div><div class="corpo"><div class="grade" id="servicos"></div></div></section>
+  <section class="passo" id="s1"><div class="cab"><span class="n">2</span><h2>Data e horário</h2><span class="val" id="v1"></span><button class="alt" id="a1">Alterar</button></div><div class="corpo"><div id="cal"></div><div id="horas"></div></div></section>
+  <section class="passo" id="s2"><div class="cab"><span class="n">3</span><h2>Profissional</h2><span class="val" id="v2"></span><button class="alt" id="a2">Alterar</button></div><div class="corpo"><div class="grade" id="profs"></div></div></section>
+  <section class="passo" id="s3"><div class="cab"><span class="n">4</span><h2>Seus dados</h2><span class="val" id="v3"></span></div><div class="corpo">
+    <label>Seu nome<input id="nome" autocomplete="name"></label>
+    <label>Seu WhatsApp, com DDD<input id="zap" inputmode="tel" autocomplete="tel" placeholder="(61) 99999-9999"></label>
+    <p class="erro" id="erro" hidden></p>
+    <button class="cta" id="confirmar">Confirmar agendamento</button>
+  </div></section>
+</div>
+<section class="fim" id="fim" hidden>
+  <svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="34"/><path d="M26 41l10 10 19-21"/></svg>
+  <h2>Solicitação enviada!</h2>
+  <p id="texto-sucesso">Seu pedido foi registrado. A equipe vai confirmar seu horário pelo WhatsApp.</p>
+  <a class="cta" id="wa" target="_blank" rel="noopener">Falar com a equipe</a>
+</section>
+</div>
+<aside class="resumo" id="resumo"></aside>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-functions.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDZiMsjK-3aUMSybjZr6UAS3b8bVXKQ3Nw",
+  authDomain: "dg-nails-caixa.firebaseapp.com",
+  projectId: "dg-nails-caixa",
+  storageBucket: "dg-nails-caixa.firebasestorage.app",
+  messagingSenderId: "975142262192",
+  appId: "1:975142262192:web:422733df09053d45417275",
+  measurementId: "G-VSFQKWPV26"
+};
+const app = initializeApp(firebaseConfig);
+const functions = getFunctions(app, "southamerica-east1");
+const chamarCatalogo = httpsCallable(functions, "publicCatalog");
+const consultarHorarios = httpsCallable(functions, "availableSlots");
+const criarAgendamento = httpsCallable(functions, "createPublicBooking");
+
+const CONFIG = { SALAO:"DG Nails", WHATSAPP:"5561993895357", DIAS_A_FRENTE:60 };
+const E = { s:null, data:null, hora:null, prof:null, passo:0, mes:null, mapa:{}, servicos:[], profissionais:[] };
+const $ = id => document.getElementById(id);
+const iso = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const mins = h => { const [a,b]=h.split(":"); return Number(a)*60+Number(b); };
+const brl = n => Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const dataCurta = d => d.toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"});
+const dataLonga = d => d.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});
+const nomeNormalizado = s => String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+const profissional = id => E.profissionais.find(p=>p.id===id);
+const profissionaisDoServico = () => {
+  const atribuido=nomeNormalizado(E.s?.profissional);
+  return E.profissionais.filter(p=>!atribuido||atribuido==="todas"||atribuido==="qualquer profissional"||nomeNormalizado(p.nome)===atribuido);
+};
+
+function mensagemSistema(texto, erro=false) {
+  const el=$("demo");
+  el.hidden=false;
+  el.textContent=texto;
+  el.style.color=erro?"#a33":"";
+}
+
+async function iniciar() {
+  try {
+    const result=await chamarCatalogo();
+    E.servicos=result.data.services||[];
+    E.profissionais=result.data.professionals||[];
+    renderizarServicos();
+    $("demo").hidden=true;
+    render();
+  } catch(err) {
+    console.error(err);
+    mensagemSistema("O agendamento online está temporariamente indisponível. Chame nossa equipe pelo WhatsApp.",true);
+    $("servicos").textContent="Não foi possível carregar os serviços. Tente novamente mais tarde.";
+  }
+}
+
+function renderizarServicos() {
+  const box=$("servicos");
+  box.innerHTML="";
+  if(!E.servicos.length) {
+    box.textContent="Nenhum serviço está disponível para agendamento online no momento.";
+    return;
+  }
+  E.servicos.forEach(s=>{
+    const b=document.createElement("button");
+    b.type="button"; b.className="op";
+    const title=document.createElement("b"); title.textContent=s.nome;
+    const small=document.createElement("small");
+    small.textContent=Number(s.duracaoMinutos)+" min"+(Number(s.preco)>0?" · "+brl(s.preco):"");
+    b.append(title,small);
+    b.addEventListener("click",()=>{
+      E.s=s; E.data=null; E.hora=null; E.prof=null; E.mapa={};
+      const hoje=new Date(); E.mes=new Date(hoje.getFullYear(),hoje.getMonth(),1);
+      calendario(); $("horas").innerHTML=""; avancar(1);
+    });
+    box.append(b);
+  });
+}
+
+function render() {
+  const vals=[E.s?.nome,E.data&&E.hora&&dataCurta(E.data)+", "+E.hora,E.prof?.nome,""];
+  for(let i=0;i<4;i++){
+    const el=$("s"+i);
+    el.className="passo"+(i===E.passo?" aberto":i<E.passo?" ok":" bloq");
+    $("v"+i).textContent=i<E.passo?(vals[i]||""):"";
+  }
+  resumo();
+}
+function avancar(i) {
+  E.passo=i; render();
+  $("s"+i).scrollIntoView({behavior:"smooth",block:"start"});
+}
+function alterar(i) {
+  if(i<=0){E.s=null;E.data=null;E.hora=null;E.prof=null;E.mapa={};}
+  if(i<=1){E.data=null;E.hora=null;E.prof=null;E.mapa={};}
+  if(i<=2) E.prof=null;
+  E.passo=i;
+  if(i===1&&E.mes) calendario();
+  if(i===2) montarProfs();
+  render();
+}
+[0,1,2].forEach(i=>$("a"+i).onclick=()=>alterar(i));
+
+function resumo() {
+  const box=$("resumo");
+  box.innerHTML="";
+  const h=document.createElement("h2"); h.textContent="Seu agendamento"; box.append(h);
+  const line=(k,v)=>{
+    const row=document.createElement("div"); row.className="lin";
+    const label=document.createElement("span"); label.textContent=k;
+    const value=document.createElement("b"); value.className=v?"":"vazio"; value.textContent=v||"—";
+    row.append(label,value); box.append(row);
+  };
+  line("Serviço",E.s?.nome);
+  line("Profissional",E.prof?.nome);
+  line("Data",E.data&&dataLonga(E.data));
+  line("Horário",E.hora);
+  line("Duração",E.s&&E.s.duracaoMinutos+" min");
+  if(E.s&&Number(E.s.preco)>0){
+    const total=document.createElement("div"); total.className="total";
+    const label=document.createElement("span"); label.textContent="Valor";
+    const value=document.createElement("b"); value.textContent=brl(E.s.preco);
+    total.append(label,value); box.append(total);
+  }
+  const note=document.createElement("p"); note.className="nota"; note.textContent="A equipe confirmará sua solicitação pelo WhatsApp.";
+  box.append(note);
+}
+
+function calendario() {
+  if(!E.mes) return;
+  const m=E.mes, hoje=new Date(); hoje.setHours(0,0,0,0);
+  const max=new Date(hoje); max.setDate(max.getDate()+CONFIG.DIAS_A_FRENTE);
+  const ultimo=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+  let h='<div class="mes"><button class="seta" id="ant" aria-label="Mês anterior">‹</button><b>'+m.toLocaleDateString("pt-BR",{month:"long",year:"numeric"})+'</b><button class="seta" id="prox" aria-label="Próximo mês">›</button></div><div class="cal">';
+  ["D","S","T","Q","Q","S","S"].forEach(x=>h+='<i>'+x+'</i>');
+  for(let i=0;i<m.getDay();i++) h+="<span></span>";
+  for(let d=1;d<=ultimo;d++){
+    const dt=new Date(m.getFullYear(),m.getMonth(),d);
+    const ok=dt>=hoje&&dt<=max;
+    const cls="d"+(+dt===+hoje?" hoje":"")+(E.data&&+dt===+E.data?" sel":"");
+    h+='<button type="button" class="'+cls+'" data-d="'+d+'" '+(ok?"":"disabled")+'>'+d+'</button>';
+  }
+  $("cal").innerHTML=h+"</div>";
+  $("ant").disabled=m<=new Date(hoje.getFullYear(),hoje.getMonth(),1);
+  $("prox").disabled=new Date(m.getFullYear(),m.getMonth()+1,1)>max;
+  $("ant").onclick=()=>{E.mes=new Date(m.getFullYear(),m.getMonth()-1,1);calendario();};
+  $("prox").onclick=()=>{E.mes=new Date(m.getFullYear(),m.getMonth()+1,1);calendario();};
+  $("cal").querySelectorAll(".d").forEach(b=>b.onclick=async()=>{
+    E.data=new Date(m.getFullYear(),m.getMonth(),Number(b.dataset.d));
+    E.hora=null;E.prof=null;E.mapa={};
+    calendario();await carregarHorariosDoDia();resumo();
+  });
+}
+
+async function carregarHorariosDoDia() {
+  const box=$("horas");
+  box.textContent="Consultando horários disponíveis...";
+  const date=iso(E.data);
+  try {
+    const results=await Promise.all(profissionaisDoServico().map(async p=>{
+      const r=await consultarHorarios({serviceId:E.s.id,professionalId:p.id,date});
+      return {id:p.id,slots:r.data.slots||[]};
+    }));
+    const mapa={};
+    results.forEach(r=>r.slots.forEach(h=>(mapa[h]=mapa[h]||[]).push(r.id)));
+    E.mapa=mapa;
+    renderizarHorarios();
+  } catch(err) {
+    console.error(err);
+    box.textContent="Não foi possível consultar os horários. Atualize a página ou fale conosco pelo WhatsApp.";
+  }
+}
+
+function renderizarHorarios() {
+  const box=$("horas");box.innerHTML="";
+  const entries=Object.keys(E.mapa).sort((a,b)=>mins(a)-mins(b));
+  if(!entries.length){
+    box.textContent="Não há horários disponíveis nesta data. Escolha outro dia.";
+    return;
+  }
+  [["Manhã",0,720],["Tarde",720,1080],["Noite",1080,1440]].forEach(([nome,a,b])=>{
+    const hs=entries.filter(h=>mins(h)>=a&&mins(h)<b);
+    if(!hs.length)return;
+    const title=document.createElement("h3");title.textContent=nome;
+    const wrap=document.createElement("div");wrap.className="horas";
+    hs.forEach(h=>{
+      const btn=document.createElement("button");btn.type="button";
+      btn.className="hora"+(E.hora===h?" sel":"");btn.textContent=h;
+      btn.onclick=()=>{E.hora=h;E.prof=null;montarProfs();avancar(2);};
+      wrap.append(btn);
+    });
+    box.append(title,wrap);
+  });
+}
+
+function montarProfs() {
+  const box=$("profs");box.innerHTML="";
+  (E.mapa[E.hora]||[]).forEach(id=>{
+    const p=profissional(id);if(!p)return;
+    const b=document.createElement("button");b.type="button";b.className="op prof";
+    const foto=p.nome.toLowerCase().includes("márcia")?"marcia.png":p.nome.toLowerCase().includes("ingrid")?"ingridy.png":"dg1.jpeg";
+    const av=document.createElement("img");av.className="av";av.src=foto;av.alt="";av.onerror=()=>{const span=document.createElement("span");span.className="av";span.textContent=p.nome[0];av.replaceWith(span);};
+    const text=document.createElement("span");
+    const name=document.createElement("b");name.textContent=p.nome;
+    const specialty=document.createElement("small");specialty.textContent=p.especialidade||"Profissional";
+    text.append(name,specialty);b.append(av,text);
+    b.onclick=()=>{E.prof=p;avancar(3);};
+    box.append(b);
+  });
+  if(!box.children.length)box.textContent="Nenhuma profissional disponível para esse horário. Escolha outro.";
+}
+
+$("confirmar").onclick=async()=>{
+  const nome=$("nome").value.trim(),zap=$("zap").value.replace(/\D/g,"");
+  const erro=$("erro"),btn=$("confirmar");
+  if(nome.length<2||zap.length<10||!E.s||!E.data||!E.hora||!E.prof){
+    erro.hidden=false;erro.textContent="Confira seu nome, WhatsApp e os dados do horário.";return;
+  }
+  erro.hidden=true;btn.disabled=true;btn.textContent="Enviando solicitação...";
+  try{
+    await criarAgendamento({
+      serviceId:E.s.id,professionalId:E.prof.id,date:iso(E.data),time:E.hora,
+      customer:nome,whatsapp:zap
+    });
+    const msg="Olá! Acabei de solicitar um horário no "+CONFIG.SALAO+": "+E.s.nome+" com "+E.prof.nome+", "+dataLonga(E.data)+" às "+E.hora+". Meu nome é "+nome+".";
+    $("wa").href="https://wa.me/"+CONFIG.WHATSAPP+"?text="+encodeURIComponent(msg);
+    $("passos").hidden=true;$("fim").hidden=false;
+    window.scrollTo({top:0,behavior:"smooth"});
+  }catch(err){
+    console.error(err);
+    erro.hidden=false;
+    erro.textContent=err.code==="functions/already-exists"?"Esse horário acabou de ser reservado. Escolha outro.":err.message||"Não foi possível registrar. Tente novamente.";
+    btn.disabled=false;btn.textContent="Confirmar agendamento";
+    if(err.code==="functions/already-exists") await carregarHorariosDoDia();
+  }
+};
+
+render();
+iniciar();
+</script>
+</body>
+</html>
