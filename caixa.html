@@ -170,6 +170,16 @@
             </div>
         </section>
 
+        <!-- NAVEGAÇÃO ENTRE ÁREAS DO PAINEL -->
+        <nav id="abas-admin" class="hidden bg-white p-2 rounded-2xl border border-goldAccent/20 shadow-sm flex flex-wrap gap-2 no-print" aria-label="Navegação do painel">
+            <button type="button" id="aba-btn-relatorios" onclick="window.trocarAbaAdmin('relatorios')" class="flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-brandDark text-white">
+                <i class="fa-solid fa-chart-line mr-2"></i>Relatórios
+            </button>
+            <button type="button" id="aba-btn-servicos" onclick="window.trocarAbaAdmin('servicos')" class="flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-nudeBg text-gray-600 hover:bg-roseLight">
+                <i class="fa-solid fa-list-check mr-2"></i>Cadastro de Serviços
+            </button>
+        </nav>
+
         <!-- PAINEL COMPLETO DA GESTORA (DIONÉSIA) -->
         <section id="painel-gestora" class="hidden space-y-6">
 
@@ -330,8 +340,8 @@
         </section>
 
 
-        <!-- CADASTRO DE SERVIÇOS — SEPARADO DOS RELATÓRIOS -->
-        <section id="gestao-servicos" class="space-y-6">
+        <!-- CADASTRO DE SERVIÇOS — ABA INDEPENDENTE -->
+        <section id="gestao-servicos" class="hidden space-y-6">
             <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-md border border-goldAccent/30 space-y-5">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-5">
                     <div>
@@ -532,9 +542,31 @@
             }
         };
 
+        window.trocarAbaAdmin = function(aba) {
+            if (!ehGestoraAutenticada) return;
+            const relatorios = document.getElementById('painel-gestora');
+            const servicos = document.getElementById('gestao-servicos');
+            const btnRelatorios = document.getElementById('aba-btn-relatorios');
+            const btnServicos = document.getElementById('aba-btn-servicos');
+            const mostrarRelatorios = aba !== 'servicos';
+
+            relatorios.classList.toggle('hidden', !mostrarRelatorios);
+            servicos.classList.toggle('hidden', mostrarRelatorios);
+
+            btnRelatorios.className = 'flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ' +
+                (mostrarRelatorios ? 'bg-brandDark text-white' : 'bg-nudeBg text-gray-600 hover:bg-roseLight');
+            btnServicos.className = 'flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ' +
+                (!mostrarRelatorios ? 'bg-brandDark text-white' : 'bg-nudeBg text-gray-600 hover:bg-roseLight');
+
+            if (!mostrarRelatorios) {
+                carregarServicos();
+            }
+            window.scrollTo({ top: document.getElementById('abas-admin').offsetTop - 90, behavior: 'smooth' });
+        };
+
         window.abrirModalAuth = function() {
             if (ehGestoraAutenticada) {
-                document.getElementById('painel-gestora').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('abas-admin').scrollIntoView({ behavior: 'smooth' });
                 return;
             }
             entrarComGoogle();
@@ -561,7 +593,10 @@
                 ehGestoraAutenticada = true;
                 telaLogin.classList.add('hidden');
                 areaAdmin.classList.remove('hidden');
+                document.getElementById('abas-admin').classList.remove('hidden');
                 document.getElementById('painel-gestora').classList.remove('hidden');
+                document.getElementById('gestao-servicos').classList.add('hidden');
+                window.trocarAbaAdmin('relatorios');
                 document.getElementById('status-modo').innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-emeraldWhatsapp animate-pulse"></span><span>Administradora autenticada</span>';
                 document.getElementById('btn-gestora').innerHTML = '<i class="fa-solid fa-unlock"></i><span class="hidden sm:inline">Painel da Gestora</span>';
                 carregarLançamentosDoFirebase();
@@ -570,7 +605,9 @@
                 ehGestoraAutenticada = false;
                 areaAdmin.classList.add('hidden');
                 telaLogin.classList.remove('hidden');
+                document.getElementById('abas-admin').classList.add('hidden');
                 document.getElementById('painel-gestora').classList.add('hidden');
+                document.getElementById('gestao-servicos').classList.add('hidden');
                 document.getElementById('status-modo').innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-gray-400"></span><span>Aguardando autenticação</span>';
                 document.getElementById('btn-gestora').innerHTML = '<i class="fa-solid fa-lock"></i><span class="hidden sm:inline">Área da Gestora</span>';
                 if (user) {
