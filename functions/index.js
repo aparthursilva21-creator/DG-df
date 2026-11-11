@@ -1,13 +1,11 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
-const crypto = require("node:crypto");
 
 initializeApp();
 const db = getFirestore();
 const REGION = "southamerica-east1";
 const ADMIN_EMAIL = "dionesiaguarina98@gmail.com";
-const TIME_ZONE = "America/Sao_Paulo";
 const SLOT_MINUTES = 30;
 const MAX_DAYS_AHEAD = 60;
 const MIN_ADVANCE_HOURS = 2;
@@ -42,6 +40,12 @@ function localDateTime(date, time) {
   if (!validDate(date) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) return null;
   const value = new Date(date + "T" + time + ":00-03:00");
   return Number.isNaN(value.getTime()) ? null : value;
+}
+
+function clockAfter(time, duration) {
+  const minute = Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5)) + duration;
+  if (minute >= 1440) return null;
+  return String(Math.floor(minute / 60)).padStart(2, "0") + ":" + String(minute % 60).padStart(2, "0");
 }
 
 function scheduleFor(professional, date) {
