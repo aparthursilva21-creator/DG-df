@@ -149,8 +149,9 @@ async function createBooking(data, source) {
   assertDateWindow(date, start);
 
   const end = new Date(startMs + duration * 60000);
+  const endClock = clockAfter(time, duration);
   const schedule = scheduleFor(professional, date);
-  if (!schedule || !fitsSchedule(schedule, time, end.toTimeString().slice(0, 5))) {
+  if (!schedule || !endClock || !fitsSchedule(schedule, time, endClock)) {
     throw new HttpsError("failed-precondition", "Esse horário está fora da agenda configurada para a profissional.");
   }
   if ((Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5))) % SLOT_MINUTES !== 0) {
@@ -214,6 +215,8 @@ exports.availableSlots = onCall({ region: REGION, cors: ALLOWED_ORIGINS }, async
 
   const duration = Number(service.duracaoMinutos);
   if (!Number.isInteger(duration) || duration < 5 || duration > 480) return { slots: [] };
+  const dateStart = localDateTime(date, "00:00");
+  if (!dateStart || dateStart.getTime() > Date.now() + MAX_DAYS_AHEAD * 86400000) return { slots: [] };
   const schedule = scheduleFor(professional, date);
   if (!schedule) return { slots: [] };
 
@@ -227,8 +230,9 @@ exports.availableSlots = onCall({ region: REGION, cors: ALLOWED_ORIGINS }, async
     const time = String(Math.floor(minute / 60)).padStart(2, "0") + ":" + String(minute % 60).padStart(2, "0");
     const start = localDateTime(date, time);
     const end = new Date(start.getTime() + duration * 60000);
+    const endClock = clockAfter(time, duration);
     if (start.getTime() < now + MIN_ADVANCE_HOURS * 3600000) continue;
-    if (!fitsSchedule(schedule, time, end.toTimeString().slice(0, 5))) continue;
+    if (!endClock || !fitsSchedule(schedule, time, endClock)) continue;
     if (!isConflict(start.getTime(), end.getTime(), conflicts)) slots.push(time);
   }
   return { slots };
