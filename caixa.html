@@ -1004,7 +1004,11 @@
             document.getElementById('servico-categoria').value=s.categoria||'';
             document.getElementById('servico-preco').value=s.preco??'';
             document.getElementById('servico-duracao').value=s.duracaoMinutos??'';
-            document.getElementById('servico-profissional').value=s.profissional||'Dionésia';
+            const selectProfissional = document.getElementById('servico-profissional');
+            if (s.profissional && ![...selectProfissional.options].some(o => o.value === s.profissional)) {
+                selectProfissional.add(new Option(s.profissional + ' (inativa/legado)', s.profissional));
+            }
+            selectProfissional.value=s.profissional||'Dionésia';
             document.getElementById('servico-descricao').value=s.descricao||'';
             document.getElementById('titulo-form-servico').textContent='Editar serviço';
             document.getElementById('btn-cancelar-edicao').classList.remove('hidden');
