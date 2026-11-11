@@ -165,13 +165,26 @@ async function createBooking(data, source) {
   const appointmentRef = db.collection("agendamentos").doc();
   const lockRef = db.collection("agenda_locks").doc(professionalId + "_" + date);
   const dateQuery = db.collection("agendamentos").where("data", "==", date);
+  const rateId = crypto.createHash("sha256").update(whatsapp).digest("hex");
+  const rateRef = db.collection("booking_rate_limits").doc(rateId);
 
   await db.runTransaction(async tx => {
-    const [lockSnap, appointmentsSnap] = await Promise.all([tx.get(lockRef), tx.get(dateQuery)]);
+    const reads = [tx.get(lockRef), tx.get(dateQuery)];
+    if (source === "public") reads.push(tx.get(rateRef));
+    const results = await Promise.all(reads);
+    const lockSnap = results[0];
+    const appointmentsSnap = results[1];
+    const rateSnap = source === "public" ? results[2] : null;
     const existing = appointmentsSnap.docs.map(d => ({ id: d.id, ...d.data() }))
       .filter(a => a.profissionalId === professionalId && a.status !== "cancelado");
     if (isConflict(startMs, end.getTime(), existing)) {
       throw new HttpsError("already-exists", "Esse horário acabou de ser reservado. Escolha outro.");
+    }
+    if (source === "public") {
+      const now = Date.now();
+      const recent = (rateSnap.data()?.timestamps || []).filter(value => now - value < 60 * 60 * 1000);
+      if (recent.length >= 3) throw new HttpsError("resource-exhausted", "Limite de solicitações atingido para este WhatsApp. Tente novamente mais tarde.");
+      tx.set(rateRef, { timestamps: [...recent, now], atualizadoEm: FieldValue.serverTimestamp() });
     }
     tx.set(lockRef, { version: Number(lockSnap.data()?.version || 0) + 1, atualizadoEm: FieldValue.serverTimestamp() });
     tx.create(appointmentRef, {
