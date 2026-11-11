@@ -184,6 +184,9 @@
             <button type="button" id="aba-btn-horarios" onclick="window.trocarAbaAdmin('horarios')" class="flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-nudeBg text-gray-600 hover:bg-roseLight">
                 <i class="fa-solid fa-clock mr-2"></i>Agenda e Horários
             </button>
+            <button type="button" id="aba-btn-agenda" onclick="window.trocarAbaAdmin('agenda')" class="flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-nudeBg text-gray-600 hover:bg-roseLight">
+                <i class="fa-solid fa-calendar-check mr-2"></i>Agenda de Atendimentos
+            </button>
         </nav>
 
         <!-- PAINEL COMPLETO DA GESTORA (DIONÉSIA) -->
@@ -471,6 +474,68 @@
             </div>
         </section>
 
+        <!-- AGENDA DE ATENDIMENTOS -->
+        <section id="gestao-agenda" class="hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-md border border-goldAccent/30 space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-gray-100 pb-5">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-goldAccent">Organização dos atendimentos</span>
+                        <h2 class="text-2xl font-serif font-bold">Agenda de Atendimentos</h2>
+                        <p class="text-xs text-gray-500 mt-1">Cadastre, acompanhe e atualize os horários das clientes em um só lugar.</p>
+                    </div>
+                    <button type="button" id="btn-atualizar-agenda" class="bg-amber-50 text-amber-700 border border-amber-200 px-4 py-3 rounded-xl text-xs font-semibold"><i class="fa-solid fa-rotate mr-1"></i> Atualizar agenda</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-nudeBg p-4 rounded-2xl">
+                    <label class="text-xs font-semibold">Dia da agenda
+                        <input type="date" id="agenda-data-filtro" class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm">
+                    </label>
+                    <label class="text-xs font-semibold">Profissional
+                        <select id="agenda-profissional-filtro" class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm">
+                            <option value="todas">Todas as profissionais</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <form id="form-agendamento-admin" class="lg:col-span-2 bg-nudeBg rounded-2xl p-5 space-y-3">
+                        <h3 class="font-bold text-sm">Adicionar agendamento</h3>
+                        <label class="block text-[11px] font-semibold">Nome da cliente
+                            <input id="agenda-cliente" required maxlength="100" class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm" placeholder="Nome da cliente">
+                        </label>
+                        <label class="block text-[11px] font-semibold">WhatsApp
+                            <input id="agenda-whatsapp" inputmode="tel" maxlength="20" class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm" placeholder="(61) 99999-9999">
+                        </label>
+                        <label class="block text-[11px] font-semibold">Serviço
+                            <select id="agenda-servico" required class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm"></select>
+                        </label>
+                        <label class="block text-[11px] font-semibold">Profissional
+                            <select id="agenda-profissional" required class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm"></select>
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="text-[11px] font-semibold">Data
+                                <input type="date" id="agenda-data" required class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm">
+                            </label>
+                            <label class="text-[11px] font-semibold">Horário
+                                <input type="time" id="agenda-hora" required class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm">
+                            </label>
+                        </div>
+                        <p id="agenda-detalhe-servico" class="text-[11px] text-gray-500">A duração e o valor serão preenchidos pelo cadastro do serviço.</p>
+                        <button type="submit" id="btn-salvar-agendamento" class="w-full bg-brandDark text-white font-bold py-3 rounded-xl text-xs"><i class="fa-solid fa-calendar-plus mr-2"></i>Salvar agendamento</button>
+                        <p id="msg-agendamento" class="text-xs text-gray-500" role="status"></p>
+                    </form>
+                    <div class="lg:col-span-3 space-y-3">
+                        <div class="flex items-center justify-between gap-3">
+                            <h3 class="font-bold text-sm">Compromissos do dia</h3>
+                            <span id="agenda-contagem" class="text-[11px] text-gray-500">0 agendamentos</span>
+                        </div>
+                        <div id="lista-agendamentos" class="space-y-3">
+                            <p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Carregando agenda...</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-[11px] text-gray-400 border-t border-gray-100 pt-4">Esta é a primeira etapa da agenda interna. Os agendamentos criados aqui ficam salvos no Firebase. A integração com o agendamento público, Google Agenda e notificações será conectada nas próximas etapas, após configurar o backend seguro.</p>
+            </div>
+        </section>
+
     </main>
 
     <!-- RODAPÉ -->
@@ -546,6 +611,11 @@
             document.getElementById('filtro-profissional').addEventListener('change', renderizarLançamentos);
             document.getElementById('data-inicio').addEventListener('change', renderizarLançamentos);
             document.getElementById('data-fim').addEventListener('change', renderizarLançamentos);
+            document.getElementById('form-agendamento-admin').addEventListener('submit', salvarAgendamentoAdmin);
+            document.getElementById('btn-atualizar-agenda').addEventListener('click', carregarAgendamentosAdmin);
+            document.getElementById('agenda-data-filtro').addEventListener('change', renderizarAgendamentosAdmin);
+            document.getElementById('agenda-profissional-filtro').addEventListener('change', renderizarAgendamentosAdmin);
+            document.getElementById('agenda-servico').addEventListener('change', atualizarDetalheServicoAgenda);
         });
 
         async function carregarLançamentosDoFirebase() {
@@ -620,13 +690,15 @@
                 relatorios: document.getElementById('painel-gestora'),
                 servicos: document.getElementById('gestao-servicos'),
                 profissionais: document.getElementById('gestao-profissionais'),
-                horarios: document.getElementById('gestao-horarios')
+                horarios: document.getElementById('gestao-horarios'),
+                agenda: document.getElementById('gestao-agenda')
             };
             const botoes = {
                 relatorios: document.getElementById('aba-btn-relatorios'),
                 servicos: document.getElementById('aba-btn-servicos'),
                 profissionais: document.getElementById('aba-btn-profissionais'),
-                horarios: document.getElementById('aba-btn-horarios')
+                horarios: document.getElementById('aba-btn-horarios'),
+                agenda: document.getElementById('aba-btn-agenda')
             };
             const abaAtiva = secoes[aba] ? aba : 'relatorios';
             Object.entries(secoes).forEach(([chave, secao]) => {
@@ -637,6 +709,10 @@
             if (abaAtiva === 'servicos') carregarServicos();
             if (abaAtiva === 'profissionais') carregarProfissionais();
             if (abaAtiva === 'horarios') carregarProfissionais().then(renderizarSeletorHorarios);
+            if (abaAtiva === 'agenda') Promise.all([carregarProfissionais(), carregarServicos()]).then(() => {
+                prepararFormularioAgenda();
+                carregarAgendamentosAdmin();
+            });
             window.scrollTo({ top: document.getElementById('abas-admin').offsetTop - 90, behavior: 'smooth' });
         };
 
@@ -1187,6 +1263,154 @@
                 await updateDoc(doc(db,'servicos',s.id),{ativo:novoStatus,atualizadoEm:new Date().toISOString()});
                 await carregarServicos();
             } catch(err) { alert('Não foi possível atualizar o serviço.'); console.error(err); }
+        }
+
+        function prepararFormularioAgenda() {
+            const prof = document.getElementById('agenda-profissional');
+            const filtro = document.getElementById('agenda-profissional-filtro');
+            const serv = document.getElementById('agenda-servico');
+            const profAtual = prof.value;
+            const filtroAtual = filtro.value || 'todas';
+            const servAtual = serv.value;
+            prof.innerHTML = '';
+            profissionaisCache.filter(p => p.ativo !== false).forEach(p => prof.add(new Option(p.nome,p.id)));
+            filtro.innerHTML = '<option value="todas">Todas as profissionais</option>';
+            profissionaisCache.forEach(p => filtro.add(new Option(p.nome+(p.ativo===false?' (inativa)':''),p.id)));
+            serv.innerHTML = '';
+            servicosCache.filter(s => s.ativo !== false).forEach(s => serv.add(new Option(s.nome,s.id)));
+            if ([...prof.options].some(o=>o.value===profAtual)) prof.value=profAtual;
+            if ([...filtro.options].some(o=>o.value===filtroAtual)) filtro.value=filtroAtual;
+            if ([...serv.options].some(o=>o.value===servAtual)) serv.value=servAtual;
+            const hoje = new Date();
+            const dataLocal = new Date(hoje.getTime()-hoje.getTimezoneOffset()*60000).toISOString().slice(0,10);
+            if (!document.getElementById('agenda-data').value) document.getElementById('agenda-data').value=dataLocal;
+            if (!document.getElementById('agenda-data-filtro').value) document.getElementById('agenda-data-filtro').value=dataLocal;
+            atualizarDetalheServicoAgenda();
+        }
+
+        function atualizarDetalheServicoAgenda() {
+            const s=servicosCache.find(x=>x.id===document.getElementById('agenda-servico').value);
+            document.getElementById('agenda-detalhe-servico').textContent = s
+                ? 'Duração: '+Number(s.duracaoMinutos||0)+' min • Valor cadastrado: R$ '+Number(s.preco||0).toFixed(2).replace('.',',')
+                : 'Cadastre e ative serviços para adicioná-los à agenda.';
+        }
+
+        function dataHoraAgenda(data,hora) {
+            const [a,m,d]=data.split('-').map(Number);
+            const [hh,mm]=hora.split(':').map(Number);
+            return new Date(a,m-1,d,hh,mm,0,0).getTime();
+        }
+
+        let agendamentosCache=[];
+
+        async function carregarAgendamentosAdmin() {
+            if (!ehGestoraAutenticada) return;
+            const alvo=document.getElementById('lista-agendamentos');
+            alvo.innerHTML='<p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Atualizando agenda...</p>';
+            try {
+                const snap=await getDocs(collection(db,'agendamentos'));
+                agendamentosCache=snap.docs.map(d=>({id:d.id,...d.data()}));
+                renderizarAgendamentosAdmin();
+            } catch(err) {
+                console.error('Erro ao carregar agendamentos:',err);
+                alvo.innerHTML='<p class="text-sm text-red-600 p-4 bg-red-50 rounded-xl">Não foi possível carregar os agendamentos. Verifique sua conexão.</p>';
+            }
+        }
+
+        function renderizarAgendamentosAdmin() {
+            const alvo=document.getElementById('lista-agendamentos');
+            if (!alvo) return;
+            const data=document.getElementById('agenda-data-filtro').value;
+            const profissional=document.getElementById('agenda-profissional-filtro').value;
+            const lista=agendamentosCache.filter(a=>a.data===data && (profissional==='todas'||a.profissionalId===profissional))
+                .sort((a,b)=>(a.inicioMs||0)-(b.inicioMs||0));
+            document.getElementById('agenda-contagem').textContent=lista.length+' agendamento(s)';
+            alvo.innerHTML='';
+            if (!lista.length) {
+                alvo.innerHTML='<p class="text-sm text-gray-500 p-5 bg-nudeBg rounded-xl">Nenhum agendamento para este dia. Você pode cadastrar um horário pelo formulário ao lado.</p>';
+                return;
+            }
+            lista.forEach(a=>{
+                const card=document.createElement('article');
+                card.className='border border-gray-200 rounded-2xl p-4 flex flex-col gap-3';
+                const topo=document.createElement('div');
+                topo.className='flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2';
+                const info=document.createElement('div');
+                const nome=document.createElement('p'); nome.className='font-bold text-sm'; nome.textContent=(a.hora||'--:--')+' · '+(a.cliente||'Cliente');
+                const detalhe=document.createElement('p'); detalhe.className='text-xs text-gray-500 mt-1'; detalhe.textContent=(a.servico||'Serviço')+' • '+(a.profissional||'Profissional')+' • '+(a.duracaoMinutos||0)+' min';
+                const contato=document.createElement('p'); contato.className='text-xs text-gray-500 mt-1'; contato.textContent=a.whatsapp?'WhatsApp: '+a.whatsapp:'WhatsApp não informado';
+                info.append(nome,detalhe,contato);
+                const status=document.createElement('span');
+                const cores={aguardando:'bg-amber-50 text-amber-700',confirmado:'bg-emerald-50 text-emerald-700',concluido:'bg-sky-50 text-sky-700',cancelado:'bg-gray-100 text-gray-500'};
+                status.className='text-[10px] font-bold rounded-full px-3 py-1 self-start '+(cores[a.status]||cores.aguardando);
+                status.textContent=({aguardando:'Aguardando',confirmado:'Confirmado',concluido:'Concluído',cancelado:'Cancelado'})[a.status]||'Aguardando';
+                topo.append(info,status);
+                const acoes=document.createElement('div'); acoes.className='flex flex-wrap gap-2';
+                [['confirmado','Confirmar'],['concluido','Concluir'],['cancelado','Cancelar']].forEach(([statusNovo,label])=>{
+                    if(a.status===statusNovo) return;
+                    const b=document.createElement('button'); b.type='button'; b.className='text-[11px] font-semibold px-3 py-2 rounded-lg '+(statusNovo==='cancelado'?'bg-gray-100 text-gray-600':'bg-roseLight text-brandDark');
+                    b.textContent=label; b.addEventListener('click',()=>alterarStatusAgendamento(a,statusNovo)); acoes.append(b);
+                });
+                if(a.status==='cancelado') {
+                    const b=document.createElement('button'); b.type='button'; b.className='text-[11px] font-semibold px-3 py-2 rounded-lg bg-emerald-50 text-emerald-700'; b.textContent='Reativar';
+                    b.addEventListener('click',()=>alterarStatusAgendamento(a,'aguardando')); acoes.append(b);
+                }
+                card.append(topo,acoes); alvo.append(card);
+            });
+        }
+
+        async function alterarStatusAgendamento(a,status) {
+            if(!ehGestoraAutenticada) return;
+            try {
+                await updateDoc(doc(db,'agendamentos',a.id),{status,atualizadoEm:new Date().toISOString()});
+                a.status=status;
+                renderizarAgendamentosAdmin();
+            } catch(err) { console.error(err); alert('Não foi possível atualizar o agendamento.'); }
+        }
+
+        async function salvarAgendamentoAdmin(e) {
+            e.preventDefault();
+            if(!ehGestoraAutenticada) return;
+            const msg=document.getElementById('msg-agendamento');
+            const btn=document.getElementById('btn-salvar-agendamento');
+            const cliente=document.getElementById('agenda-cliente').value.trim();
+            const whatsapp=document.getElementById('agenda-whatsapp').value.trim();
+            const servico=servicosCache.find(s=>s.id===document.getElementById('agenda-servico').value);
+            const profissional=profissionaisCache.find(p=>p.id===document.getElementById('agenda-profissional').value);
+            const data=document.getElementById('agenda-data').value;
+            const hora=document.getElementById('agenda-hora').value;
+            if(!cliente||!servico||!profissional||!data||!hora) { msg.textContent='Preencha todos os campos obrigatórios.'; return; }
+            const duracao=Number(servico.duracaoMinutos);
+            if(!Number.isInteger(duracao)||duracao<5) { msg.textContent='Esse serviço precisa ter uma duração válida no cadastro.'; return; }
+            const inicioMs=dataHoraAgenda(data,hora), fimMs=inicioMs+duracao*60000;
+            if(inicioMs<Date.now()) { msg.textContent='Escolha um horário futuro.'; return; }
+            const conflito=agendamentosCache.some(a=>{
+                if(a.profissionalId!==profissional.id||a.data!==data||a.status==='cancelado') return false;
+                const inicio=a.inicioMs||dataHoraAgenda(a.data,a.hora);
+                const fim=a.fimMs||inicio+Number(a.duracaoMinutos||0)*60000;
+                return inicioMs<fim && fimMs>inicio;
+            });
+            if(conflito) { msg.textContent='Esse horário conflita com outro compromisso dessa profissional. Escolha outro.'; return; }
+            const novo={
+                cliente,whatsapp,servico:servico.nome,servicoId:servico.id,
+                profissional:profissional.nome,profissionalId:profissional.id,
+                data,hora,duracaoMinutos:duracao,valor:Number(servico.preco||0),
+                inicioMs,fimMs,status:'confirmado',origem:'painel',
+                criadoEm:new Date().toISOString(),atualizadoEm:new Date().toISOString()
+            };
+            btn.disabled=true; btn.textContent='Salvando...'; msg.textContent='';
+            try {
+                const ref=await addDoc(collection(db,'agendamentos'),novo);
+                agendamentosCache.push({id:ref.id,...novo});
+                document.getElementById('form-agendamento-admin').reset();
+                document.getElementById('agenda-data').value=data;
+                prepararFormularioAgenda();
+                renderizarAgendamentosAdmin();
+                msg.textContent='Agendamento salvo com sucesso.';
+            } catch(err) {
+                console.error('Erro ao salvar agendamento:',err);
+                msg.textContent='Não foi possível salvar. Confira a conexão e as permissões do Firebase.';
+            } finally { btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-calendar-plus mr-2"></i>Salvar agendamento'; }
         }
 
         function exportarCSV() {
