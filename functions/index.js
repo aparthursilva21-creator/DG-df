@@ -275,6 +275,24 @@ exports.updateBookingStatus = onCall({ region: REGION, cors: ALLOWED_ORIGINS }, 
   await db.runTransaction(async tx => {
     const snap = await tx.get(ref);
     if (!snap.exists) throw new HttpsError("not-found", "Agendamento não encontrado.");
+    const current = snap.data();
+    if (status !== "cancelado") {
+      const lockRef = db.collection("agenda_locks").doc(current.profissionalId + "_" + current.data);
+      const query = db.collection("agendamentos").where("data", "==", current.data);
+      const [lockSnap, appointmentsSnap] = await Promise.all([tx.get(lockRef), tx.get(query)]);
+      const others = appointmentsSnap.docs
+        .filter(d => d.id !== id)
+        .map(d => d.data())
+        .filter(a => a.profissionalId === current.profissionalId && a.status !== "cancelado");
+      if (isConflict(Number(current.inicioMs), Number(current.fimMs), others)) {
+        throw new HttpsError("already-exists", "Não é possível reativar este agendamento porque o horário já está ocupado.");
+      }
+      tx.set(lockRef, { version: Number(lockSnap.data()?.version || 0) + 1, atualizadoEm: FieldValue.serverTimestamp() });
+    } else {
+      const lockRef = db.collection("agenda_locks").doc(current.profissionalId + "_" + current.data);
+      const lockSnap = await tx.get(lockRef);
+      tx.set(lockRef, { version: Number(lockSnap.data()?.version || 0) + 1, atualizadoEm: FieldValue.serverTimestamp() });
+    }
     tx.update(ref, { status, atualizadoEm: FieldValue.serverTimestamp() });
   });
   return { ok: true };
