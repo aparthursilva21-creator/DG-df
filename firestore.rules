@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'dionesiaguarina98@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    // Somente a conta Google autorizada pode ler ou alterar dados do sistema.
+    // A regra também protege novas coleções que forem criadas para agenda,
+    // serviços, profissionais, clientes e configurações.
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
