@@ -178,6 +178,9 @@
             <button type="button" id="aba-btn-servicos" onclick="window.trocarAbaAdmin('servicos')" class="flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-nudeBg text-gray-600 hover:bg-roseLight">
                 <i class="fa-solid fa-list-check mr-2"></i>Cadastro de Serviços
             </button>
+            <button type="button" id="aba-btn-profissionais" onclick="window.trocarAbaAdmin('profissionais')" class="flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-nudeBg text-gray-600 hover:bg-roseLight">
+                <i class="fa-solid fa-user-group mr-2"></i>Profissionais
+            </button>
         </nav>
 
         <!-- PAINEL COMPLETO DA GESTORA (DIONÉSIA) -->
@@ -405,6 +408,43 @@
             </div>
         </section>
 
+        <!-- GESTÃO DE PROFISSIONAIS -->
+        <section id="gestao-profissionais" class="hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-md border border-goldAccent/30 space-y-5">
+                <div class="border-b border-gray-100 pb-5">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-goldAccent">Equipe do salão</span>
+                    <h2 class="text-2xl font-serif font-bold">Cadastro de Profissionais</h2>
+                    <p class="text-xs text-gray-500 mt-1">Adicione, edite ou desative profissionais. Os cadastros inativos deixam de aparecer em novos lançamentos e serviços, mas permanecem no histórico.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <form id="form-profissional" class="lg:col-span-2 bg-nudeBg rounded-2xl p-5 space-y-3">
+                        <h3 id="titulo-form-profissional" class="font-bold text-sm">Adicionar profissional</h3>
+                        <input type="hidden" id="profissional-id">
+                        <label class="block text-[11px] font-semibold">Nome da profissional
+                            <input id="profissional-nome" required maxlength="80" class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm" placeholder="Nome completo">
+                        </label>
+                        <label class="block text-[11px] font-semibold">Especialidade (opcional)
+                            <input id="profissional-especialidade" maxlength="100" class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm" placeholder="Ex.: Manicure, cabelo, cílios">
+                        </label>
+                        <div class="flex gap-2">
+                            <button type="submit" id="btn-salvar-profissional" class="flex-1 bg-brandDark text-white font-bold py-3 rounded-xl text-xs">Salvar profissional</button>
+                            <button type="button" id="btn-cancelar-profissional" class="hidden bg-gray-200 px-4 rounded-xl text-xs">Cancelar</button>
+                        </div>
+                        <p id="msg-profissional" class="text-xs text-gray-500" role="status"></p>
+                    </form>
+                    <div class="lg:col-span-3 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-sm">Equipe cadastrada</h3>
+                            <button type="button" id="btn-atualizar-profissionais" class="text-xs text-goldAccent font-semibold"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+                        </div>
+                        <div id="lista-profissionais" class="space-y-2">
+                            <p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Carregando profissionais...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- RODAPÉ -->
@@ -440,6 +480,7 @@
 
         let todosLancamentosGlobal = [];
         let servicosCache = [];
+        let profissionaisCache = [];
         const referenciasHistoricas = [
             {nome:"Pé e mão", categoria:"Mãos e pés", preco:50, detalhe:"Valor observado em vários lançamentos"},
             {nome:"Pé", categoria:"Pés", preco:30, detalhe:"Valor observado em três lançamentos"},
@@ -463,6 +504,9 @@
             document.getElementById('caixa-form').addEventListener('submit', adicionarLancamento);
             document.getElementById('btn-google-login').addEventListener('click', entrarComGoogle);
             document.getElementById('form-servico').addEventListener('submit', salvarServico);
+            document.getElementById('form-profissional').addEventListener('submit', salvarProfissional);
+            document.getElementById('btn-cancelar-profissional').addEventListener('click', limparFormularioProfissional);
+            document.getElementById('btn-atualizar-profissionais').addEventListener('click', carregarProfissionais);
             document.getElementById('btn-cancelar-edicao').addEventListener('click', limparFormularioServico);
             document.getElementById('btn-atualizar-servicos').addEventListener('click', carregarServicos);
             renderizarReferenciasHistoricas();
@@ -544,23 +588,24 @@
 
         window.trocarAbaAdmin = function(aba) {
             if (!ehGestoraAutenticada) return;
-            const relatorios = document.getElementById('painel-gestora');
-            const servicos = document.getElementById('gestao-servicos');
-            const btnRelatorios = document.getElementById('aba-btn-relatorios');
-            const btnServicos = document.getElementById('aba-btn-servicos');
-            const mostrarRelatorios = aba !== 'servicos';
-
-            relatorios.classList.toggle('hidden', !mostrarRelatorios);
-            servicos.classList.toggle('hidden', mostrarRelatorios);
-
-            btnRelatorios.className = 'flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ' +
-                (mostrarRelatorios ? 'bg-brandDark text-white' : 'bg-nudeBg text-gray-600 hover:bg-roseLight');
-            btnServicos.className = 'flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ' +
-                (!mostrarRelatorios ? 'bg-brandDark text-white' : 'bg-nudeBg text-gray-600 hover:bg-roseLight');
-
-            if (!mostrarRelatorios) {
-                carregarServicos();
-            }
+            const secoes = {
+                relatorios: document.getElementById('painel-gestora'),
+                servicos: document.getElementById('gestao-servicos'),
+                profissionais: document.getElementById('gestao-profissionais')
+            };
+            const botoes = {
+                relatorios: document.getElementById('aba-btn-relatorios'),
+                servicos: document.getElementById('aba-btn-servicos'),
+                profissionais: document.getElementById('aba-btn-profissionais')
+            };
+            const abaAtiva = secoes[aba] ? aba : 'relatorios';
+            Object.entries(secoes).forEach(([chave, secao]) => {
+                secao.classList.toggle('hidden', chave !== abaAtiva);
+                botoes[chave].className = 'flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ' +
+                    (chave === abaAtiva ? 'bg-brandDark text-white' : 'bg-nudeBg text-gray-600 hover:bg-roseLight');
+            });
+            if (abaAtiva === 'servicos') carregarServicos();
+            if (abaAtiva === 'profissionais') carregarProfissionais();
             window.scrollTo({ top: document.getElementById('abas-admin').offsetTop - 90, behavior: 'smooth' });
         };
 
@@ -596,11 +641,12 @@
                 document.getElementById('abas-admin').classList.remove('hidden');
                 document.getElementById('painel-gestora').classList.remove('hidden');
                 document.getElementById('gestao-servicos').classList.add('hidden');
+                document.getElementById('gestao-profissionais').classList.add('hidden');
                 window.trocarAbaAdmin('relatorios');
                 document.getElementById('status-modo').innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-emeraldWhatsapp animate-pulse"></span><span>Administradora autenticada</span>';
                 document.getElementById('btn-gestora').innerHTML = '<i class="fa-solid fa-unlock"></i><span class="hidden sm:inline">Painel da Gestora</span>';
                 carregarLançamentosDoFirebase();
-                carregarServicos();
+                carregarProfissionais().then(() => carregarServicos());
             } else {
                 ehGestoraAutenticada = false;
                 areaAdmin.classList.add('hidden');
@@ -608,6 +654,7 @@
                 document.getElementById('abas-admin').classList.add('hidden');
                 document.getElementById('painel-gestora').classList.add('hidden');
                 document.getElementById('gestao-servicos').classList.add('hidden');
+                document.getElementById('gestao-profissionais').classList.add('hidden');
                 document.getElementById('status-modo').innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-gray-400"></span><span>Aguardando autenticação</span>';
                 document.getElementById('btn-gestora').innerHTML = '<i class="fa-solid fa-lock"></i><span class="hidden sm:inline">Área da Gestora</span>';
                 if (user) {
@@ -783,6 +830,133 @@
             });
         }
 
+        async function carregarProfissionais() {
+            if (!ehGestoraAutenticada) return;
+            const alvo = document.getElementById('lista-profissionais');
+            alvo.innerHTML = '<p class="text-xs text-gray-400 p-4">Carregando...</p>';
+            try {
+                let snap = await getDocs(collection(db, 'profissionais'));
+                if (snap.empty) {
+                    const iniciais = [
+                        {nome:'Dionésia', especialidade:''},
+                        {nome:'Márcia', especialidade:''},
+                        {nome:'Ingrid', especialidade:''}
+                    ];
+                    await Promise.all(iniciais.map(p => addDoc(collection(db, 'profissionais'), {
+                        ...p, ativo:true, criadoEm:new Date().toISOString(), atualizadoEm:new Date().toISOString()
+                    })));
+                    snap = await getDocs(collection(db, 'profissionais'));
+                }
+                profissionaisCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+                profissionaisCache.sort((a,b) => (a.nome||'').localeCompare(b.nome||'', 'pt-BR'));
+                atualizarSeletoresProfissionais();
+                renderizarProfissionais();
+            } catch (err) {
+                console.error('Erro ao carregar profissionais:', err);
+                alvo.innerHTML = '<p class="text-xs text-red-600 p-4">Não foi possível carregar a equipe. Confira as regras do Firestore.</p>';
+            }
+        }
+
+        function atualizarSeletoresProfissionais() {
+            const ativos = profissionaisCache.filter(p => p.ativo !== false);
+            const selectLancamento = document.getElementById('profissional');
+            const selectServico = document.getElementById('servico-profissional');
+            const selectFiltro = document.getElementById('filtro-profissional');
+            const valorLancamento = selectLancamento.value;
+            const valorServico = selectServico.value;
+            const valorFiltro = selectFiltro.value;
+
+            selectLancamento.innerHTML = '<option value="">Selecione quem atendeu...</option>';
+            ativos.forEach(p => selectLancamento.add(new Option(p.nome, p.nome)));
+            selectServico.innerHTML = '';
+            ativos.forEach(p => selectServico.add(new Option(p.nome, p.nome)));
+            selectFiltro.innerHTML = '<option value="todas">Todas as Profissionais</option>';
+            profissionaisCache.forEach(p => selectFiltro.add(new Option(p.nome + (p.ativo === false ? ' (inativa)' : ''), p.nome)));
+
+            if ([...selectLancamento.options].some(o => o.value === valorLancamento)) selectLancamento.value = valorLancamento;
+            if ([...selectServico.options].some(o => o.value === valorServico)) selectServico.value = valorServico;
+            if ([...selectFiltro.options].some(o => o.value === valorFiltro)) selectFiltro.value = valorFiltro;
+        }
+
+        function renderizarProfissionais() {
+            const alvo = document.getElementById('lista-profissionais');
+            alvo.innerHTML = '';
+            if (!profissionaisCache.length) {
+                alvo.innerHTML = '<p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Nenhuma profissional cadastrada.</p>';
+                return;
+            }
+            profissionaisCache.forEach(p => {
+                const ativa = p.ativo !== false;
+                const card = document.createElement('div');
+                card.className='border border-gray-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+                const info=document.createElement('div');
+                const nome=document.createElement('p'); nome.className='text-sm font-bold'; nome.textContent=p.nome||'Sem nome';
+                const especialidade=document.createElement('p'); especialidade.className='text-xs text-gray-500'; especialidade.textContent=p.especialidade||'Especialidade não informada';
+                const status=document.createElement('span'); status.className='text-[10px] '+(ativa?'text-emerald-700':'text-gray-400'); status.textContent=ativa?'Ativa':'Inativa';
+                info.append(nome,especialidade,status);
+                const acoes=document.createElement('div'); acoes.className='flex gap-2';
+                const editar=document.createElement('button'); editar.type='button'; editar.className='text-xs px-3 py-2 bg-roseLight rounded-lg'; editar.textContent='Editar';
+                editar.addEventListener('click',()=>editarProfissional(p));
+                const alternar=document.createElement('button'); alternar.type='button'; alternar.className='text-xs px-3 py-2 bg-gray-100 rounded-lg'; alternar.textContent=ativa?'Desativar':'Ativar';
+                alternar.addEventListener('click',()=>alternarStatusProfissional(p));
+                acoes.append(editar,alternar); card.append(info,acoes); alvo.append(card);
+            });
+        }
+
+        function editarProfissional(p) {
+            document.getElementById('profissional-id').value=p.id;
+            document.getElementById('profissional-nome').value=p.nome||'';
+            document.getElementById('profissional-especialidade').value=p.especialidade||'';
+            document.getElementById('titulo-form-profissional').textContent='Editar profissional';
+            document.getElementById('btn-cancelar-profissional').classList.remove('hidden');
+            document.getElementById('form-profissional').scrollIntoView({behavior:'smooth',block:'center'});
+        }
+
+        function limparFormularioProfissional() {
+            document.getElementById('form-profissional').reset();
+            document.getElementById('profissional-id').value='';
+            document.getElementById('titulo-form-profissional').textContent='Adicionar profissional';
+            document.getElementById('btn-cancelar-profissional').classList.add('hidden');
+            document.getElementById('msg-profissional').textContent='';
+        }
+
+        async function salvarProfissional(e) {
+            e.preventDefault();
+            if (!ehGestoraAutenticada) return;
+            const id=document.getElementById('profissional-id').value;
+            const nome=document.getElementById('profissional-nome').value.trim();
+            const especialidade=document.getElementById('profissional-especialidade').value.trim();
+            if (!nome) return;
+            const duplicada=profissionaisCache.some(p => p.id !== id && (p.nome||'').trim().toLocaleLowerCase('pt-BR') === nome.toLocaleLowerCase('pt-BR'));
+            if (duplicada) {
+                document.getElementById('msg-profissional').textContent='Já existe uma profissional com esse nome.';
+                return;
+            }
+            const btn=document.getElementById('btn-salvar-profissional');
+            btn.disabled=true; btn.textContent='Salvando...';
+            try {
+                const dados={nome,especialidade,atualizadoEm:new Date().toISOString()};
+                if (id) await updateDoc(doc(db,'profissionais',id),dados);
+                else await addDoc(collection(db,'profissionais'),{...dados,ativo:true,criadoEm:new Date().toISOString()});
+                limparFormularioProfissional();
+                document.getElementById('msg-profissional').textContent='Profissional salva com sucesso.';
+                await carregarProfissionais();
+            } catch(err) {
+                console.error(err);
+                document.getElementById('msg-profissional').textContent='Erro ao salvar. Verifique sua conexão e as regras do Firebase.';
+            } finally { btn.disabled=false; btn.textContent='Salvar profissional'; }
+        }
+
+        async function alternarStatusProfissional(p) {
+            if (!ehGestoraAutenticada) return;
+            const novoStatus=p.ativo===false;
+            if (!confirm((novoStatus?'Ativar':'Desativar')+' a profissional "'+p.nome+'"?')) return;
+            try {
+                await updateDoc(doc(db,'profissionais',p.id),{ativo:novoStatus,atualizadoEm:new Date().toISOString()});
+                await carregarProfissionais();
+            } catch(err) { alert('Não foi possível atualizar a profissional.'); console.error(err); }
+        }
+
         async function carregarServicos() {
             if (!ehGestoraAutenticada) return;
             const alvo = document.getElementById('lista-servicos');
@@ -791,6 +965,7 @@
                 const snap = await getDocs(collection(db, 'servicos'));
                 servicosCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
                 servicosCache.sort((a,b) => (a.nome||'').localeCompare(b.nome||'', 'pt-BR'));
+                atualizarSeletoresProfissionais();
                 renderizarServicos();
             } catch (err) {
                 console.error('Erro ao carregar serviços:', err);
