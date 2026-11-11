@@ -329,6 +329,72 @@
 
         </section>
 
+
+        <!-- CADASTRO DE SERVIÇOS — SEPARADO DOS RELATÓRIOS -->
+        <section id="gestao-servicos" class="space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-md border border-goldAccent/30 space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-5">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-goldAccent">Nova área de gestão</span>
+                        <h2 class="text-2xl font-serif font-bold">Cadastro de Serviços</h2>
+                        <p class="text-xs text-gray-500 mt-1">Cadastre preços e duração para alimentar o futuro agendamento.</p>
+                    </div>
+                    <span class="text-xs bg-emerald-50 text-emerald-700 px-3 py-2 rounded-xl">Separado dos relatórios</span>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <form id="form-servico" class="lg:col-span-2 bg-nudeBg rounded-2xl p-5 space-y-3">
+                        <h3 id="titulo-form-servico" class="font-bold text-sm">Adicionar serviço</h3>
+                        <input type="hidden" id="servico-id">
+                        <label class="block text-[11px] font-semibold">Nome do serviço
+                            <input id="servico-nome" required maxlength="100" class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm" placeholder="Ex.: Manicure tradicional">
+                        </label>
+                        <label class="block text-[11px] font-semibold">Categoria
+                            <input id="servico-categoria" maxlength="60" class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm" placeholder="Ex.: Mãos, Pés, Alongamento">
+                        </label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="block text-[11px] font-semibold">Preço (R$)
+                                <input id="servico-preco" type="number" min="0" step="0.01" required class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm" placeholder="0,00">
+                            </label>
+                            <label class="block text-[11px] font-semibold">Duração (min)
+                                <input id="servico-duracao" type="number" min="5" step="5" required class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm" placeholder="Ex.: 60">
+                            </label>
+                        </div>
+                        <label class="block text-[11px] font-semibold">Profissional responsável
+                            <select id="servico-profissional" required class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm">
+                                <option value="Dionésia">Dionésia</option>
+                                <option value="Márcia">Márcia</option>
+                                <option value="Ingrid">Ingrid</option>
+                            </select>
+                        </label>
+                        <label class="block text-[11px] font-semibold">Descrição (opcional)
+                            <textarea id="servico-descricao" rows="2" maxlength="300" class="mt-1 w-full bg-white border border-gray-200 rounded-xl p-3 text-sm" placeholder="Detalhes do serviço"></textarea>
+                        </label>
+                        <div class="flex gap-2">
+                            <button type="submit" id="btn-salvar-servico" class="flex-1 bg-brandDark text-white font-bold py-3 rounded-xl text-xs">Salvar serviço</button>
+                            <button type="button" id="btn-cancelar-edicao" class="hidden bg-gray-200 px-4 rounded-xl text-xs">Cancelar</button>
+                        </div>
+                        <p id="msg-servico" class="text-xs text-gray-500" role="status"></p>
+                    </form>
+                    <div class="lg:col-span-3 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-sm">Serviços cadastrados</h3>
+                            <button type="button" id="btn-atualizar-servicos" class="text-xs text-goldAccent font-semibold"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+                        </div>
+                        <div id="lista-servicos" class="space-y-2">
+                            <p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Carregando serviços...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-amber-200 space-y-4">
+                <div>
+                    <h3 class="font-serif font-bold text-lg">Referências do relatório enviado</h3>
+                    <p class="text-xs text-gray-500">Valores observados nos lançamentos de 1º a 8/11/2026. São referências históricas, não preços oficiais. Clique para preencher o formulário; nada é salvo até confirmar.</p>
+                </div>
+                <div id="referencias-servicos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"></div>
+            </div>
+        </section>
+
     </main>
 
     <!-- RODAPÉ -->
@@ -341,7 +407,7 @@
     <!-- SCRIPT FIREBASE INTEGRADO -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -361,7 +427,23 @@
         const EMAIL_ADMIN = "dionesiaguarina98@gmail.com";
 
         let ehGestoraAutenticada = false;
+
         let todosLancamentosGlobal = [];
+        let servicosCache = [];
+        const referenciasHistoricas = [
+            {nome:"Pé e mão", categoria:"Mãos e pés", preco:50, detalhe:"Valor observado em vários lançamentos"},
+            {nome:"Pé", categoria:"Pés", preco:30, detalhe:"Valor observado em três lançamentos"},
+            {nome:"Mão", categoria:"Mãos", preco:30, detalhe:"Valor observado em um lançamento"},
+            {nome:"Mão com esmaltação em gel", categoria:"Mãos", preco:55, detalhe:"Valor observado em lançamento"},
+            {nome:"Blindagem na mão", categoria:"Mãos", preco:65, detalhe:"Valor observado em lançamento"},
+            {nome:"Aplicação de fibra", categoria:"Alongamento", preco:180, detalhe:"Valor observado em lançamento"},
+            {nome:"Pé com esmaltação em gel", categoria:"Pés", preco:40, detalhe:"Valor observado em lançamento"},
+            {nome:"Pé com esmaltação em gel + mão simples", categoria:"Mãos e pés", preco:70, detalhe:"Valor observado em lançamento"},
+            {nome:"Pé e mão com esmaltação em gel", categoria:"Mãos e pés", preco:85, detalhe:"Valor observado em lançamento"},
+            {nome:"Manutenção de gel + pé", categoria:"Manutenção", preco:135, detalhe:"Foram observados R$ 135 e R$ 140"},
+            {nome:"Blindagem + pé", categoria:"Mãos e pés", preco:95, detalhe:"Valor observado em lançamento"},
+            {nome:"Pé e mão + sobrancelha", categoria:"Combo", preco:95, detalhe:"Valor observado em lançamento"}
+        ];
 
         document.addEventListener('DOMContentLoaded', () => {
             const hoje = new Date();
@@ -370,6 +452,10 @@
 
             document.getElementById('caixa-form').addEventListener('submit', adicionarLancamento);
             document.getElementById('btn-google-login').addEventListener('click', entrarComGoogle);
+            document.getElementById('form-servico').addEventListener('submit', salvarServico);
+            document.getElementById('btn-cancelar-edicao').addEventListener('click', limparFormularioServico);
+            document.getElementById('btn-atualizar-servicos').addEventListener('click', carregarServicos);
+            renderizarReferenciasHistoricas();
             onAuthStateChanged(auth, tratarEstadoAutenticacao);
             document.getElementById('btn-atualizar').addEventListener('click', carregarLançamentosDoFirebase);
             document.getElementById('btn-exportar').addEventListener('click', exportarCSV);
@@ -479,6 +565,7 @@
                 document.getElementById('status-modo').innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-emeraldWhatsapp animate-pulse"></span><span>Administradora autenticada</span>';
                 document.getElementById('btn-gestora').innerHTML = '<i class="fa-solid fa-unlock"></i><span class="hidden sm:inline">Painel da Gestora</span>';
                 carregarLançamentosDoFirebase();
+                carregarServicos();
             } else {
                 ehGestoraAutenticada = false;
                 areaAdmin.classList.add('hidden');
@@ -628,6 +715,138 @@
             document.getElementById('resumo-dionesia').innerText = `R$ ${(totaisPorProf.Dionésia || 0).toFixed(2).replace('.', ',')}`;
             document.getElementById('resumo-marcia').innerText = `R$ ${(totaisPorProf.Márcia || 0).toFixed(2).replace('.', ',')}`;
             document.getElementById('resumo-ingrid').innerText = `R$ ${(totaisPorProf.Ingrid || 0).toFixed(2).replace('.', ',')}`;
+        }
+
+
+        function renderizarReferenciasHistoricas() {
+            const alvo = document.getElementById('referencias-servicos');
+            alvo.innerHTML = '';
+            referenciasHistoricas.forEach(ref => {
+                const card = document.createElement('div');
+                card.className = 'border border-gray-200 rounded-xl p-3 flex items-center justify-between gap-2';
+                const info = document.createElement('div');
+                const nome = document.createElement('p'); nome.className='text-xs font-bold'; nome.textContent=ref.nome;
+                const detalhe = document.createElement('p'); detalhe.className='text-[10px] text-gray-500'; detalhe.textContent=ref.detalhe;
+                const preco = document.createElement('p'); preco.className='text-sm font-bold text-goldAccent'; preco.textContent='R$ '+ref.preco.toFixed(2).replace('.',',');
+                info.append(nome, detalhe, preco);
+                const btn = document.createElement('button'); btn.type='button'; btn.className='text-[10px] bg-roseLight px-3 py-2 rounded-lg'; btn.textContent='Usar';
+                btn.addEventListener('click', () => {
+                    document.getElementById('servico-id').value='';
+                    document.getElementById('servico-nome').value=ref.nome;
+                    document.getElementById('servico-categoria').value=ref.categoria;
+                    document.getElementById('servico-preco').value=ref.preco;
+                    document.getElementById('servico-duracao').value='';
+                    document.getElementById('servico-profissional').value='Dionésia';
+                    document.getElementById('servico-descricao').value='Preço de referência histórica; confirmar com a profissional. Duração ainda não definida.';
+                    document.getElementById('titulo-form-servico').textContent='Confirmar cadastro do serviço';
+                    document.getElementById('msg-servico').textContent='Informe a duração e confirme se o preço continua válido antes de salvar.';
+                    document.getElementById('servico-duracao').focus();
+                });
+                card.append(info,btn); alvo.append(card);
+            });
+        }
+
+        async function carregarServicos() {
+            if (!ehGestoraAutenticada) return;
+            const alvo = document.getElementById('lista-servicos');
+            alvo.innerHTML = '<p class="text-xs text-gray-400 p-4">Carregando...</p>';
+            try {
+                const snap = await getDocs(collection(db, 'servicos'));
+                servicosCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+                servicosCache.sort((a,b) => (a.nome||'').localeCompare(b.nome||'', 'pt-BR'));
+                renderizarServicos();
+            } catch (err) {
+                console.error('Erro ao carregar serviços:', err);
+                alvo.innerHTML = '<p class="text-xs text-red-600 p-4">Não foi possível carregar os serviços. Confira as regras do Firestore.</p>';
+            }
+        }
+
+        function renderizarServicos() {
+            const alvo = document.getElementById('lista-servicos');
+            alvo.innerHTML = '';
+            if (!servicosCache.length) {
+                alvo.innerHTML = '<p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Nenhum serviço cadastrado ainda. Use uma referência histórica ou preencha o formulário.</p>';
+                return;
+            }
+            servicosCache.forEach(s => {
+                const card = document.createElement('div');
+                card.className='border border-gray-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+                const info=document.createElement('div');
+                const nome=document.createElement('p'); nome.className='text-sm font-bold'; nome.textContent=s.nome||'Sem nome';
+                const meta=document.createElement('p'); meta.className='text-xs text-gray-500'; meta.textContent=(s.profissional||'Sem profissional')+' • '+(s.duracaoMinutos||'?')+' min • '+(s.categoria||'Sem categoria');
+                const preco=document.createElement('p'); preco.className='text-xs font-semibold text-goldAccent'; preco.textContent='R$ '+Number(s.preco||0).toFixed(2).replace('.',',');
+                const status=document.createElement('span'); status.className='text-[10px] '+(s.ativo===false?'text-gray-400':'text-emerald-700'); status.textContent=s.ativo===false?'Inativo':'Ativo';
+                info.append(nome,meta,preco,status);
+                const acoes=document.createElement('div'); acoes.className='flex gap-2';
+                const editar=document.createElement('button'); editar.type='button'; editar.className='text-xs px-3 py-2 bg-roseLight rounded-lg'; editar.textContent='Editar';
+                editar.addEventListener('click',()=>editarServico(s));
+                const alternar=document.createElement('button'); alternar.type='button'; alternar.className='text-xs px-3 py-2 bg-gray-100 rounded-lg'; alternar.textContent=s.ativo===false?'Ativar':'Desativar';
+                alternar.addEventListener('click',()=>alternarStatusServico(s));
+                acoes.append(editar,alternar); card.append(info,acoes); alvo.append(card);
+            });
+        }
+
+        function editarServico(s) {
+            document.getElementById('servico-id').value=s.id;
+            document.getElementById('servico-nome').value=s.nome||'';
+            document.getElementById('servico-categoria').value=s.categoria||'';
+            document.getElementById('servico-preco').value=s.preco??'';
+            document.getElementById('servico-duracao').value=s.duracaoMinutos??'';
+            document.getElementById('servico-profissional').value=s.profissional||'Dionésia';
+            document.getElementById('servico-descricao').value=s.descricao||'';
+            document.getElementById('titulo-form-servico').textContent='Editar serviço';
+            document.getElementById('btn-cancelar-edicao').classList.remove('hidden');
+            document.getElementById('form-servico').scrollIntoView({behavior:'smooth',block:'center'});
+        }
+
+        function limparFormularioServico() {
+            document.getElementById('form-servico').reset();
+            document.getElementById('servico-id').value='';
+            document.getElementById('titulo-form-servico').textContent='Adicionar serviço';
+            document.getElementById('btn-cancelar-edicao').classList.add('hidden');
+            document.getElementById('msg-servico').textContent='';
+        }
+
+        async function salvarServico(e) {
+            e.preventDefault();
+            if (!ehGestoraAutenticada) return;
+            const btn=document.getElementById('btn-salvar-servico');
+            const id=document.getElementById('servico-id').value;
+            const dados={
+                nome:document.getElementById('servico-nome').value.trim(),
+                categoria:document.getElementById('servico-categoria').value.trim(),
+                preco:Number(document.getElementById('servico-preco').value),
+                duracaoMinutos:Number(document.getElementById('servico-duracao').value),
+                profissional:document.getElementById('servico-profissional').value,
+                descricao:document.getElementById('servico-descricao').value.trim(),
+                ativo:true,
+                atualizadoEm:new Date().toISOString()
+            };
+            if (!dados.nome || !Number.isFinite(dados.preco) || dados.preco<0 || !Number.isInteger(dados.duracaoMinutos) || dados.duracaoMinutos<5) {
+                document.getElementById('msg-servico').textContent='Confira o nome, preço e duração (mínimo 5 minutos).';
+                return;
+            }
+            btn.disabled=true; btn.textContent='Salvando...';
+            try {
+                if (id) await updateDoc(doc(db,'servicos',id),dados);
+                else await addDoc(collection(db,'servicos'),{...dados,criadoEm:new Date().toISOString()});
+                limparFormularioServico();
+                document.getElementById('msg-servico').textContent='Serviço salvo com sucesso.';
+                await carregarServicos();
+            } catch(err) {
+                console.error(err);
+                document.getElementById('msg-servico').textContent='Erro ao salvar. Verifique sua conexão e as regras do Firebase.';
+            } finally { btn.disabled=false; btn.textContent='Salvar serviço'; }
+        }
+
+        async function alternarStatusServico(s) {
+            if (!ehGestoraAutenticada) return;
+            const novoStatus=s.ativo===false;
+            if (!confirm((novoStatus?'Ativar':'Desativar')+' o serviço "'+s.nome+'"?')) return;
+            try {
+                await updateDoc(doc(db,'servicos',s.id),{ativo:novoStatus,atualizadoEm:new Date().toISOString()});
+                await carregarServicos();
+            } catch(err) { alert('Não foi possível atualizar o serviço.'); console.error(err); }
         }
 
         function exportarCSV() {
