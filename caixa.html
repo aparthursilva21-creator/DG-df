@@ -181,6 +181,9 @@
             <button type="button" id="aba-btn-profissionais" onclick="window.trocarAbaAdmin('profissionais')" class="flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-nudeBg text-gray-600 hover:bg-roseLight">
                 <i class="fa-solid fa-user-group mr-2"></i>Profissionais
             </button>
+            <button type="button" id="aba-btn-horarios" onclick="window.trocarAbaAdmin('horarios')" class="flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-nudeBg text-gray-600 hover:bg-roseLight">
+                <i class="fa-solid fa-clock mr-2"></i>Agenda e Horários
+            </button>
         </nav>
 
         <!-- PAINEL COMPLETO DA GESTORA (DIONÉSIA) -->
@@ -445,6 +448,29 @@
             </div>
         </section>
 
+        <!-- CONFIGURAÇÃO DE HORÁRIOS -->
+        <section id="gestao-horarios" class="hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-md border border-goldAccent/30 space-y-5">
+                <div class="border-b border-gray-100 pb-5">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-goldAccent">Funcionamento da equipe</span>
+                    <h2 class="text-2xl font-serif font-bold">Agenda e Horários</h2>
+                    <p class="text-xs text-gray-500 mt-1">Configure os dias e horários individuais de cada profissional. O padrão considera segunda a sábado; os horários ficam em branco até serem informados.</p>
+                </div>
+                <div class="max-w-xl space-y-3">
+                    <label class="block text-xs font-semibold">Selecione a profissional
+                        <select id="horario-profissional" class="mt-1 w-full bg-nudeBg border border-gray-200 rounded-xl p-3 text-sm"></select>
+                    </label>
+                    <div id="editor-horarios" class="space-y-3">
+                        <p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Carregando profissionais...</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button type="button" id="btn-salvar-horarios" class="bg-brandDark text-white font-bold px-6 py-3 rounded-xl text-xs">Salvar horários</button>
+                        <span id="msg-horarios" class="text-xs text-gray-500" role="status"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- RODAPÉ -->
@@ -507,6 +533,8 @@
             document.getElementById('form-profissional').addEventListener('submit', salvarProfissional);
             document.getElementById('btn-cancelar-profissional').addEventListener('click', limparFormularioProfissional);
             document.getElementById('btn-atualizar-profissionais').addEventListener('click', carregarProfissionais);
+            document.getElementById('horario-profissional').addEventListener('change', renderizarEditorHorarios);
+            document.getElementById('btn-salvar-horarios').addEventListener('click', salvarHorariosProfissional);
             document.getElementById('btn-cancelar-edicao').addEventListener('click', limparFormularioServico);
             document.getElementById('btn-atualizar-servicos').addEventListener('click', carregarServicos);
             renderizarReferenciasHistoricas();
@@ -591,12 +619,14 @@
             const secoes = {
                 relatorios: document.getElementById('painel-gestora'),
                 servicos: document.getElementById('gestao-servicos'),
-                profissionais: document.getElementById('gestao-profissionais')
+                profissionais: document.getElementById('gestao-profissionais'),
+                horarios: document.getElementById('gestao-horarios')
             };
             const botoes = {
                 relatorios: document.getElementById('aba-btn-relatorios'),
                 servicos: document.getElementById('aba-btn-servicos'),
-                profissionais: document.getElementById('aba-btn-profissionais')
+                profissionais: document.getElementById('aba-btn-profissionais'),
+                horarios: document.getElementById('aba-btn-horarios')
             };
             const abaAtiva = secoes[aba] ? aba : 'relatorios';
             Object.entries(secoes).forEach(([chave, secao]) => {
@@ -606,6 +636,7 @@
             });
             if (abaAtiva === 'servicos') carregarServicos();
             if (abaAtiva === 'profissionais') carregarProfissionais();
+            if (abaAtiva === 'horarios') carregarProfissionais().then(renderizarSeletorHorarios);
             window.scrollTo({ top: document.getElementById('abas-admin').offsetTop - 90, behavior: 'smooth' });
         };
 
@@ -642,6 +673,7 @@
                 document.getElementById('painel-gestora').classList.remove('hidden');
                 document.getElementById('gestao-servicos').classList.add('hidden');
                 document.getElementById('gestao-profissionais').classList.add('hidden');
+                document.getElementById('gestao-horarios').classList.add('hidden');
                 window.trocarAbaAdmin('relatorios');
                 document.getElementById('status-modo').innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-emeraldWhatsapp animate-pulse"></span><span>Administradora autenticada</span>';
                 document.getElementById('btn-gestora').innerHTML = '<i class="fa-solid fa-unlock"></i><span class="hidden sm:inline">Painel da Gestora</span>';
@@ -655,6 +687,7 @@
                 document.getElementById('painel-gestora').classList.add('hidden');
                 document.getElementById('gestao-servicos').classList.add('hidden');
                 document.getElementById('gestao-profissionais').classList.add('hidden');
+                document.getElementById('gestao-horarios').classList.add('hidden');
                 document.getElementById('status-modo').innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-gray-400"></span><span>Aguardando autenticação</span>';
                 document.getElementById('btn-gestora').innerHTML = '<i class="fa-solid fa-lock"></i><span class="hidden sm:inline">Área da Gestora</span>';
                 if (user) {
@@ -955,6 +988,97 @@
                 await updateDoc(doc(db,'profissionais',p.id),{ativo:novoStatus,atualizadoEm:new Date().toISOString()});
                 await carregarProfissionais();
             } catch(err) { alert('Não foi possível atualizar a profissional.'); console.error(err); }
+        }
+
+        const diasAgenda = [
+            {chave:'segunda', nome:'Segunda-feira'},
+            {chave:'terca', nome:'Terça-feira'},
+            {chave:'quarta', nome:'Quarta-feira'},
+            {chave:'quinta', nome:'Quinta-feira'},
+            {chave:'sexta', nome:'Sexta-feira'},
+            {chave:'sabado', nome:'Sábado'}
+        ];
+
+        function renderizarSeletorHorarios() {
+            const select = document.getElementById('horario-profissional');
+            const selecionada = select.value;
+            select.innerHTML = '';
+            profissionaisCache.filter(p => p.ativo !== false).forEach(p => select.add(new Option(p.nome, p.id)));
+            if ([...select.options].some(o => o.value === selecionada)) select.value = selecionada;
+            renderizarEditorHorarios();
+        }
+
+        function renderizarEditorHorarios() {
+            const alvo = document.getElementById('editor-horarios');
+            const profissional = profissionaisCache.find(p => p.id === document.getElementById('horario-profissional').value);
+            alvo.innerHTML = '';
+            if (!profissional) {
+                alvo.innerHTML = '<p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Cadastre ou ative uma profissional para configurar os horários.</p>';
+                return;
+            }
+            const agenda = profissional.agenda || {};
+            diasAgenda.forEach(dia => {
+                const dados = agenda[dia.chave] || {ativo:true};
+                const linha = document.createElement('div');
+                linha.className = 'border border-gray-200 rounded-2xl p-4 space-y-3';
+                const topo = document.createElement('label');
+                topo.className = 'flex items-center gap-2 text-sm font-bold';
+                const check = document.createElement('input');
+                check.type = 'checkbox'; check.className = 'h-4 w-4 accent-rose-600'; check.dataset.dia = dia.chave;
+                check.checked = dados.ativo !== false;
+                const nome = document.createElement('span'); nome.textContent = dia.nome;
+                topo.append(check,nome);
+                const campos = document.createElement('div');
+                campos.className = 'grid grid-cols-2 sm:grid-cols-4 gap-2';
+                [['inicio','Entrada'],['fim','Saída'],['intervaloInicio','Início do intervalo'],['intervaloFim','Fim do intervalo']].forEach(([campo,rotulo]) => {
+                    const label = document.createElement('label');
+                    label.className = 'text-[10px] font-semibold text-gray-600';
+                    label.textContent = rotulo;
+                    const input = document.createElement('input');
+                    input.type = 'time'; input.dataset.dia = dia.chave; input.dataset.campo = campo;
+                    input.value = dados[campo] || '';
+                    input.className = 'mt-1 w-full bg-nudeBg border border-gray-200 rounded-lg p-2 text-xs';
+                    label.append(input); campos.append(label);
+                });
+                check.addEventListener('change', () => {
+                    campos.querySelectorAll('input').forEach(input => input.disabled = !check.checked);
+                });
+                if (!check.checked) campos.querySelectorAll('input').forEach(input => input.disabled = true);
+                linha.append(topo,campos); alvo.append(linha);
+            });
+        }
+
+        async function salvarHorariosProfissional() {
+            if (!ehGestoraAutenticada) return;
+            const id = document.getElementById('horario-profissional').value;
+            const profissional = profissionaisCache.find(p => p.id === id);
+            const msg = document.getElementById('msg-horarios');
+            const btn = document.getElementById('btn-salvar-horarios');
+            if (!profissional) { msg.textContent = 'Selecione uma profissional.'; return; }
+            const agenda = {};
+            for (const dia of diasAgenda) {
+                const check = document.querySelector('input[type="checkbox"][data-dia="'+dia.chave+'"]');
+                const dados = {ativo: !!check?.checked};
+                document.querySelectorAll('input[data-dia="'+dia.chave+'"][data-campo]').forEach(input => dados[input.dataset.campo] = input.value);
+                if (dados.ativo && dados.inicio && dados.fim && dados.fim <= dados.inicio) {
+                    msg.textContent = 'O horário de saída deve ser depois da entrada ('+dia.nome+').';
+                    return;
+                }
+                if (dados.ativo && ((dados.intervaloInicio && !dados.intervaloFim) || (!dados.intervaloInicio && dados.intervaloFim))) {
+                    msg.textContent = 'Preencha os dois horários do intervalo ou deixe ambos vazios ('+dia.nome+').';
+                    return;
+                }
+                agenda[dia.chave] = dados;
+            }
+            btn.disabled = true; btn.textContent = 'Salvando...'; msg.textContent = '';
+            try {
+                await updateDoc(doc(db,'profissionais',id),{agenda,atualizadoEm:new Date().toISOString()});
+                profissional.agenda = agenda;
+                msg.textContent = 'Horários salvos com sucesso.';
+            } catch(err) {
+                console.error('Erro ao salvar horários:',err);
+                msg.textContent = 'Não foi possível salvar. Confira a conexão e as regras do Firebase.';
+            } finally { btn.disabled = false; btn.textContent = 'Salvar horários'; }
         }
 
         async function carregarServicos() {
