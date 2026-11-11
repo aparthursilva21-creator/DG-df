@@ -328,9 +328,7 @@ function toggleMobileMenu(){document.getElementById('mobile-menu').classList.tog
 })();
 </script>
   <script>
-document.querySelectorAll('a[href^="https://wa.me/"]').forEach(function(a){
-  if(/agendar|garantir/i.test(a.textContent)){ a.href='agendamento.html'; a.removeAttribute('target'); }
-});
+/* Os botões de agendamento permanecem no WhatsApp até a agenda online real estar configurada. */
 </script>
 </body>
 </html>
