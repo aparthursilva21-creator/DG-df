@@ -103,6 +103,7 @@ function doPost(e) {
     requestId = String(req.requestId || "");
     if (!/^[a-f0-9]{32}$/.test(requestId)) throw new Error("Identificador de requisição inválido.");
     const result = route_(req);
+    if (result && result.ok === undefined) result.ok = true;
     CacheService.getScriptCache().put("req_" + requestId, JSON.stringify(result), 300);
   } catch (err) {
     if (requestId && /^[a-f0-9]{32}$/.test(requestId)) {
