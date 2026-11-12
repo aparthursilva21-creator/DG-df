@@ -986,7 +986,7 @@
                 renderizarProfissionais();
             } catch (err) {
                 console.error('Erro ao carregar profissionais:', err);
-                alvo.innerHTML = '<p class="text-xs text-red-600 p-4">Não foi possível carregar a equipe. Confira as regras do Firestore.</p>';
+                alvo.innerHTML = '<p class="text-xs text-red-600 p-4">Não foi possível carregar a equipe. Verifique a conexão com a planilha.</p>';
             }
         }
 
@@ -1074,7 +1074,7 @@
                 await carregarProfissionais();
             } catch(err) {
                 console.error(err);
-                document.getElementById('msg-profissional').textContent='Erro ao salvar. Verifique sua conexão e as regras do Firebase.';
+                document.getElementById('msg-profissional').textContent='Erro ao salvar. Verifique a conexão com o Apps Script.';
             } finally { btn.disabled=false; btn.textContent='Salvar profissional'; }
         }
 
@@ -1175,7 +1175,7 @@
                 msg.textContent = 'Horários salvos com sucesso.';
             } catch(err) {
                 console.error('Erro ao salvar horários:',err);
-                msg.textContent = 'Não foi possível salvar. Confira a conexão e as regras do Firebase.';
+                msg.textContent = 'Não foi possível salvar. Confira a conexão com a planilha.';
             } finally { btn.disabled = false; btn.textContent = 'Salvar horários'; }
         }
 
@@ -1191,7 +1191,7 @@
                 renderizarServicos();
             } catch (err) {
                 console.error('Erro ao carregar serviços:', err);
-                alvo.innerHTML = '<p class="text-xs text-red-600 p-4">Não foi possível carregar os serviços. Confira as regras do Firestore.</p>';
+                alvo.innerHTML = '<p class="text-xs text-red-600 p-4">Não foi possível carregar os serviços. Verifique a conexão com a planilha.</p>';
             }
         }
 
@@ -1432,7 +1432,7 @@
                 msg.textContent='Agendamento salvo com sucesso.';
             } catch(err) {
                 console.error('Erro ao salvar agendamento:',err);
-                msg.textContent='Não foi possível salvar. Confira a conexão e as permissões do Firebase.';
+                msg.textContent='Não foi possível salvar. Confira a conexão com o Apps Script.';
             } finally { btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-calendar-plus mr-2"></i>Salvar agendamento'; }
         }
 
