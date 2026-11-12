@@ -256,7 +256,7 @@ function importLegacyData_(d) {
       const id = clean_(a.id,80);
       if (!id || !validDate_(String(a.data||"")) || !validClock_(String(a.hora||""))) return;
       const item = {
-        id, cliente:clean_(a.cliente,100), whatsapp:String(a.whatsapp||"").replace(/\\D/g,"").slice(0,15),
+        id, cliente:clean_(a.cliente,100), whatsapp:String(a.whatsapp||"").replace(/\D/g,"").slice(0,15),
         servico:clean_(a.servico,100), servicoId:clean_(a.servicoId,80),
         profissional:clean_(a.profissional,100), profissionalId:clean_(a.profissionalId,80),
         data:String(a.data), hora:String(a.hora), duracaoMinutos:Number(a.duracaoMinutos||0),
