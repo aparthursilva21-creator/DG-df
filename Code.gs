@@ -66,6 +66,16 @@ function configurarSistema() {
   return ss.getUrl();
 }
 
+function autorizarIntegracoes() {
+  // Execute manualmente no editor para conceder as permissões antes da implantação.
+  const agenda = CalendarApp.getDefaultCalendar();
+  const quotaEmail = MailApp.getRemainingDailyQuota();
+  UrlFetchApp.fetch("https://www.google.com", {muteHttpExceptions:true});
+  Logger.log("Agenda principal autorizada: " + agenda.getName());
+  Logger.log("Destinatários de e-mail restantes hoje: " + quotaEmail);
+  return "Integrações autorizadas.";
+}
+
 function db_() {
   const id = PropertiesService.getScriptProperties().getProperty(CONFIG.SHEET_PROPERTY);
   if (!id) throw new Error("Execute configurarSistema() antes de usar o sistema.");
