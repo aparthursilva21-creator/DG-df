@@ -9,8 +9,9 @@ O backend do agendamento agora usa **Google Apps Script + Google Sheets**. O Fir
 3. Copie todo o conteúdo de `Code.gs` deste repositório e substitua o conteúdo de `Código.gs` no Apps Script.
 4. Salve.
 5. No seletor de funções, escolha `configurarSistema` e clique em **Executar**.
-6. Na primeira execução, autorize o acesso ao Google Sheets, Google Calendar e envio de e-mail.
-7. Abra o **Registro de execução** e copie o endereço da planilha criado. A planilha fica privada na conta da gestora; não a compartilhe publicamente.
+6. Depois, escolha `autorizarIntegracoes` e clique em **Executar** para conceder acesso ao Google Calendar, envio de e-mail e requisições externas.
+7. Autorize as permissões solicitadas.
+8. Abra o **Registro de execução** de `configurarSistema` e copie o endereço da planilha criado. A planilha fica privada na conta da gestora; não a compartilhe publicamente.
 
 A função cria as abas `servicos`, `profissionais` e `agendamentos`, com cabeçalhos e as três profissionais iniciais (Dionésia, Márcia e Ingrid). Não preenche horários nem inventa serviços. Os horários devem ser configurados no painel.
 
