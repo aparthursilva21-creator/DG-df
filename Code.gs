@@ -388,7 +388,7 @@ function createBooking_(d, source) {
   const agenda = parseJson_(professional.agendaJson,{});
   const dayKey = ["domingo","segunda","terca","quarta","quinta","sexta","sabado"][new Date(date+"T12:00:00-03:00").getDay()];
   const schedule = agenda[dayKey];
-  if (!schedule || !schedule.ativo || !fits_(schedule,time,clock_(clockMin_(time)+duration))) {
+  if (!schedule || !schedule.ativo || !schedule.inicio || !schedule.fim || !fits_(schedule,time,clock_(clockMin_(time)+duration))) {
     throw new Error("Horário fora da agenda configurada.");
   }
 
@@ -494,6 +494,7 @@ function belongs_(s,p) {
   return !assigned || assigned==="todas" || assigned==="qualquer profissional" || assigned===name;
 }
 function fits_(s,start,end) {
+  if (!s || !validClock_(s.inicio) || !validClock_(s.fim) || !validClock_(start) || !validClock_(end)) return false;
   const a=clockMin_(start), b=clockMin_(end);
   if (a<clockMin_(s.inicio) || b>clockMin_(s.fim)) return false;
   if (s.intervaloInicio && s.intervaloFim) return !(a<clockMin_(s.intervaloFim) && b>clockMin_(s.intervaloInicio));
