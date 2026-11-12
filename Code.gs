@@ -125,7 +125,8 @@ function route_(req) {
     case "publicCatalog": return publicCatalog_();
     case "availableSlots": return availableSlots_(data);
     case "createPublicBooking": return createBooking_(data, "site");
-    case "adminData": return adminData_();\n    case "importLegacyData": return importLegacyData_(data);
+    case "adminData": return adminData_();
+    case "importLegacyData": return importLegacyData_(data);
     case "saveService": return saveService_(data);
     case "setServiceActive": return setActive_("servicos", data);
     case "saveProfessional": return saveProfessional_(data);
