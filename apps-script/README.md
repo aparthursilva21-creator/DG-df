@@ -5,9 +5,9 @@ Esta pasta contém a primeira etapa da migração das Cloud Functions para Googl
 ## O que esta etapa implementa
 
 - Inicialização de uma planilha com abas para serviços, profissionais e agendamentos.
-- Catálogo público de serviços/profissionais ativos.
-- Consulta de horários a partir da agenda semanal de cada profissional.
-- Criação de pedido de agendamento com bloqueio concorrente via LockService.
+- Catálogo público de serviços/profissionais ativos via JSONP.
+- Consulta de horários a partir da agenda semanal de cada profissional via JSONP.
+- Criação de pedido de agendamento por formulário HTML oculto, com retorno via postMessage e bloqueio concorrente via LockService.
 - Notificação por e-mail para a gestora quando chega um pedido (opcional).
 
 ## Instalação (feita uma vez na conta Google que será dona da planilha)
@@ -25,18 +25,20 @@ Esta pasta contém a primeira etapa da migração das Cloud Functions para Googl
    - Quem pode acessar: **Qualquer pessoa**
    - Copie a URL terminada em `/exec`.
 
-## API
+## API pública
 
 - `GET ?action=health`
-- `GET ?action=catalog`
-- `GET ?action=slots&serviceId=...&professionalId=...&date=YYYY-MM-DD`
-- `POST` JSON: `{"action":"booking","serviceId":"...","professionalId":"...","date":"YYYY-MM-DD","time":"HH:MM","customer":"...","whatsapp":"..."}`
+- `GET ?action=catalog&callback=nomeDaFuncao` (JSONP)
+- `GET ?action=slots&serviceId=...&professionalId=...&date=YYYY-MM-DD&callback=nomeDaFuncao` (JSONP)
+- `POST` `application/x-www-form-urlencoded` em formulário: `action=booking`, `requestId`, `serviceId`, `professionalId`, `date`, `time`, `customer`, `whatsapp`. A resposta envia `postMessage` para a janela que abriu o formulário.
+
+A página `agendamento.html` já está preparada para consumir essa API. Depois da implantação, basta preencher `CONFIG.API_URL` com a URL `/exec` do Web App. O painel administrativo ainda não foi migrado: ele permanece protegido pelo login Google/Firebase até a implementação de autenticação administrativa validada no servidor.
 
 As respostas JSON usam `ok`, e a consulta de horários retorna `slots`.
 
 ## Importante antes de colocar no ar
 
-- Esta é a camada inicial do backend. O painel administrativo e a página pública ainda precisam ser migrados para consumir esta API; não altere o site publicado antes dessa integração.
+- O agendamento público foi conectado no código do site, mas só funcionará depois de criar a planilha, implantar o Web App e configurar `CONFIG.API_URL` em `agendamento.html`. O painel administrativo ainda usa Firebase e não deve ser liberado publicamente.
 - O painel deve continuar restrito à gestora. Não coloque uma chave administrativa no JavaScript público.
 - O Google Calendar pode ser sincronizado numa etapa seguinte, pelo próprio Apps Script, sem exigir que a gestora use o Calendar.
 - O Apps Script tem cotas diárias e limites de execução. O serviço é gratuito dentro dos limites vigentes do Google; não é ilimitado.
