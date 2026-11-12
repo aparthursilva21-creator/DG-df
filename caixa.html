@@ -565,7 +565,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        async function gasAdmin(action, data={}) {\n            const user = auth.currentUser;\n            if (!user) throw new Error("Entre com a conta administradora.");\n            const token = await user.getIdToken();\n            return gasRequest(action, data, token);\n        }
+        async function gasAdmin(action, data={}) {
+            const user = auth.currentUser;
+            if (!user) throw new Error("Entre com a conta administradora.");
+            const token = await user.getIdToken();
+            return gasRequest(action, data, token);
+        }
         const googleProvider = new GoogleAuthProvider();
         const EMAIL_ADMIN = "dionesiaguarina98@gmail.com";
 
@@ -946,7 +951,10 @@
             const alvo = document.getElementById('lista-profissionais');
             alvo.innerHTML = '<p class="text-xs text-gray-400 p-4">Carregando...</p>';
             try {
-                const data = await gasAdmin("adminData");\n                profissionaisCache = (data.professionals || []).map(p => ({\n                    ...p, agenda:p.agenda || (()=>{try{return JSON.parse(p.agendaJson||"{}")}catch(e){return {}}})()\n                }));
+                const data = await gasAdmin("adminData");
+                profissionaisCache = (data.professionals || []).map(p => ({
+                    ...p, agenda:p.agenda || (()=>{try{return JSON.parse(p.agendaJson||"{}")}catch(e){return {}}})()
+                }));
                 profissionaisCache.sort((a,b) => (a.nome||'').localeCompare(b.nome||'', 'pt-BR'));
                 atualizarSeletoresProfissionais();
                 renderizarProfissionais();
@@ -1150,7 +1158,8 @@
             const alvo = document.getElementById('lista-servicos');
             alvo.innerHTML = '<p class="text-xs text-gray-400 p-4">Carregando...</p>';
             try {
-                const data = await gasAdmin("adminData");\n                servicosCache = data.services || [];
+                const data = await gasAdmin("adminData");
+                servicosCache = data.services || [];
                 servicosCache.sort((a,b) => (a.nome||'').localeCompare(b.nome||'', 'pt-BR'));
                 atualizarSeletoresProfissionais();
                 renderizarServicos();
@@ -1294,7 +1303,8 @@
             const alvo=document.getElementById('lista-agendamentos');
             alvo.innerHTML='<p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Atualizando agenda...</p>';
             try {
-                const data=await gasAdmin("adminData");\n                agendamentosCache=data.appointments||[];
+                const data=await gasAdmin("adminData");
+                agendamentosCache=data.appointments||[];
                 renderizarAgendamentosAdmin();
             } catch(err) {
                 console.error('Erro ao carregar agendamentos:',err);
@@ -1385,7 +1395,10 @@
             };
             btn.disabled=true; btn.textContent='Salvando...'; msg.textContent='';
             try {
-                await gasAdmin("createAdminBooking",{\n                    serviceId:servico.id, professionalId:profissional.id,\n                    date, time:hora, customer:cliente, whatsapp\n                });
+                await gasAdmin("createAdminBooking",{
+                    serviceId:servico.id, professionalId:profissional.id,
+                    date, time:hora, customer:cliente, whatsapp
+                });
                 document.getElementById('form-agendamento-admin').reset();
                 document.getElementById('agenda-data').value=data;
                 prepararFormularioAgenda();
