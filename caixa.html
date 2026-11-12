@@ -730,13 +730,21 @@
                 botoes[chave].className = 'flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ' +
                     (chave === abaAtiva ? 'bg-brandDark text-white' : 'bg-nudeBg text-gray-600 hover:bg-roseLight');
             });
+            if (agendaRefreshTimer) clearInterval(agendaRefreshTimer);
+            agendaRefreshTimer = null;
             if (abaAtiva === 'servicos') carregarServicos();
             if (abaAtiva === 'profissionais') carregarProfissionais();
             if (abaAtiva === 'horarios') carregarProfissionais().then(renderizarSeletorHorarios);
-            if (abaAtiva === 'agenda') Promise.all([carregarProfissionais(), carregarServicos()]).then(() => {
-                prepararFormularioAgenda();
-                carregarAgendamentosAdmin();
-            });
+            if (abaAtiva === 'agenda') {
+                Promise.all([carregarProfissionais(), carregarServicos()]).then(() => {
+                    prepararFormularioAgenda();
+                    carregarAgendamentosAdmin();
+                });
+                // Atualiza a agenda aberta para novos pedidos aparecerem sem recarregar a página.
+                agendaRefreshTimer = setInterval(() => {
+                    if (document.visibilityState === 'visible') carregarAgendamentosAdmin();
+                }, 30000);
+            }
             window.scrollTo({ top: document.getElementById('abas-admin').offsetTop - 90, behavior: 'smooth' });
         };
 
