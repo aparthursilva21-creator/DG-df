@@ -214,6 +214,8 @@ function adminData_() {
  * das profissionais iniciais quando o nome corresponder.
  */
 function importLegacyData_(d) {
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty("DG_LEGACY_IMPORTED") === "1") return {ok:true, alreadyImported:true};
   const currentServices = rows_("servicos");
   const legacyServices = Array.isArray(d.services) ? d.services : [];
   if (currentServices.length === 0) {
@@ -246,6 +248,7 @@ function importLegacyData_(d) {
     };
     writeRow_("profissionais",item,id);
   });
+  props.setProperty("DG_LEGACY_IMPORTED","1");
   return {ok:true, importedServices:currentServices.length===0?legacyServices.length:0,
     importedProfessionals:legacyPros.length};
 }
