@@ -2,7 +2,7 @@
  * Cliente HTTP do Apps Script. O POST usa modo no-cors para evitar preflight;
  * o resultado é consultado por JSONP usando um requestId aleatório.
  */
-const ENDPOINT = window.DG_GAS_URL || "";
+const ENDPOINT = window.DG_GAS_URL || "COLE_AQUI_URL_DO_APPS_SCRIPT";
 
 function requestId() {
   const bytes = new Uint8Array(16);
