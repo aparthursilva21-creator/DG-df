@@ -532,7 +532,7 @@
                         </div>
                     </div>
                 </div>
-                <p class="text-[11px] text-gray-400 border-t border-gray-100 pt-4">Esta é a primeira etapa da agenda interna. Os agendamentos criados aqui ficam salvos no Firebase. A integração com o agendamento público, Google Agenda e notificações será conectada nas próximas etapas, após configurar o backend seguro.</p>
+                <p class="text-[11px] text-gray-400 border-t border-gray-100 pt-4">Os agendamentos ficam salvos na planilha privada do Google e sincronizados com a agenda principal da gestora. Novos pedidos aparecem aqui automaticamente; a gestora também recebe um aviso por e-mail.</p>
             </div>
         </section>
 
@@ -550,7 +550,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
-        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-functions.js";
+        import { gasRequest } from "./gas-client.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDZiMsjK-3aUMSybjZr6UAS3b8bVXKQ3Nw",
@@ -565,9 +565,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const functions = getFunctions(app, "southamerica-east1");
-        const chamarCriarAgendamentoAdmin = httpsCallable(functions, "createAdminBooking");
-        const chamarAtualizarStatusAgendamento = httpsCallable(functions, "updateBookingStatus");
+        async function gasAdmin(action, data={}) {
+            const user = auth.currentUser;
+            if (!user) throw new Error("Entre com a conta administradora.");
+            const token = await user.getIdToken();
+            return gasRequest(action, data, token);
+        }
         const googleProvider = new GoogleAuthProvider();
         const EMAIL_ADMIN = "dionesiaguarina98@gmail.com";
 
@@ -576,6 +579,31 @@
         let todosLancamentosGlobal = [];
         let servicosCache = [];
         let profissionaisCache = [];
+
+        let legadoMigrado = false;
+        let migracaoLegadoPromise = null;
+        let agendaRefreshTimer = null;
+
+        async function migrarDadosLegados() {
+            if (legadoMigrado) return;
+            if (migracaoLegadoPromise) return migracaoLegadoPromise;
+            migracaoLegadoPromise = (async () => {
+                const [servicosAntigos, profissionaisAntigas, agendamentosAntigos] = await Promise.all([
+                    getDocs(collection(db, 'servicos')),
+                    getDocs(collection(db, 'profissionais')),
+                    getDocs(collection(db, 'agendamentos'))
+                ]);
+                const services = servicosAntigos.docs.map(d => ({id:d.id, ...d.data()}));
+                const professionals = profissionaisAntigas.docs.map(d => ({id:d.id, ...d.data()}));
+                const appointments = agendamentosAntigos.docs.map(d => ({id:d.id, ...d.data()}));
+                if (services.length || professionals.length || appointments.length) {
+                    await gasAdmin("importLegacyData",{services,professionals,appointments});
+                }
+                legadoMigrado = true;
+            })();
+            try { await migracaoLegadoPromise; }
+            catch (err) { migracaoLegadoPromise = null; throw err; }
+        }
         const referenciasHistoricas = [
             {nome:"Pé e mão", categoria:"Mãos e pés", preco:50, detalhe:"Valor observado em vários lançamentos"},
             {nome:"Pé", categoria:"Pés", preco:30, detalhe:"Valor observado em três lançamentos"},
@@ -710,13 +738,21 @@
                 botoes[chave].className = 'flex-1 min-w-[150px] px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all ' +
                     (chave === abaAtiva ? 'bg-brandDark text-white' : 'bg-nudeBg text-gray-600 hover:bg-roseLight');
             });
+            if (agendaRefreshTimer) clearInterval(agendaRefreshTimer);
+            agendaRefreshTimer = null;
             if (abaAtiva === 'servicos') carregarServicos();
             if (abaAtiva === 'profissionais') carregarProfissionais();
             if (abaAtiva === 'horarios') carregarProfissionais().then(renderizarSeletorHorarios);
-            if (abaAtiva === 'agenda') Promise.all([carregarProfissionais(), carregarServicos()]).then(() => {
-                prepararFormularioAgenda();
-                carregarAgendamentosAdmin();
-            });
+            if (abaAtiva === 'agenda') {
+                Promise.all([carregarProfissionais(), carregarServicos()]).then(() => {
+                    prepararFormularioAgenda();
+                    carregarAgendamentosAdmin();
+                });
+                // Atualiza a agenda aberta para novos pedidos aparecerem sem recarregar a página.
+                agendaRefreshTimer = setInterval(() => {
+                    if (document.visibilityState === 'visible') carregarAgendamentosAdmin();
+                }, 30000);
+            }
             window.scrollTo({ top: document.getElementById('abas-admin').offsetTop - 90, behavior: 'smooth' });
         };
 
@@ -948,25 +984,17 @@
             const alvo = document.getElementById('lista-profissionais');
             alvo.innerHTML = '<p class="text-xs text-gray-400 p-4">Carregando...</p>';
             try {
-                let snap = await getDocs(collection(db, 'profissionais'));
-                if (snap.empty) {
-                    const iniciais = [
-                        {nome:'Dionésia', especialidade:''},
-                        {nome:'Márcia', especialidade:''},
-                        {nome:'Ingrid', especialidade:''}
-                    ];
-                    await Promise.all(iniciais.map(p => addDoc(collection(db, 'profissionais'), {
-                        ...p, ativo:true, criadoEm:new Date().toISOString(), atualizadoEm:new Date().toISOString()
-                    })));
-                    snap = await getDocs(collection(db, 'profissionais'));
-                }
-                profissionaisCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+                await migrarDadosLegados();
+                const data = await gasAdmin("adminData");
+                profissionaisCache = (data.professionals || []).map(p => ({
+                    ...p, agenda:p.agenda || (()=>{try{return JSON.parse(p.agendaJson||"{}")}catch(e){return {}}})()
+                }));
                 profissionaisCache.sort((a,b) => (a.nome||'').localeCompare(b.nome||'', 'pt-BR'));
                 atualizarSeletoresProfissionais();
                 renderizarProfissionais();
             } catch (err) {
                 console.error('Erro ao carregar profissionais:', err);
-                alvo.innerHTML = '<p class="text-xs text-red-600 p-4">Não foi possível carregar a equipe. Confira as regras do Firestore.</p>';
+                alvo.innerHTML = '<p class="text-xs text-red-600 p-4">Não foi possível carregar a equipe. Verifique a conexão com a planilha.</p>';
             }
         }
 
@@ -1048,15 +1076,13 @@
             const btn=document.getElementById('btn-salvar-profissional');
             btn.disabled=true; btn.textContent='Salvando...';
             try {
-                const dados={nome,especialidade,atualizadoEm:new Date().toISOString()};
-                if (id) await updateDoc(doc(db,'profissionais',id),dados);
-                else await addDoc(collection(db,'profissionais'),{...dados,ativo:true,criadoEm:new Date().toISOString()});
+                await gasAdmin("saveProfessional",{id,nome,especialidade});
                 limparFormularioProfissional();
                 document.getElementById('msg-profissional').textContent='Profissional salva com sucesso.';
                 await carregarProfissionais();
             } catch(err) {
                 console.error(err);
-                document.getElementById('msg-profissional').textContent='Erro ao salvar. Verifique sua conexão e as regras do Firebase.';
+                document.getElementById('msg-profissional').textContent='Erro ao salvar. Verifique a conexão com o Apps Script.';
             } finally { btn.disabled=false; btn.textContent='Salvar profissional'; }
         }
 
@@ -1065,7 +1091,7 @@
             const novoStatus=p.ativo===false;
             if (!confirm((novoStatus?'Ativar':'Desativar')+' a profissional "'+p.nome+'"?')) return;
             try {
-                await updateDoc(doc(db,'profissionais',p.id),{ativo:novoStatus,atualizadoEm:new Date().toISOString()});
+                await gasAdmin("setProfessionalActive",{id:p.id,ativo:novoStatus});
                 await carregarProfissionais();
             } catch(err) { alert('Não foi possível atualizar a profissional.'); console.error(err); }
         }
@@ -1152,12 +1178,12 @@
             }
             btn.disabled = true; btn.textContent = 'Salvando...'; msg.textContent = '';
             try {
-                await updateDoc(doc(db,'profissionais',id),{agenda,atualizadoEm:new Date().toISOString()});
+                await gasAdmin("saveSchedule",{professionalId:id,agenda});
                 profissional.agenda = agenda;
                 msg.textContent = 'Horários salvos com sucesso.';
             } catch(err) {
                 console.error('Erro ao salvar horários:',err);
-                msg.textContent = 'Não foi possível salvar. Confira a conexão e as regras do Firebase.';
+                msg.textContent = 'Não foi possível salvar. Confira a conexão com a planilha.';
             } finally { btn.disabled = false; btn.textContent = 'Salvar horários'; }
         }
 
@@ -1166,14 +1192,14 @@
             const alvo = document.getElementById('lista-servicos');
             alvo.innerHTML = '<p class="text-xs text-gray-400 p-4">Carregando...</p>';
             try {
-                const snap = await getDocs(collection(db, 'servicos'));
-                servicosCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+                const data = await gasAdmin("adminData");
+                servicosCache = data.services || [];
                 servicosCache.sort((a,b) => (a.nome||'').localeCompare(b.nome||'', 'pt-BR'));
                 atualizarSeletoresProfissionais();
                 renderizarServicos();
             } catch (err) {
                 console.error('Erro ao carregar serviços:', err);
-                alvo.innerHTML = '<p class="text-xs text-red-600 p-4">Não foi possível carregar os serviços. Confira as regras do Firestore.</p>';
+                alvo.innerHTML = '<p class="text-xs text-red-600 p-4">Não foi possível carregar os serviços. Verifique a conexão com a planilha.</p>';
             }
         }
 
@@ -1248,8 +1274,7 @@
             }
             btn.disabled=true; btn.textContent='Salvando...';
             try {
-                if (id) await updateDoc(doc(db,'servicos',id),dados);
-                else await addDoc(collection(db,'servicos'),{...dados,criadoEm:new Date().toISOString()});
+                await gasAdmin("saveService",{...dados,id});
                 limparFormularioServico();
                 document.getElementById('msg-servico').textContent='Serviço salvo com sucesso.';
                 await carregarServicos();
@@ -1264,7 +1289,7 @@
             const novoStatus=s.ativo===false;
             if (!confirm((novoStatus?'Ativar':'Desativar')+' o serviço "'+s.nome+'"?')) return;
             try {
-                await updateDoc(doc(db,'servicos',s.id),{ativo:novoStatus,atualizadoEm:new Date().toISOString()});
+                await gasAdmin("setServiceActive",{id:s.id,ativo:novoStatus});
                 await carregarServicos();
             } catch(err) { alert('Não foi possível atualizar o serviço.'); console.error(err); }
         }
@@ -1312,8 +1337,8 @@
             const alvo=document.getElementById('lista-agendamentos');
             alvo.innerHTML='<p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Atualizando agenda...</p>';
             try {
-                const snap=await getDocs(collection(db,'agendamentos'));
-                agendamentosCache=snap.docs.map(d=>({id:d.id,...d.data()}));
+                const data=await gasAdmin("adminData");
+                agendamentosCache=data.appointments||[];
                 renderizarAgendamentosAdmin();
             } catch(err) {
                 console.error('Erro ao carregar agendamentos:',err);
@@ -1366,7 +1391,7 @@
         async function alterarStatusAgendamento(a,status) {
             if(!ehGestoraAutenticada) return;
             try {
-                await chamarAtualizarStatusAgendamento({appointmentId:a.id,status});
+                await gasAdmin("updateBookingStatus",{appointmentId:a.id,status});
                 a.status=status;
                 await carregarAgendamentosAdmin();
             } catch(err) { console.error(err); alert('Não foi possível atualizar o agendamento.'); }
@@ -1404,7 +1429,7 @@
             };
             btn.disabled=true; btn.textContent='Salvando...'; msg.textContent='';
             try {
-                await chamarCriarAgendamentoAdmin({
+                await gasAdmin("createAdminBooking",{
                     serviceId:servico.id, professionalId:profissional.id,
                     date, time:hora, customer:cliente, whatsapp
                 });
@@ -1415,7 +1440,7 @@
                 msg.textContent='Agendamento salvo com sucesso.';
             } catch(err) {
                 console.error('Erro ao salvar agendamento:',err);
-                msg.textContent='Não foi possível salvar. Confira a conexão e as permissões do Firebase.';
+                msg.textContent='Não foi possível salvar. Confira a conexão com o Apps Script.';
             } finally { btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-calendar-plus mr-2"></i>Salvar agendamento'; }
         }
 

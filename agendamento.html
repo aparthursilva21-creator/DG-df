@@ -121,23 +121,9 @@ input{width:100%;margin-top:4px;background:var(--bg);border:1px solid var(--linh
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-functions.js";
+import { gasRequest } from "./gas-client.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDZiMsjK-3aUMSybjZr6UAS3b8bVXKQ3Nw",
-  authDomain: "dg-nails-caixa.firebaseapp.com",
-  projectId: "dg-nails-caixa",
-  storageBucket: "dg-nails-caixa.firebasestorage.app",
-  messagingSenderId: "975142262192",
-  appId: "1:975142262192:web:422733df09053d45417275",
-  measurementId: "G-VSFQKWPV26"
-};
-const app = initializeApp(firebaseConfig);
-const functions = getFunctions(app, "southamerica-east1");
-const chamarCatalogo = httpsCallable(functions, "publicCatalog");
-const consultarHorarios = httpsCallable(functions, "availableSlots");
-const criarAgendamento = httpsCallable(functions, "createPublicBooking");
+
 
 const CONFIG = { SALAO:"DG Nails", WHATSAPP:"5561993895357", DIAS_A_FRENTE:60 };
 const E = { s:null, data:null, hora:null, prof:null, passo:0, mes:null, mapa:{}, servicos:[], profissionais:[] };
@@ -163,9 +149,9 @@ function mensagemSistema(texto, erro=false) {
 
 async function iniciar() {
   try {
-    const result=await chamarCatalogo();
-    E.servicos=result.data.services||[];
-    E.profissionais=result.data.professionals||[];
+    const result=await gasRequest("publicCatalog");
+    E.servicos=result.services||[];
+    E.profissionais=result.professionals||[];
     renderizarServicos();
     $("demo").hidden=true;
     render();
@@ -280,8 +266,8 @@ async function carregarHorariosDoDia() {
   const date=iso(E.data);
   try {
     const results=await Promise.all(profissionaisDoServico().map(async p=>{
-      const r=await consultarHorarios({serviceId:E.s.id,professionalId:p.id,date});
-      return {id:p.id,slots:r.data.slots||[]};
+      const r=await gasRequest("availableSlots",{serviceId:E.s.id,professionalId:p.id,date});
+      return {id:p.id,slots:r.slots||[]};
     }));
     const mapa={};
     results.forEach(r=>r.slots.forEach(h=>(mapa[h]=mapa[h]||[]).push(r.id)));
@@ -340,7 +326,7 @@ $("confirmar").onclick=async()=>{
   }
   erro.hidden=true;btn.disabled=true;btn.textContent="Enviando solicitação...";
   try{
-    await criarAgendamento({
+    await gasRequest("createPublicBooking",{
       serviceId:E.s.id,professionalId:E.prof.id,date:iso(E.data),time:E.hora,
       customer:nome,whatsapp:zap
     });
@@ -351,9 +337,9 @@ $("confirmar").onclick=async()=>{
   }catch(err){
     console.error(err);
     erro.hidden=false;
-    erro.textContent=err.code==="functions/already-exists"?"Esse horário acabou de ser reservado. Escolha outro.":err.message||"Não foi possível registrar. Tente novamente.";
+    erro.textContent=err.message||"Não foi possível registrar. Tente novamente."
     btn.disabled=false;btn.textContent="Confirmar agendamento";
-    if(err.code==="functions/already-exists") await carregarHorariosDoDia();
+    if(/ocupado|reservado/i.test(err.message||"")) await carregarHorariosDoDia();
   }
 };
 
