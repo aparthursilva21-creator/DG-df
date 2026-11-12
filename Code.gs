@@ -117,7 +117,7 @@ function route_(req) {
   const data = req.data || {};
   const adminActions = [
     "adminData","saveService","setServiceActive","saveProfessional",
-    "setProfessionalActive","saveSchedule","createAdminBooking","updateBookingStatus"
+    "setProfessionalActive","saveSchedule","createAdminBooking","updateBookingStatus","importLegacyData"
   ];
   if (adminActions.indexOf(action) >= 0) requireAdmin_(data.idToken);
 
@@ -125,7 +125,7 @@ function route_(req) {
     case "publicCatalog": return publicCatalog_();
     case "availableSlots": return availableSlots_(data);
     case "createPublicBooking": return createBooking_(data, "site");
-    case "adminData": return adminData_();
+    case "adminData": return adminData_();\n    case "importLegacyData": return importLegacyData_(data);
     case "saveService": return saveService_(data);
     case "setServiceActive": return setActive_("servicos", data);
     case "saveProfessional": return saveProfessional_(data);
@@ -205,6 +205,52 @@ function adminData_() {
     }),
     appointments: rows_("agendamentos")
   };
+}
+
+/**
+ * Migra uma única vez o catálogo antigo do Firestore para a planilha.
+ * Não substitui registros que já existam na planilha e mantém os IDs atuais
+ * das profissionais iniciais quando o nome corresponder.
+ */
+function importLegacyData_(d) {
+  const currentServices = rows_("servicos");
+  const legacyServices = Array.isArray(d.services) ? d.services : [];
+  if (currentServices.length === 0) {
+    legacyServices.forEach(s => {
+      const id = clean_(s.id,80);
+      if (!id) return;
+      const item = {
+        id, nome:clean_(s.nome,100), categoria:clean_(s.categoria,80),
+        preco:Number(s.preco||0), duracaoMinutos:Number(s.duracaoMinutos||0),
+        profissional:clean_(s.profissional,100), descricao:clean_(s.descricao,500),
+        ativo:s.ativo !== false, criadoEm:s.criadoEm||new Date().toISOString(),
+        atualizadoEm:s.atualizadoEm||new Date().toISOString()
+      };
+      writeRow_("servicos",item,id);
+    });
+  }
+  const currentPros = rows_("profissionais");
+  const legacyPros = Array.isArray(d.professionals) ? d.professionals : [];
+  legacyPros.forEach(p => {
+    const name = clean_(p.nome,100);
+    if (!name) return;
+    const same = currentPros.find(x => normalizeText_(x.nome) === normalizeText_(name));
+    const id = same ? String(same.id) : clean_(p.id,80) || Utilities.getUuid();
+    const item = {
+      id, nome:name, especialidade:clean_(p.especialidade,100),
+      ativo:p.ativo !== false,
+      agendaJson:JSON.stringify(p.agenda || {}),
+      criadoEm:p.criadoEm||new Date().toISOString(),
+      atualizadoEm:p.atualizadoEm||new Date().toISOString()
+    };
+    writeRow_("profissionais",item,id);
+  });
+  return {ok:true, importedServices:currentServices.length===0?legacyServices.length:0,
+    importedProfessionals:legacyPros.length};
+}
+
+function normalizeText_(value) {
+  return String(value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim();
 }
 
 function saveService_(d) {
