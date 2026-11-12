@@ -254,7 +254,7 @@ function importLegacyData_(d) {
 }
 
 function normalizeText_(value) {
-  return String(value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim();
+  return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 }
 
 function saveService_(d) {
