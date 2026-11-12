@@ -550,7 +550,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
-        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-functions.js";
+        import { gasRequest } from "./gas-client.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDZiMsjK-3aUMSybjZr6UAS3b8bVXKQ3Nw",
@@ -565,9 +565,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const functions = getFunctions(app, "southamerica-east1");
-        const chamarCriarAgendamentoAdmin = httpsCallable(functions, "createAdminBooking");
-        const chamarAtualizarStatusAgendamento = httpsCallable(functions, "updateBookingStatus");
+        async function gasAdmin(action, data={}) {\n            const user = auth.currentUser;\n            if (!user) throw new Error("Entre com a conta administradora.");\n            const token = await user.getIdToken();\n            return gasRequest(action, data, token);\n        }
         const googleProvider = new GoogleAuthProvider();
         const EMAIL_ADMIN = "dionesiaguarina98@gmail.com";
 
@@ -948,19 +946,7 @@
             const alvo = document.getElementById('lista-profissionais');
             alvo.innerHTML = '<p class="text-xs text-gray-400 p-4">Carregando...</p>';
             try {
-                let snap = await getDocs(collection(db, 'profissionais'));
-                if (snap.empty) {
-                    const iniciais = [
-                        {nome:'Dionésia', especialidade:''},
-                        {nome:'Márcia', especialidade:''},
-                        {nome:'Ingrid', especialidade:''}
-                    ];
-                    await Promise.all(iniciais.map(p => addDoc(collection(db, 'profissionais'), {
-                        ...p, ativo:true, criadoEm:new Date().toISOString(), atualizadoEm:new Date().toISOString()
-                    })));
-                    snap = await getDocs(collection(db, 'profissionais'));
-                }
-                profissionaisCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+                const data = await gasAdmin("adminData");\n                profissionaisCache = (data.professionals || []).map(p => ({\n                    ...p, agenda:p.agenda || (()=>{try{return JSON.parse(p.agendaJson||"{}")}catch(e){return {}}})()\n                }));
                 profissionaisCache.sort((a,b) => (a.nome||'').localeCompare(b.nome||'', 'pt-BR'));
                 atualizarSeletoresProfissionais();
                 renderizarProfissionais();
@@ -1048,9 +1034,7 @@
             const btn=document.getElementById('btn-salvar-profissional');
             btn.disabled=true; btn.textContent='Salvando...';
             try {
-                const dados={nome,especialidade,atualizadoEm:new Date().toISOString()};
-                if (id) await updateDoc(doc(db,'profissionais',id),dados);
-                else await addDoc(collection(db,'profissionais'),{...dados,ativo:true,criadoEm:new Date().toISOString()});
+                await gasAdmin("saveProfessional",{id,nome,especialidade});
                 limparFormularioProfissional();
                 document.getElementById('msg-profissional').textContent='Profissional salva com sucesso.';
                 await carregarProfissionais();
@@ -1065,7 +1049,7 @@
             const novoStatus=p.ativo===false;
             if (!confirm((novoStatus?'Ativar':'Desativar')+' a profissional "'+p.nome+'"?')) return;
             try {
-                await updateDoc(doc(db,'profissionais',p.id),{ativo:novoStatus,atualizadoEm:new Date().toISOString()});
+                await gasAdmin("setProfessionalActive",{id:p.id,ativo:novoStatus});
                 await carregarProfissionais();
             } catch(err) { alert('Não foi possível atualizar a profissional.'); console.error(err); }
         }
@@ -1152,7 +1136,7 @@
             }
             btn.disabled = true; btn.textContent = 'Salvando...'; msg.textContent = '';
             try {
-                await updateDoc(doc(db,'profissionais',id),{agenda,atualizadoEm:new Date().toISOString()});
+                await gasAdmin("saveSchedule",{professionalId:id,agenda});
                 profissional.agenda = agenda;
                 msg.textContent = 'Horários salvos com sucesso.';
             } catch(err) {
@@ -1166,8 +1150,7 @@
             const alvo = document.getElementById('lista-servicos');
             alvo.innerHTML = '<p class="text-xs text-gray-400 p-4">Carregando...</p>';
             try {
-                const snap = await getDocs(collection(db, 'servicos'));
-                servicosCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+                const data = await gasAdmin("adminData");\n                servicosCache = data.services || [];
                 servicosCache.sort((a,b) => (a.nome||'').localeCompare(b.nome||'', 'pt-BR'));
                 atualizarSeletoresProfissionais();
                 renderizarServicos();
@@ -1248,8 +1231,7 @@
             }
             btn.disabled=true; btn.textContent='Salvando...';
             try {
-                if (id) await updateDoc(doc(db,'servicos',id),dados);
-                else await addDoc(collection(db,'servicos'),{...dados,criadoEm:new Date().toISOString()});
+                await gasAdmin("saveService",{...dados,id});
                 limparFormularioServico();
                 document.getElementById('msg-servico').textContent='Serviço salvo com sucesso.';
                 await carregarServicos();
@@ -1264,7 +1246,7 @@
             const novoStatus=s.ativo===false;
             if (!confirm((novoStatus?'Ativar':'Desativar')+' o serviço "'+s.nome+'"?')) return;
             try {
-                await updateDoc(doc(db,'servicos',s.id),{ativo:novoStatus,atualizadoEm:new Date().toISOString()});
+                await gasAdmin("setServiceActive",{id:s.id,ativo:novoStatus});
                 await carregarServicos();
             } catch(err) { alert('Não foi possível atualizar o serviço.'); console.error(err); }
         }
@@ -1312,8 +1294,7 @@
             const alvo=document.getElementById('lista-agendamentos');
             alvo.innerHTML='<p class="text-sm text-gray-400 p-4 bg-nudeBg rounded-xl">Atualizando agenda...</p>';
             try {
-                const snap=await getDocs(collection(db,'agendamentos'));
-                agendamentosCache=snap.docs.map(d=>({id:d.id,...d.data()}));
+                const data=await gasAdmin("adminData");\n                agendamentosCache=data.appointments||[];
                 renderizarAgendamentosAdmin();
             } catch(err) {
                 console.error('Erro ao carregar agendamentos:',err);
@@ -1366,7 +1347,7 @@
         async function alterarStatusAgendamento(a,status) {
             if(!ehGestoraAutenticada) return;
             try {
-                await chamarAtualizarStatusAgendamento({appointmentId:a.id,status});
+                await gasAdmin("updateBookingStatus",{appointmentId:a.id,status});
                 a.status=status;
                 await carregarAgendamentosAdmin();
             } catch(err) { console.error(err); alert('Não foi possível atualizar o agendamento.'); }
@@ -1404,10 +1385,7 @@
             };
             btn.disabled=true; btn.textContent='Salvando...'; msg.textContent='';
             try {
-                await chamarCriarAgendamentoAdmin({
-                    serviceId:servico.id, professionalId:profissional.id,
-                    date, time:hora, customer:cliente, whatsapp
-                });
+                await gasAdmin("createAdminBooking",{\n                    serviceId:servico.id, professionalId:profissional.id,\n                    date, time:hora, customer:cliente, whatsapp\n                });
                 document.getElementById('form-agendamento-admin').reset();
                 document.getElementById('agenda-data').value=data;
                 prepararFormularioAgenda();
