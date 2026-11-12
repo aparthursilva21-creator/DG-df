@@ -249,9 +249,29 @@ function importLegacyData_(d) {
     };
     writeRow_("profissionais",item,id);
   });
+  const currentAppointments = rows_("agendamentos");
+  const legacyAppointments = Array.isArray(d.appointments) ? d.appointments : [];
+  if (currentAppointments.length === 0) {
+    legacyAppointments.forEach(a => {
+      const id = clean_(a.id,80);
+      if (!id || !validDate_(String(a.data||"")) || !validClock_(String(a.hora||""))) return;
+      const item = {
+        id, cliente:clean_(a.cliente,100), whatsapp:String(a.whatsapp||"").replace(/\\D/g,"").slice(0,15),
+        servico:clean_(a.servico,100), servicoId:clean_(a.servicoId,80),
+        profissional:clean_(a.profissional,100), profissionalId:clean_(a.profissionalId,80),
+        data:String(a.data), hora:String(a.hora), duracaoMinutos:Number(a.duracaoMinutos||0),
+        valor:Number(a.valor||0), inicioMs:Number(a.inicioMs||localDate_(String(a.data),String(a.hora)).getTime()),
+        fimMs:Number(a.fimMs||0), status:["aguardando","confirmado","concluido","cancelado"].indexOf(a.status)>=0?a.status:"aguardando",
+        origem:String(a.origem||"migrado"), criadoEm:a.criadoEm||new Date().toISOString(),
+        atualizadoEm:a.atualizadoEm||new Date().toISOString(), calendarEventId:""
+      };
+      if (!item.fimMs) item.fimMs=item.inicioMs+item.duracaoMinutos*60000;
+      writeRow_("agendamentos",item,id);
+    });
+  }
   props.setProperty("DG_LEGACY_IMPORTED","1");
   return {ok:true, importedServices:currentServices.length===0?legacyServices.length:0,
-    importedProfessionals:legacyPros.length};
+    importedProfessionals:legacyPros.length, importedAppointments:currentAppointments.length===0?legacyAppointments.length:0};
 }
 
 function normalizeText_(value) {
