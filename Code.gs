@@ -47,6 +47,19 @@ function configurarSistema() {
       sh.setFrozenRows(1);
     }
   });
+  // Mantém a equipe inicial já prevista no painel. Os horários continuam
+  // vazios até a gestora configurar cada profissional.
+  if (rows_("profissionais").length === 0) {
+    const now = new Date().toISOString();
+    [
+      {nome:"Dionésia",especialidade:""},
+      {nome:"Márcia",especialidade:""},
+      {nome:"Ingrid",especialidade:""}
+    ].forEach(p => writeRow_("profissionais", {
+      id:Utilities.getUuid(), nome:p.nome, especialidade:p.especialidade,
+      ativo:true, agendaJson:"{}", criadoEm:now, atualizadoEm:now
+    }, ""));
+  }
   const defaultSheet = ss.getSheetByName("Planilha1");
   if (defaultSheet && ss.getSheets().length > 3 && defaultSheet.getLastRow() === 0) ss.deleteSheet(defaultSheet);
   Logger.log("Planilha DG Nails: " + ss.getUrl());
