@@ -85,13 +85,19 @@ function rows_(sheetName) {
 function doGet(e) {
   try {
     const action = String((e && e.parameter && e.parameter.action) || 'catalog');
-    if (action === 'catalog') return json_(catalog_());
-    if (action === 'slots') {
-      return json_(slots_(String(e.parameter.serviceId || ''),
-        String(e.parameter.professionalId || ''), String(e.parameter.date || '')));
+    let result;
+    if (action === 'catalog') result = catalog_();
+    else if (action === 'slots') result = slots_(String(e.parameter.serviceId || ''),
+      String(e.parameter.professionalId || ''), String(e.parameter.date || ''));
+    else if (action === 'health') result = { ok: true, service: 'DG Nails API' };
+    else result = { ok: false, error: 'Ação não reconhecida.' };
+    const callback = String((e && e.parameter && e.parameter.callback) || '');
+    if (callback) {
+      if (!/^[A-Za-z_$][0-9A-Za-z_$\.]{0,80}$/.test(callback)) return json_({ok:false,error:'Callback inválido.'});
+      return ContentService.createTextOutput(callback + '(' + JSON.stringify(result) + ');')
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
     }
-    if (action === 'health') return json_({ ok: true, service: 'DG Nails API' });
-    return json_({ ok: false, error: 'Ação não reconhecida.' });
+    return json_(result);
   } catch (err) {
     console.error(err);
     return json_({ ok: false, error: 'Não foi possível consultar os dados.' });
@@ -101,16 +107,15 @@ function doGet(e) {
 function doPost(e) {
   const lock = LockService.getScriptLock();
   try {
-    const raw = e && e.postData && e.postData.contents;
-    const data = raw ? JSON.parse(raw) : (e && e.parameter) || {};
-    if (data.action !== 'booking') return json_({ ok: false, error: 'Ação não reconhecida.' });
+    const data = (e && e.parameter) || {};
+    if (data.action !== 'booking') return htmlResult_({ ok: false, error: 'Ação não reconhecida.' }, data.requestId);
 
     lock.waitLock(20000);
     const result = createBooking_(data);
-    return json_(result);
+    return htmlResult_(result, data.requestId);
   } catch (err) {
     console.error(err);
-    return json_({ ok: false, error: err && err.publicMessage ? err.publicMessage : 'Não foi possível concluir. Atualize a página e tente novamente.' });
+    return htmlResult_({ ok: false, error: err && err.publicMessage ? err.publicMessage : 'Não foi possível concluir. Atualize a página e tente novamente.' }, (e && e.parameter && e.parameter.requestId));
   } finally {
     if (lock.hasLock()) lock.releaseLock();
   }
@@ -131,7 +136,7 @@ function catalog_() {
 }
 
 function slots_(serviceId, professionalId, date) {
-  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) return { ok: false, slots: [] };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { ok: false, slots: [] };
   const cat = catalog_();
   const service = cat.services.find(s => s.id === serviceId);
   const professional = cat.professionals.find(p => p.id === professionalId);
@@ -174,9 +179,9 @@ function createBooking_(data) {
   const date = String(data.date || '');
   const time = String(data.time || '');
   const customer = clean_(data.customer, 80);
-  const whatsapp = String(data.whatsapp || '').replace(/\\D/g, '').slice(0, 15);
-  if (!serviceId || !professionalId || !/^\\d{4}-\\d{2}-\\d{2}$/.test(date) ||
-      !/^([01]\\d|2[0-3]):[0-5]\\d$/.test(time) || customer.length < 2 || whatsapp.length < 10) {
+  const whatsapp = String(data.whatsapp || '').replace(/\D/g, '').slice(0, 15);
+  if (!serviceId || !professionalId || !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+      !/^([01]\d|2[0-3]):[0-5]\d$/.test(time) || customer.length < 2 || whatsapp.length < 10) {
     throw publicError_('Confira nome, WhatsApp, serviço, profissional e horário.');
   }
 
@@ -206,10 +211,10 @@ function notifySalon_(customer, whatsapp, service, professional, date, time) {
   if (!email) return;
   const when = Utilities.formatDate(new Date(date + 'T' + time + ':00-03:00'), DG.timezone, "dd/MM/yyyy 'às' HH:mm");
   const subject = 'Novo pedido de agendamento — DG Nails';
-  const body = 'Novo pedido recebido pelo site.\\n\\nCliente: ' + customer +
-    '\\nWhatsApp: ' + whatsapp + '\\nServiço: ' + service.nome +
-    '\\nProfissional: ' + professional.nome + '\\nData: ' + when +
-    '\\n\\nAcesse o painel DG Nails para confirmar.';
+  const body = 'Novo pedido recebido pelo site.\n\nCliente: ' + customer +
+    '\nWhatsApp: ' + whatsapp + '\nServiço: ' + service.nome +
+    '\nProfissional: ' + professional.nome + '\nData: ' + when +
+    '\n\nAcesse o painel DG Nails para confirmar.';
   try { MailApp.sendEmail(email, subject, body); } catch (err) { console.error(err); }
 }
 
@@ -238,8 +243,15 @@ function fitsBreak_(s, start, end) {
 
 function truthy_(v) { return v === true || String(v).toLowerCase() === 'true' || String(v) === '1' || String(v).toLowerCase() === 'sim'; }
 function clean_(v, max) { return String(v || '').trim().replace(/[<>]/g, '').slice(0, max); }
-function normalize_(v) { return String(v || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim(); }
+function normalize_(v) { return String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); }
 function minutes_(v) { const p = String(v).split(':').map(Number); return p[0] * 60 + p[1]; }
 function clock_(m) { return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
 function startOfToday_() { const s = Utilities.formatDate(new Date(), DG.timezone, 'yyyy-MM-dd'); return new Date(s + 'T00:00:00-03:00').getTime(); }
 function publicError_(message) { const e = new Error(message); e.publicMessage = message; return e; }
+
+
+function htmlResult_(payload, requestId) {
+  const safeId = String(requestId || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 80);
+  const message = JSON.stringify({ type: 'dg-booking-result', requestId: safeId, payload: payload }).replace(/</g, '\\u003c');
+  return HtmlService.createHtmlOutput('<!doctype html><script>parent.postMessage(' + message + ', "*");</script>');
+}
