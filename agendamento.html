@@ -120,26 +120,17 @@ input{width:100%;margin-top:4px;background:var(--bg);border:1px solid var(--linh
 <aside class="resumo" id="resumo"></aside>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-functions.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDZiMsjK-3aUMSybjZr6UAS3b8bVXKQ3Nw",
-  authDomain: "dg-nails-caixa.firebaseapp.com",
-  projectId: "dg-nails-caixa",
-  storageBucket: "dg-nails-caixa.firebasestorage.app",
-  messagingSenderId: "975142262192",
-  appId: "1:975142262192:web:422733df09053d45417275",
-  measurementId: "G-VSFQKWPV26"
+<script>
+/*
+ * URL do Web App do Google Apps Script.
+ * Será preenchida após criar e implantar o projeto DG Nails API.
+ */
+const CONFIG = {
+  API_URL: "",
+  SALAO: "DG Nails",
+  WHATSAPP: "5561993895357",
+  DIAS_A_FRENTE: 60
 };
-const app = initializeApp(firebaseConfig);
-const functions = getFunctions(app, "southamerica-east1");
-const chamarCatalogo = httpsCallable(functions, "publicCatalog");
-const consultarHorarios = httpsCallable(functions, "availableSlots");
-const criarAgendamento = httpsCallable(functions, "createPublicBooking");
-
-const CONFIG = { SALAO:"DG Nails", WHATSAPP:"5561993895357", DIAS_A_FRENTE:60 };
 const E = { s:null, data:null, hora:null, prof:null, passo:0, mes:null, mapa:{}, servicos:[], profissionais:[] };
 const $ = id => document.getElementById(id);
 const iso = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
@@ -153,212 +144,117 @@ const profissionaisDoServico = () => {
   const atribuido=nomeNormalizado(E.s?.profissional);
   return E.profissionais.filter(p=>!atribuido||atribuido==="todas"||atribuido==="qualquer profissional"||nomeNormalizado(p.nome)===atribuido);
 };
-
 function mensagemSistema(texto, erro=false) {
-  const el=$("demo");
-  el.hidden=false;
-  el.textContent=texto;
-  el.style.color=erro?"#a33":"";
+  const el=$("demo"); el.hidden=false; el.textContent=texto; el.style.color=erro?"#a33":"";
 }
-
+function jsonp(params) {
+  return new Promise((resolve,reject)=>{
+    const callback="dgJsonp_"+Math.random().toString(36).slice(2);
+    const script=document.createElement("script");
+    const timer=setTimeout(()=>{cleanup();reject(new Error("Tempo esgotado ao consultar a agenda."));},15000);
+    function cleanup(){clearTimeout(timer);delete window[callback];script.remove();}
+    window[callback]=data=>{cleanup();resolve(data);};
+    const url=new URL(CONFIG.API_URL);
+    Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
+    url.searchParams.set("callback",callback);
+    script.onerror=()=>{cleanup();reject(new Error("Não foi possível conectar à agenda."));};
+    script.src=url.toString();document.head.appendChild(script);
+  });
+}
 async function iniciar() {
+  if(!CONFIG.API_URL) {
+    mensagemSistema("Estamos preparando o agendamento online. Para marcar, fale com nossa equipe pelo WhatsApp.");
+    $("servicos").textContent="Agendamento online em configuração. Nossa equipe atende pelo WhatsApp.";
+    return;
+  }
   try {
-    const result=await chamarCatalogo();
-    E.servicos=result.data.services||[];
-    E.profissionais=result.data.professionals||[];
-    renderizarServicos();
-    $("demo").hidden=true;
-    render();
+    const result=await jsonp({action:"catalog"});
+    if(!result.ok) throw new Error(result.error||"Não foi possível carregar o catálogo.");
+    E.servicos=result.services||[]; E.profissionais=result.professionals||[];
+    renderizarServicos(); $("demo").hidden=true; render();
   } catch(err) {
     console.error(err);
     mensagemSistema("O agendamento online está temporariamente indisponível. Chame nossa equipe pelo WhatsApp.",true);
     $("servicos").textContent="Não foi possível carregar os serviços. Tente novamente mais tarde.";
   }
 }
-
 function renderizarServicos() {
-  const box=$("servicos");
-  box.innerHTML="";
-  if(!E.servicos.length) {
-    box.textContent="Nenhum serviço está disponível para agendamento online no momento.";
-    return;
-  }
+  const box=$("servicos");box.innerHTML="";
+  if(!E.servicos.length){box.textContent="Nenhum serviço está disponível para agendamento online no momento.";return;}
   E.servicos.forEach(s=>{
-    const b=document.createElement("button");
-    b.type="button"; b.className="op";
-    const title=document.createElement("b"); title.textContent=s.nome;
-    const small=document.createElement("small");
-    small.textContent=Number(s.duracaoMinutos)+" min"+(Number(s.preco)>0?" · "+brl(s.preco):"");
+    const b=document.createElement("button");b.type="button";b.className="op";
+    const title=document.createElement("b");title.textContent=s.nome;
+    const small=document.createElement("small");small.textContent=Number(s.duracaoMinutos)+" min"+(Number(s.preco)>0?" · "+brl(s.preco):"");
     b.append(title,small);
-    b.addEventListener("click",()=>{
-      E.s=s; E.data=null; E.hora=null; E.prof=null; E.mapa={};
-      const hoje=new Date(); E.mes=new Date(hoje.getFullYear(),hoje.getMonth(),1);
-      calendario(); $("horas").innerHTML=""; avancar(1);
-    });
+    b.addEventListener("click",()=>{E.s=s;E.data=null;E.hora=null;E.prof=null;E.mapa={};const hoje=new Date();E.mes=new Date(hoje.getFullYear(),hoje.getMonth(),1);calendario();$("horas").innerHTML="";avancar(1);});
     box.append(b);
   });
 }
-
 function render() {
   const vals=[E.s?.nome,E.data&&E.hora&&dataCurta(E.data)+", "+E.hora,E.prof?.nome,""];
-  for(let i=0;i<4;i++){
-    const el=$("s"+i);
-    el.className="passo"+(i===E.passo?" aberto":i<E.passo?" ok":" bloq");
-    $("v"+i).textContent=i<E.passo?(vals[i]||""):"";
-  }
+  for(let i=0;i<4;i++){const el=$("s"+i);el.className="passo"+(i===E.passo?" aberto":i<E.passo?" ok":" bloq");$("v"+i).textContent=i<E.passo?(vals[i]||""):"";}
   resumo();
 }
-function avancar(i) {
-  E.passo=i; render();
-  $("s"+i).scrollIntoView({behavior:"smooth",block:"start"});
-}
-function alterar(i) {
-  if(i<=0){E.s=null;E.data=null;E.hora=null;E.prof=null;E.mapa={};}
-  if(i<=1){E.data=null;E.hora=null;E.prof=null;E.mapa={};}
-  if(i<=2) E.prof=null;
-  E.passo=i;
-  if(i===1&&E.mes) calendario();
-  if(i===2) montarProfs();
-  render();
-}
+function avancar(i){E.passo=i;render();$("s"+i).scrollIntoView({behavior:"smooth",block:"start"});}
+function alterar(i){if(i<=0){E.s=null;E.data=null;E.hora=null;E.prof=null;E.mapa={};}if(i<=1){E.data=null;E.hora=null;E.prof=null;E.mapa={};}if(i<=2)E.prof=null;E.passo=i;if(i===1&&E.mes)calendario();if(i===2)montarProfs();render();}
 [0,1,2].forEach(i=>$("a"+i).onclick=()=>alterar(i));
-
-function resumo() {
-  const box=$("resumo");
-  box.innerHTML="";
-  const h=document.createElement("h2"); h.textContent="Seu agendamento"; box.append(h);
-  const line=(k,v)=>{
-    const row=document.createElement("div"); row.className="lin";
-    const label=document.createElement("span"); label.textContent=k;
-    const value=document.createElement("b"); value.className=v?"":"vazio"; value.textContent=v||"—";
-    row.append(label,value); box.append(row);
-  };
-  line("Serviço",E.s?.nome);
-  line("Profissional",E.prof?.nome);
-  line("Data",E.data&&dataLonga(E.data));
-  line("Horário",E.hora);
-  line("Duração",E.s&&E.s.duracaoMinutos+" min");
-  if(E.s&&Number(E.s.preco)>0){
-    const total=document.createElement("div"); total.className="total";
-    const label=document.createElement("span"); label.textContent="Valor";
-    const value=document.createElement("b"); value.textContent=brl(E.s.preco);
-    total.append(label,value); box.append(total);
-  }
-  const note=document.createElement("p"); note.className="nota"; note.textContent="A equipe confirmará sua solicitação pelo WhatsApp.";
-  box.append(note);
+function resumo(){
+ const box=$("resumo");box.innerHTML="";const h=document.createElement("h2");h.textContent="Seu agendamento";box.append(h);
+ const line=(k,v)=>{const row=document.createElement("div");row.className="lin";const label=document.createElement("span");label.textContent=k;const value=document.createElement("b");value.className=v?"":"vazio";value.textContent=v||"—";row.append(label,value);box.append(row);};
+ line("Serviço",E.s?.nome);line("Profissional",E.prof?.nome);line("Data",E.data&&dataLonga(E.data));line("Horário",E.hora);line("Duração",E.s&&E.s.duracaoMinutos+" min");
+ if(E.s&&Number(E.s.preco)>0){const total=document.createElement("div");total.className="total";const label=document.createElement("span");label.textContent="Valor";const value=document.createElement("b");value.textContent=brl(E.s.preco);total.append(label,value);box.append(total);}
+ const note=document.createElement("p");note.className="nota";note.textContent="A equipe confirmará sua solicitação pelo WhatsApp.";box.append(note);
 }
-
-function calendario() {
-  if(!E.mes) return;
-  const m=E.mes, hoje=new Date(); hoje.setHours(0,0,0,0);
-  const max=new Date(hoje); max.setDate(max.getDate()+CONFIG.DIAS_A_FRENTE);
-  const ultimo=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
-  let h='<div class="mes"><button class="seta" id="ant" aria-label="Mês anterior">‹</button><b>'+m.toLocaleDateString("pt-BR",{month:"long",year:"numeric"})+'</b><button class="seta" id="prox" aria-label="Próximo mês">›</button></div><div class="cal">';
-  ["D","S","T","Q","Q","S","S"].forEach(x=>h+='<i>'+x+'</i>');
-  for(let i=0;i<m.getDay();i++) h+="<span></span>";
-  for(let d=1;d<=ultimo;d++){
-    const dt=new Date(m.getFullYear(),m.getMonth(),d);
-    const ok=dt>=hoje&&dt<=max;
-    const cls="d"+(+dt===+hoje?" hoje":"")+(E.data&&+dt===+E.data?" sel":"");
-    h+='<button type="button" class="'+cls+'" data-d="'+d+'" '+(ok?"":"disabled")+'>'+d+'</button>';
-  }
-  $("cal").innerHTML=h+"</div>";
-  $("ant").disabled=m<=new Date(hoje.getFullYear(),hoje.getMonth(),1);
-  $("prox").disabled=new Date(m.getFullYear(),m.getMonth()+1,1)>max;
-  $("ant").onclick=()=>{E.mes=new Date(m.getFullYear(),m.getMonth()-1,1);calendario();};
-  $("prox").onclick=()=>{E.mes=new Date(m.getFullYear(),m.getMonth()+1,1);calendario();};
-  $("cal").querySelectorAll(".d").forEach(b=>b.onclick=async()=>{
-    E.data=new Date(m.getFullYear(),m.getMonth(),Number(b.dataset.d));
-    E.hora=null;E.prof=null;E.mapa={};
-    calendario();await carregarHorariosDoDia();resumo();
-  });
+function calendario(){
+ if(!E.mes)return;const m=E.mes,hoje=new Date();hoje.setHours(0,0,0,0);const max=new Date(hoje);max.setDate(max.getDate()+CONFIG.DIAS_A_FRENTE);const ultimo=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+ let h='<div class="mes"><button class="seta" id="ant" aria-label="Mês anterior">‹</button><b>'+m.toLocaleDateString("pt-BR",{month:"long",year:"numeric"})+'</b><button class="seta" id="prox" aria-label="Próximo mês">›</button></div><div class="cal">';
+ ["D","S","T","Q","Q","S","S"].forEach(x=>h+='<i>'+x+'</i>');for(let i=0;i<m.getDay();i++)h+="<span></span>";
+ for(let d=1;d<=ultimo;d++){const dt=new Date(m.getFullYear(),m.getMonth(),d);const ok=dt>=hoje&&dt<=max;const cls="d"+(+dt===+hoje?" hoje":"")+(E.data&&+dt===+E.data?" sel":"");h+='<button type="button" class="'+cls+'" data-d="'+d+'" '+(ok?"":"disabled")+'>'+d+'</button>';}
+ $("cal").innerHTML=h+"</div>";$("ant").disabled=m<=new Date(hoje.getFullYear(),hoje.getMonth(),1);$("prox").disabled=new Date(m.getFullYear(),m.getMonth()+1,1)>max;
+ $("ant").onclick=()=>{E.mes=new Date(m.getFullYear(),m.getMonth()-1,1);calendario();};$("prox").onclick=()=>{E.mes=new Date(m.getFullYear(),m.getMonth()+1,1);calendario();};
+ $("cal").querySelectorAll(".d").forEach(b=>b.onclick=async()=>{E.data=new Date(m.getFullYear(),m.getMonth(),Number(b.dataset.d));E.hora=null;E.prof=null;E.mapa={};calendario();await carregarHorariosDoDia();resumo();});
 }
-
-async function carregarHorariosDoDia() {
-  const box=$("horas");
-  box.textContent="Consultando horários disponíveis...";
-  const date=iso(E.data);
-  try {
-    const results=await Promise.all(profissionaisDoServico().map(async p=>{
-      const r=await consultarHorarios({serviceId:E.s.id,professionalId:p.id,date});
-      return {id:p.id,slots:r.data.slots||[]};
-    }));
-    const mapa={};
-    results.forEach(r=>r.slots.forEach(h=>(mapa[h]=mapa[h]||[]).push(r.id)));
-    E.mapa=mapa;
-    renderizarHorarios();
-  } catch(err) {
-    console.error(err);
-    box.textContent="Não foi possível consultar os horários. Atualize a página ou fale conosco pelo WhatsApp.";
-  }
+async function carregarHorariosDoDia(){
+ const box=$("horas");box.textContent="Consultando horários disponíveis...";
+ try{
+  const results=await Promise.all(profissionaisDoServico().map(async p=>{const r=await jsonp({action:"slots",serviceId:E.s.id,professionalId:p.id,date:iso(E.data)});return{id:p.id,slots:r.slots||[]};}));
+  const mapa={};results.forEach(r=>r.slots.forEach(h=>(mapa[h]=mapa[h]||[]).push(r.id)));E.mapa=mapa;renderizarHorarios();
+ }catch(err){console.error(err);box.textContent="Não foi possível consultar os horários. Atualize a página ou fale conosco pelo WhatsApp.";}
 }
-
-function renderizarHorarios() {
-  const box=$("horas");box.innerHTML="";
-  const entries=Object.keys(E.mapa).sort((a,b)=>mins(a)-mins(b));
-  if(!entries.length){
-    box.textContent="Não há horários disponíveis nesta data. Escolha outro dia.";
-    return;
-  }
-  [["Manhã",0,720],["Tarde",720,1080],["Noite",1080,1440]].forEach(([nome,a,b])=>{
-    const hs=entries.filter(h=>mins(h)>=a&&mins(h)<b);
-    if(!hs.length)return;
-    const title=document.createElement("h3");title.textContent=nome;
-    const wrap=document.createElement("div");wrap.className="horas";
-    hs.forEach(h=>{
-      const btn=document.createElement("button");btn.type="button";
-      btn.className="hora"+(E.hora===h?" sel":"");btn.textContent=h;
-      btn.onclick=()=>{E.hora=h;E.prof=null;montarProfs();avancar(2);};
-      wrap.append(btn);
-    });
-    box.append(title,wrap);
-  });
+function renderizarHorarios(){
+ const box=$("horas");box.innerHTML="";const entries=Object.keys(E.mapa).sort((a,b)=>mins(a)-mins(b));
+ if(!entries.length){box.textContent="Não há horários disponíveis nesta data. Escolha outro dia.";return;}
+ [["Manhã",0,720],["Tarde",720,1080],["Noite",1080,1440]].forEach(([nome,a,b])=>{const hs=entries.filter(h=>mins(h)>=a&&mins(h)<b);if(!hs.length)return;const title=document.createElement("h3");title.textContent=nome;const wrap=document.createElement("div");wrap.className="horas";hs.forEach(h=>{const btn=document.createElement("button");btn.type="button";btn.className="hora"+(E.hora===h?" sel":"");btn.textContent=h;btn.onclick=()=>{E.hora=h;E.prof=null;montarProfs();avancar(2);};wrap.append(btn);});box.append(title,wrap);});
 }
-
-function montarProfs() {
-  const box=$("profs");box.innerHTML="";
-  (E.mapa[E.hora]||[]).forEach(id=>{
-    const p=profissional(id);if(!p)return;
-    const b=document.createElement("button");b.type="button";b.className="op prof";
-    const foto=p.nome.toLowerCase().includes("márcia")?"marcia.png":p.nome.toLowerCase().includes("ingrid")?"ingridy.png":"dg1.jpeg";
-    const av=document.createElement("img");av.className="av";av.src=foto;av.alt="";av.onerror=()=>{const span=document.createElement("span");span.className="av";span.textContent=p.nome[0];av.replaceWith(span);};
-    const text=document.createElement("span");
-    const name=document.createElement("b");name.textContent=p.nome;
-    const specialty=document.createElement("small");specialty.textContent=p.especialidade||"Profissional";
-    text.append(name,specialty);b.append(av,text);
-    b.onclick=()=>{E.prof=p;avancar(3);};
-    box.append(b);
-  });
-  if(!box.children.length)box.textContent="Nenhuma profissional disponível para esse horário. Escolha outro.";
+function montarProfs(){
+ const box=$("profs");box.innerHTML="";(E.mapa[E.hora]||[]).forEach(id=>{const p=profissional(id);if(!p)return;const foto=p.nome.toLowerCase().includes("márcia")?"marcia.png":p.nome.toLowerCase().includes("ingrid")?"ingridy.png":"dg1.jpeg";const b=document.createElement("button");b.type="button";b.className="op prof";const av=document.createElement("img");av.className="av";av.src=foto;av.alt="";av.onerror=()=>{const span=document.createElement("span");span.className="av";span.textContent=p.nome[0];av.replaceWith(span);};const txt=document.createElement("span");const name=document.createElement("b");name.textContent=p.nome;const specialty=document.createElement("small");specialty.textContent=p.especialidade||"Profissional";txt.append(name,specialty);b.append(av,txt);b.onclick=()=>{E.prof=p;avancar(3);};box.append(b);});
+ if(!box.children.length)box.textContent="Nenhuma profissional disponível para esse horário. Escolha outro.";
 }
-
+function enviarSolicitacao(payload){
+ return new Promise((resolve,reject)=>{
+  const requestId="dg_"+Date.now()+"_"+Math.random().toString(36).slice(2);
+  const iframe=document.createElement("iframe");iframe.name=requestId;iframe.hidden=true;document.body.append(iframe);
+  const form=document.createElement("form");form.method="POST";form.action=CONFIG.API_URL;form.target=requestId;form.hidden=true;
+  const fields={action:"booking",requestId,...payload};
+  Object.entries(fields).forEach(([name,value])=>{const input=document.createElement("input");input.type="hidden";input.name=name;input.value=String(value);form.append(input);});
+  const timeout=setTimeout(()=>finish(new Error("A solicitação demorou demais. Tente novamente.")),20000);
+  function finish(err,result){clearTimeout(timeout);window.removeEventListener("message",listener);form.remove();iframe.remove();err?reject(err):resolve(result);}
+  function listener(event){const d=event.data;if(!d||d.type!=="dg-booking-result"||d.requestId!==requestId)return;finish(d.payload?.ok?null:new Error(d.payload?.error||"Não foi possível registrar."),d.payload);}
+  window.addEventListener("message",listener);document.body.append(form);form.submit();
+ });
+}
 $("confirmar").onclick=async()=>{
-  const nome=$("nome").value.trim(),zap=$("zap").value.replace(/\D/g,"");
-  const erro=$("erro"),btn=$("confirmar");
-  if(nome.length<2||zap.length<10||!E.s||!E.data||!E.hora||!E.prof){
-    erro.hidden=false;erro.textContent="Confira seu nome, WhatsApp e os dados do horário.";return;
-  }
-  erro.hidden=true;btn.disabled=true;btn.textContent="Enviando solicitação...";
-  try{
-    await criarAgendamento({
-      serviceId:E.s.id,professionalId:E.prof.id,date:iso(E.data),time:E.hora,
-      customer:nome,whatsapp:zap
-    });
-    const msg="Olá! Acabei de solicitar um horário no "+CONFIG.SALAO+": "+E.s.nome+" com "+E.prof.nome+", "+dataLonga(E.data)+" às "+E.hora+". Meu nome é "+nome+".";
-    $("wa").href="https://wa.me/"+CONFIG.WHATSAPP+"?text="+encodeURIComponent(msg);
-    $("passos").hidden=true;$("fim").hidden=false;
-    window.scrollTo({top:0,behavior:"smooth"});
-  }catch(err){
-    console.error(err);
-    erro.hidden=false;
-    erro.textContent=err.code==="functions/already-exists"?"Esse horário acabou de ser reservado. Escolha outro.":err.message||"Não foi possível registrar. Tente novamente.";
-    btn.disabled=false;btn.textContent="Confirmar agendamento";
-    if(err.code==="functions/already-exists") await carregarHorariosDoDia();
-  }
+ const nome=$("nome").value.trim(),zap=$("zap").value.replace(/\D/g,""),erro=$("erro"),btn=$("confirmar");
+ if(nome.length<2||zap.length<10||!E.s||!E.data||!E.hora||!E.prof){erro.hidden=false;erro.textContent="Confira seu nome, WhatsApp e os dados do horário.";return;}
+ if(!CONFIG.API_URL){erro.hidden=false;erro.textContent="O agendamento online ainda está sendo configurado. Fale com a equipe pelo WhatsApp.";return;}
+ erro.hidden=true;btn.disabled=true;btn.textContent="Enviando solicitação...";
+ try{
+  await enviarSolicitacao({serviceId:E.s.id,professionalId:E.prof.id,date:iso(E.data),time:E.hora,customer:nome,whatsapp:zap});
+  const msg="Olá! Acabei de solicitar um horário no "+CONFIG.SALAO+": "+E.s.nome+" com "+E.prof.nome+", "+dataLonga(E.data)+" às "+E.hora+". Meu nome é "+nome+".";
+  $("wa").href="https://wa.me/"+CONFIG.WHATSAPP+"?text="+encodeURIComponent(msg);$("passos").hidden=true;$("fim").hidden=false;window.scrollTo({top:0,behavior:"smooth"});
+ }catch(err){console.error(err);erro.hidden=false;erro.textContent=err.message||"Não foi possível registrar. Tente novamente.";btn.disabled=false;btn.textContent="Confirmar agendamento";await carregarHorariosDoDia();}
 };
-
-render();
-iniciar();
+render();iniciar();
 </script>
 </body>
 </html>
