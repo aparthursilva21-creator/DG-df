@@ -581,22 +581,28 @@
         let profissionaisCache = [];
 
         let legadoMigrado = false;
+        let migracaoLegadoPromise = null;
         let agendaRefreshTimer = null;
 
         async function migrarDadosLegados() {
             if (legadoMigrado) return;
-            const [servicosAntigos, profissionaisAntigas, agendamentosAntigos] = await Promise.all([
-                getDocs(collection(db, 'servicos')),
-                getDocs(collection(db, 'profissionais')),
-                getDocs(collection(db, 'agendamentos'))
-            ]);
-            const services = servicosAntigos.docs.map(d => ({id:d.id, ...d.data()}));
-            const professionals = profissionaisAntigas.docs.map(d => ({id:d.id, ...d.data()}));
-            const appointments = agendamentosAntigos.docs.map(d => ({id:d.id, ...d.data()}));
-            if (services.length || professionals.length || appointments.length) {
-                await gasAdmin("importLegacyData",{services,professionals,appointments});
-            }
-            legadoMigrado = true;
+            if (migracaoLegadoPromise) return migracaoLegadoPromise;
+            migracaoLegadoPromise = (async () => {
+                const [servicosAntigos, profissionaisAntigas, agendamentosAntigos] = await Promise.all([
+                    getDocs(collection(db, 'servicos')),
+                    getDocs(collection(db, 'profissionais')),
+                    getDocs(collection(db, 'agendamentos'))
+                ]);
+                const services = servicosAntigos.docs.map(d => ({id:d.id, ...d.data()}));
+                const professionals = profissionaisAntigas.docs.map(d => ({id:d.id, ...d.data()}));
+                const appointments = agendamentosAntigos.docs.map(d => ({id:d.id, ...d.data()}));
+                if (services.length || professionals.length || appointments.length) {
+                    await gasAdmin("importLegacyData",{services,professionals,appointments});
+                }
+                legadoMigrado = true;
+            })();
+            try { await migracaoLegadoPromise; }
+            catch (err) { migracaoLegadoPromise = null; throw err; }
         }
         const referenciasHistoricas = [
             {nome:"Pé e mão", categoria:"Mãos e pés", preco:50, detalhe:"Valor observado em vários lançamentos"},
