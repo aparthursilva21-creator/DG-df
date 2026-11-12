@@ -382,8 +382,11 @@ function createBooking_(d, source) {
   const duration = Number(service.duracaoMinutos);
   if (!Number.isInteger(duration) || duration < 5 || duration > 480) throw new Error("Duração do serviço inválida.");
   const start = localDate_(date,time);
-  if (start.getTime() < Date.now()+CONFIG.MIN_ADVANCE_HOURS*3600000 ||
-      start.getTime() > Date.now()+CONFIG.MAX_DAYS_AHEAD*86400000) throw new Error("Escolha uma data entre 2 horas e 60 dias a partir de agora.");
+  const minAdvance = source === "site" ? CONFIG.MIN_ADVANCE_HOURS*3600000 : 0;
+  if (start.getTime() < Date.now()+minAdvance ||
+      start.getTime() > Date.now()+CONFIG.MAX_DAYS_AHEAD*86400000) throw new Error(source === "site"
+        ? "Escolha uma data com pelo menos 2 horas de antecedência e até 60 dias."
+        : "Escolha um horário futuro, dentro dos próximos 60 dias.");
   const end = start.getTime()+duration*60000;
   const agenda = parseJson_(professional.agendaJson,{});
   const dayKey = ["domingo","segunda","terca","quarta","quinta","sexta","sabado"][new Date(date+"T12:00:00-03:00").getDay()];
